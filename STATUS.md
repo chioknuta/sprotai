@@ -11,22 +11,44 @@ streak counter, star rating, copyable share block.
 **But the core loop is too boring, and that's the live problem.** v0 should be
 treated as a working prototype that proved out the plumbing, not as the game.
 
-## The design problem (open — decide before building more)
+## DECIDED (2026-08-10): rebuild the core loop as OIL LINE
 
-Diagnosis: freeing a fish only ever *helps* — it can never block anything. So
-there is no tension, no risk, and no consequence to move order. The board also
-gets monotonically easier as it empties, so the game deflates instead of
-escalating. Wrong clicks are the only cost, which is a weak hook.
+v0's flaw: freeing a fish only ever *helps*, so no move has a downside, order
+barely matters, and the board deflates. Ran two Fable ideation passes (one
+physical-truth lens, one Wordle-ritual lens, 8 mechanics total) and picked:
 
-Goal: **relaxing but addictive**, and ideally mechanically unique.
+### OIL LINE — the spec
 
-Candidate directions are in the conversation; the leading one is a *wake /
-slipstream cascade* — an escaping sprat drags along the fish it passes,
-recursively, so one tap can chain the whole tin and the game becomes "find the
-tap that frees the most" rather than "clear the list".
+- **Side-view** tin (v0 was top-down). Fish packed in rows, submerged in oil.
+- Tap a fish whose path **upward** to the surface is clear → it lifts out.
+- Its displacement leaves with it: the **oil level drops one notch** per rescue
+  (tune: possibly per N cells of fish volume).
+- Any fish now poking above the oil line **dries out and locks permanently** —
+  visibly stiff/grey. It stays in the tin as an obstacle.
+- Goal: save as many fish as possible. Perfect = full tin saved.
+- **Score = fish saved / total.** Near-miss ("6/8") drives the run-it-back urge.
+- No clock. Nothing moves until you tap. That's the relaxing half.
 
-**Next action: pick a direction, then rebuild the core loop.** Keep the
-generator, art, daily seeding, and share plumbing — all of that is reusable.
+### Non-negotiables for the build
+
+- Generator must **guarantee a perfect rescue order exists** (verify by search
+  over the small discrete state space — extend tools/verify.mjs; keep the
+  generator:start/end extraction pattern so shipped code is what's verified).
+- The removal→oil-drop causality must be **unmissable**: animate the glug and
+  the line ticking down after every rescue, before the drying lock applies.
+- Undo-free, but instant "retry today's tin" button.
+- Share block: e.g. `🥫 Šprotai #N  🐟🐟🐟🐟🐟🐟💀🐟 7/8` — saved fish in
+  rescue order, skulls where fish dried. Positions stay unspoiled.
+- Reuse from v0: seeded RNG, daily numbering, streak, stars, share plumbing,
+  the sprat SVG (re-orient for side view), tin chrome. The v0 top-down loop
+  and its generator get replaced.
+
+### Benched for later (possible second daily on the same site)
+
+**BONES**: rim counts say how many bony fish hide per row/column; eat fish,
+bank anytime; biting a bone ends the run. Best pure ritual of the batch but
+it's recognisably Voltorb Flip in a tin — fine as a companion game, not the
+flagship. Full 8-idea shortlist lives in the 2026-08-10 conversation.
 
 ## Done
 
