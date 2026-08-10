@@ -4,8 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Šprotai — free the little one</title>
-<meta name="description" content="A tin of sprats packed too tight. Slide them out of the way and free the little pink one.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
+<meta name="description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day, and endless tins besides.">
+<link rel="canonical" href="https://sprot.ai/">
+<meta name="theme-color" content="#f0bd6d">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Šprotai">
+<meta property="og:url" content="https://sprot.ai/">
+<meta property="og:title" content="Šprotai — free the little one">
+<meta property="og:description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day.">
+<meta property="og:image" content="https://sprot.ai/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A tin of cartoon sprats seen from above, one of them pink, beside the word ŠPROTAI.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Šprotai — free the little one">
+<meta name="twitter:description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day.">
+<meta name="twitter:image" content="https://sprot.ai/og.png">
+
+<link rel="icon" href="/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Šprotai">
 <style>
   :root{
     --bg:#fdf6e9; --ink:#4a3520; --muted-txt:#a08a68;
@@ -36,7 +57,14 @@
   }
   .tagline{color:var(--muted-txt); font-size:13.5px; margin-top:1px}
 
+  .modes{display:flex; gap:4px; background:#f3e3c8; padding:4px; border-radius:999px}
+  .modes button{
+    font:inherit; font-size:13.5px; font-weight:600; color:#a8895c;
+    background:none; border:0; padding:7px 16px; border-radius:999px; cursor:pointer;
+  }
+  .modes button[aria-selected="true"]{background:#fff8ea; color:var(--accent)}
   .tinbar{display:flex; align-items:center; gap:10px}
+  .tinbar[hidden],#dailyhead[hidden]{display:none}
   .tinlabel{font-size:14.5px; color:var(--muted-txt); min-width:132px; text-align:center}
   .tinlabel b{color:var(--ink); font-variant-numeric:tabular-nums}
   .btn.nav{padding:7px 13px; font-size:15px}
@@ -159,11 +187,17 @@
   <p class="tagline">Free the little one.</p>
 </header>
 
-<div class="tinbar">
+<div class="modes" role="tablist">
+  <button role="tab" id="tab-daily" aria-selected="true">Today's tin</button>
+  <button role="tab" id="tab-ladder" aria-selected="false">All tins</button>
+</div>
+
+<div class="tinbar" id="laddernav">
   <button class="btn nav" id="prev" aria-label="Previous tin">←</button>
   <span class="tinlabel">Tin <b id="tinno">1</b> <span id="band"></span></span>
   <button class="btn nav" id="next" aria-label="Next tin">→</button>
 </div>
+<p class="tinlabel" id="dailyhead" hidden><b id="dailydate"></b></p>
 
 <div class="tin"><div class="tin-inner" id="tin">
   <div class="clip"><div class="grid" id="grid"></div></div>
@@ -359,11 +393,10 @@ function bandFor(n){
 }
 
 /** Hill-climb to a tin at least as tangled as the band asks for.
-    The budget is counted in solver calls, never in milliseconds, so tin #N is
-    byte-identical on a fast laptop and a slow phone. */
-function makeTin(n){
-  const b = bandFor(n);
-  const rng = mulberry32(xmur3("sprotai-tin-" + n)());
+    The budget is counted in solver calls, never in milliseconds, so a given
+    seed is byte-identical on a fast laptop and a slow phone. */
+function makeBoard(seed, b){
+  const rng = mulberry32(xmur3(seed)());
   const BUDGET = 2600;
   let cur = null, curPar = 0, best = null, bestPar = -1, evals = 0;
 
@@ -400,6 +433,16 @@ function makeTin(n){
   }
   return null;
 }
+
+/** Tin #N of the endless ladder. */
+function makeTin(n){ return makeBoard("sprotai-tin-" + n, bandFor(n)); }
+
+/** The tin of the day — same one for everybody, seeded from the date alone.
+    A fixed middle band: hard enough to be worth the trip, short enough to do
+    over a coffee. It never escalates, because a daily that gets harder every
+    day punishes the people who keep turning up. */
+const DAILY_BAND = { name:"daily", lo:10 };
+function makeDaily(dateKey){ return makeBoard("sprotai-daily-" + dateKey, DAILY_BAND); }
 /* === generator:end ==================================================== */
 
 /* ---------- the sprats ----------
@@ -528,7 +571,8 @@ const Snd = {
 /* ---------- state ---------- */
 const $ = id => document.getElementById(id);
 const tinEl = $("tin"), gridEl = $("grid"), notchEl = $("notch"), winEl = $("win");
-let lvl = 1, par = 0, cell = 52, fish = [], off = [], hist = [], els = [], done = false;
+let mode = "daily", dayK = "", lvl = 1, par = 0, cell = 52,
+    fish = [], off = [], hist = [], els = [], done = false;
 
 const store = {
   get(k, fb){ try { return JSON.parse(localStorage.getItem("sprotai.slide."+k)) ?? fb; } catch { return fb; } },
@@ -662,7 +706,7 @@ function commit(i, to){
   place(i);
   paint();
   if (laneClear()) escape();
-  else { Snd.bubble(); heroBubble(); }
+  else { Snd.bubble(); heroBubble(); saveRun(); }
 }
 
 /** Every move, the little one blows a bubble — the game answering you each
@@ -682,12 +726,26 @@ function heroBubble(){
   setTimeout(() => b.remove(), 1200);
 }
 
-/* ---------- build ---------- */
-const tinCache = new Map();
+/* ---------- which tin are we on ---------- */
+const pad = n => String(n).padStart(2, "0");
+const dayKeyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey = () => dayKeyOf(new Date());
+const prettyDay = () => new Date().toLocaleDateString(undefined, { day:"numeric", month:"long" });
+
+const tinCache = new Map(), dailyCache = new Map();
 function tinFor(n){
   if (!tinCache.has(n)) tinCache.set(n, makeTin(n));
   return tinCache.get(n);
 }
+function dailyFor(k){
+  if (!dailyCache.has(k)) dailyCache.set(k, makeDaily(k));
+  return dailyCache.get(k);
+}
+const currentTin = () => mode === "daily" ? dailyFor(dayK) : tinFor(lvl);
+/** Stable id for storage, so a daily and a ladder tin never collide. */
+const boardId = () => mode === "daily" ? "d:" + dayK : "t:" + lvl;
+
+/* ---------- build ---------- */
 /** Generating a hard tin can take a moment, so paint the wait first. */
 function goTo(n){
   if (n < 1) return;
@@ -698,15 +756,26 @@ function goTo(n){
   $("band").textContent = "· packing…";
   setTimeout(() => { tinEl.parentElement.classList.remove("busy"); build(n); }, 16);
 }
-function build(n){
-  lvl = n; done = false; drag = null;
+function build(n, restore){
+  if (n) lvl = n;
+  done = false; drag = null;
   clearEscape();
   tinEl.classList.remove("freeze");
-  const tin = tinFor(n);
+  const tin = currentTin();
   fish = tin.fish.map(f => ({ r:f.r, c:f.c, len:f.len, dir:f.dir }));
   par = tin.par;
   off = fish.map(() => 0);
   hist = [];
+  // Bring back a half-finished tin after a refresh, but only if it is really
+  // the same board — a stale save must never be replayed onto a different one.
+  if (restore && restore.id === boardId() && Array.isArray(restore.hist)){
+    for (const m of restore.hist){
+      if (typeof m?.i === "number" && fish[m.i] && typeof m.to === "number"){
+        off[m.i] = m.to; hist.push(m);
+      }
+    }
+    if (!gridValid()){ off = fish.map(() => 0); hist = []; }
+  }
   tinEl.querySelectorAll(".fish").forEach(e => e.remove());
   els = fish.map((f, i) => {
     const el = document.createElement("button");
@@ -724,11 +793,44 @@ function build(n){
   winEl.hidden = true;
   layout();
   paint();
-  $("tinno").textContent = n;
-  $("band").textContent = "· " + tinFor(n).band;
-  $("prev").disabled = n <= 1;
-  store.set("reached", Math.max(store.get("reached", 1), n));
-  prefetch(n + 1);
+  renderHead();
+  if (mode === "ladder"){
+    store.set("reached", Math.max(store.get("reached", 1), lvl));
+    prefetch(lvl + 1);
+  }
+  saveRun();
+}
+/** Every sprat inside the tin, nobody overlapping — used to reject a bad save. */
+function gridValid(){
+  const seen = new Set();
+  for (let i = 0; i < fish.length; i++){
+    for (const [r, c] of cellsOf(fish[i], off[i])){
+      if (r < 0 || r >= H || c < 0 || c >= W) return false;
+      const k = r * W + c;
+      if (seen.has(k)) return false;
+      seen.add(k);
+    }
+  }
+  return true;
+}
+function renderHead(){
+  const daily = mode === "daily";
+  $("tab-daily").setAttribute("aria-selected", String(daily));
+  $("tab-ladder").setAttribute("aria-selected", String(!daily));
+  $("laddernav").hidden = daily;
+  $("dailyhead").hidden = !daily;
+  if (daily){
+    $("dailydate").textContent = prettyDay();
+  } else {
+    $("tinno").textContent = lvl;
+    $("band").textContent = "· " + currentTin().band;
+    $("prev").disabled = lvl <= 1;
+  }
+}
+/* ---------- a half-played tin survives a refresh ---------- */
+function saveRun(){
+  if (done) { store.set("run", null); return; }
+  store.set("run", { id: boardId(), mode, lvl, dayK, hist });
 }
 /** Build the next tin while the player is busy with this one, so Next is instant. */
 function prefetch(n){
@@ -739,7 +841,7 @@ function prefetch(n){
 }
 function paint(){
   $("moves").textContent = hist.length;
-  $("best").textContent = store.get("best." + lvl, null) ?? "—";
+  $("best").textContent = store.get("best." + boardId(), null) ?? "—";
   $("undo").disabled = !hist.length || done;
 }
 
@@ -857,24 +959,35 @@ function skipEscape(){
 }
 function showWin(){
   const n = hist.length;
-  const prevBest = store.get("best." + lvl, null);
-  if (prevBest === null || n < prevBest) store.set("best." + lvl, n);
+  const key = "best." + boardId();
+  const prevBest = store.get(key, null);
+  if (prevBest === null || n < prevBest) store.set(key, n);
+  store.set("run", null);                       // finished: nothing to resume
   paint();
   const perfect = n === par;
+  const daily = mode === "daily";
   winEl.hidden = false;
   // No boast, no manufactured deficit. The shortest route is a fact she can
   // ask for, not a scolding delivered the moment she wins.
   winEl.innerHTML = `
     <h2>Out she goes.</h2>
     <p>${n} move${n === 1 ? "" : "s"}${perfect ? " — the shortest way out." : ""}</p>
-    <button class="go" id="gonext">Next tin →</button>
+    ${daily
+      ? `<button class="go" id="share">Share</button>
+         <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`
+      : `<button class="go" id="gonext">Next tin →</button>`}
     ${perfect ? "" : `<button class="btn" id="showpar" style="margin-top:8px;width:100%">Was there a shorter way?</button>`}`;
-  $("gonext").onclick = () => goTo(lvl + 1);
+  if (daily){
+    $("share").onclick = e => shareDaily(e.target, n, perfect);
+    $("toladder").onclick = () => setMode("ladder");
+  } else {
+    $("gonext").onclick = () => goTo(lvl + 1);
+  }
   const sp = $("showpar");
   if (sp) sp.onclick = () => {
     sp.outerHTML = `<p style="margin-top:10px">Shortest possible: <b style="color:var(--ink)">${par}</b></p>
       <button class="btn" id="retry" style="margin-top:8px;width:100%">Try again</button>`;
-    $("retry").onclick = () => build(lvl);
+    $("retry").onclick = () => build();
   };
 }
 function undo(){
@@ -883,6 +996,7 @@ function undo(){
   off[m.i] = m.from;
   place(m.i);
   paint();
+  saveRun();
 }
 window.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
@@ -898,15 +1012,77 @@ $("mute").onclick = () => {
   if (Snd.on){ Snd.init(); Snd.pop(); }
 };
 $("undo").onclick = undo;
-$("reset").onclick = () => build(lvl);
+$("reset").onclick = () => build();
 $("prev").onclick = () => goTo(lvl - 1);
 $("next").onclick = () => goTo(lvl + 1);
+$("tab-daily").onclick = () => setMode("daily");
+$("tab-ladder").onclick = () => setMode("ladder");
 window.addEventListener("resize", () => fish.length && layout());
 document.addEventListener("keydown", e => {
   if ((e.key === "z" || e.key === "Z") && (e.metaKey || e.ctrlKey)){ e.preventDefault(); undo(); }
 });
 
-goTo(store.get("reached", 1));
+/* ---------- daily ---------- */
+function setMode(next, restore){
+  mode = next;
+  store.set("mode", next);
+  if (next === "daily"){
+    dayK = todayKey();
+    const cached = dailyCache.has(dayK);
+    if (!cached){
+      tinEl.parentElement.classList.add("busy");
+      renderHead();
+      setTimeout(() => { tinEl.parentElement.classList.remove("busy"); build(null, restore); afterDaily(); }, 16);
+      return;
+    }
+    build(null, restore);
+    afterDaily();
+  } else {
+    build(lvl, restore);
+  }
+}
+/** If today's tin is already done, say so instead of pretending it is fresh. */
+function afterDaily(){
+  const best = store.get("best." + boardId(), null);
+  if (best === null || hist.length) return;
+  done = true;
+  winEl.hidden = false;
+  winEl.innerHTML = `
+    <h2>Today's tin is done.</h2>
+    <p>You freed her in ${best} move${best === 1 ? "" : "s"}${best === par ? " — the shortest way out." : ""}</p>
+    <button class="go" id="share">Share</button>
+    <button class="btn" id="again" style="margin-top:8px;width:100%">Play it again</button>
+    <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`;
+  $("share").onclick = e => shareDaily(e.target, best, best === par);
+  $("again").onclick = () => { done = false; build(); };
+  $("toladder").onclick = () => setMode("ladder");
+}
+/** Spoiler-free: the score, never the board. */
+function shareDaily(btn, moves, perfect){
+  const text = `🥫 Šprotai · ${prettyDay()}\n`
+    + (perfect
+        ? `Freed her in ${moves} — the shortest way out.\n`
+        : `Freed her in ${moves} moves (shortest is ${par}).\n`)
+    + `https://sprot.ai`;
+  const done = () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share", 1600); };
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => navigator.clipboard?.writeText(text).then(done, () => {}));
+  } else {
+    navigator.clipboard?.writeText(text).then(done, () => window.prompt("Copy your result:", text));
+  }
+}
+
+/* ---------- start ---------- */
+(function start(){
+  const run = store.get("run", null);
+  if (run && run.id && run.hist?.length){
+    // resume exactly where they were, daily or ladder
+    if (run.mode === "daily" && run.dayK === todayKey()){ lvl = run.lvl || 1; return setMode("daily", run); }
+    if (run.mode === "ladder"){ lvl = run.lvl || 1; return setMode("ladder", run); }
+  }
+  lvl = store.get("reached", 1);
+  setMode(store.get("mode", "daily"));
+})();
 </script>
 </body>
 </html>
