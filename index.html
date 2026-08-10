@@ -3,18 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Šprotai — a tin of sprats to set free, daily</title>
-<meta name="description" content="A new tin of sprats every day. Click a fish to let it swim out — but only if nothing's in its way. Clear the tin without a single bump.">
+<title>Šprotai — the oil is dropping, save the tin</title>
+<meta name="description" content="A new tin of sprats every day, seen from the side. Lift them out one by one — every rescue drains oil, and any sprat left above the line dries out for good. Save them all.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
 <style>
   :root{
     --bg:#14100c; --panel:#1d1710; --panel-2:#261e15;
     --oil:#2b2011; --oil-2:#1d1409;
     --amber:#f0b455; --amber-dim:#c08b3c;
-    --ink:#f5ecdc; --muted:#a3958240; --muted-txt:#a09484;
+    --ink:#f5ecdc; --muted-txt:#a09484;
     --bad:#e2603f; --good:#7fbf6a;
     --rim-1:#e4e7ec; --rim-2:#8b9199; --rim-3:#c6cbd2;
-    --cell:56px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{min-height:100%}
@@ -25,22 +24,22 @@
     color:var(--ink);
     font:400 16px/1.5 ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     display:flex; flex-direction:column; align-items:center;
-    padding:clamp(16px,4vw,32px) 16px 48px; gap:20px;
+    padding:clamp(14px,3.5vw,28px) 16px 48px; gap:16px;
     -webkit-tap-highlight-color:transparent;
   }
 
   header{text-align:center}
   h1{
-    font-size:clamp(30px,8vw,44px); font-weight:800; letter-spacing:.14em;
+    font-size:clamp(28px,7vw,40px); font-weight:800; letter-spacing:.14em;
     background:linear-gradient(180deg,#fbe6bd,var(--amber) 55%,#a9701f);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .tagline{color:var(--muted-txt); font-size:14px; margin-top:2px}
+  .tagline{color:var(--muted-txt); font-size:13.5px; margin-top:2px}
 
   .tabs{display:flex; gap:4px; background:var(--panel); padding:4px; border-radius:999px}
   .tabs button{
     font:inherit; font-size:14px; font-weight:600; color:var(--muted-txt);
-    background:none; border:0; padding:8px 18px; border-radius:999px; cursor:pointer;
+    background:none; border:0; padding:7px 18px; border-radius:999px; cursor:pointer;
   }
   .tabs button[aria-selected="true"]{background:var(--panel-2); color:var(--amber)}
 
@@ -49,45 +48,77 @@
   .sizes{display:flex; gap:4px}
   .sizes button{
     font:inherit; font-size:13px; color:var(--muted-txt); background:var(--panel);
-    border:1px solid transparent; padding:5px 12px; border-radius:999px; cursor:pointer;
+    border:1px solid transparent; padding:8px 14px; border-radius:999px; cursor:pointer;
   }
   .sizes button[aria-pressed="true"]{border-color:var(--amber-dim); color:var(--amber)}
 
-  /* ---- the tin ---- */
+  /* ---- the tin, side view ---- */
   .tin{
-    padding:12px; border-radius:22px;
+    padding:12px; border-radius:20px;
     background:linear-gradient(145deg,var(--rim-1),var(--rim-2) 42%,var(--rim-3) 58%,#7d838b);
     box-shadow:0 18px 44px #0009, inset 0 1px 0 #fff8;
   }
   .tin-inner{
-    position:relative; border-radius:13px; overflow:hidden;
+    position:relative; border-radius:11px; overflow:hidden;
     background:
-      radial-gradient(120% 100% at 30% 10%, #4a3517 0%, transparent 55%),
+      radial-gradient(130% 90% at 30% 0%, #3a2c16 0%, transparent 55%),
       linear-gradient(160deg,var(--oil),var(--oil-2));
     box-shadow:inset 0 3px 12px #000b, inset 0 0 0 1px #0006;
   }
-  .grid{position:absolute; inset:0; pointer-events:none}
-  .grid i{position:absolute; background:#f0b45514}
-  .grid i.h{left:0; right:0; height:1px}
-  .grid i.v{top:0; bottom:0; width:1px}
+  .grid{position:absolute; inset:0; pointer-events:none; z-index:0}
+  .grid i{position:absolute; left:0; right:0; height:1px; background:#f0b45516}
+  .ticks{position:absolute; top:0; bottom:0; left:0; width:7px; z-index:2; pointer-events:none; opacity:.85}
+
+  /* Oil overlay sits above the fish: submerged sprats are seen through it,
+     exposed sprats sit in clear air. Its top edge IS the oil line. */
+  .oil{
+    position:absolute; left:0; right:0; bottom:0; pointer-events:none; z-index:3;
+    background:linear-gradient(180deg,#f7c66838 0,#c8873a30 26%,#8a5a1e3a 100%);
+    border-top:2px solid #ffd98ab8;
+    box-shadow:0 -1px 12px #f0b45566, inset 0 4px 10px #ffdf9c1f;
+    transition:top .5s cubic-bezier(.3,.65,.35,1.15);
+  }
+  .oil.glug{animation:glugpulse .55s ease}
+  @keyframes glugpulse{30%{filter:brightness(1.4)}}
+  .bubble{
+    position:absolute; width:5px; height:5px; border-radius:50%; z-index:4;
+    background:#ffe3a8cc; pointer-events:none; animation:rise .75s ease-out forwards;
+  }
+  @keyframes rise{to{transform:translateY(-26px); opacity:0}}
 
   .fish{
-    position:absolute; width:var(--cell); height:var(--cell);
-    border:0; padding:0; background:none; cursor:pointer;
-    transition:transform .42s cubic-bezier(.45,.05,.55,.95), opacity .42s ease;
+    position:absolute; border:0; padding:0; background:none; cursor:pointer; z-index:1;
+    transition:transform .55s cubic-bezier(.5,-.08,.75,.4), opacity .55s ease;
   }
   .fish:focus-visible{outline:2px solid var(--amber); outline-offset:-3px; border-radius:8px}
-  .fish .art{width:100%; height:100%; display:block; transition:filter .2s}
+  .fish .wrap{display:block; width:100%; height:100%}
+  .fish .art{width:100%; height:100%; display:block; transition:filter .45s ease}
   .fish.gone{opacity:0}
+  .fish.dried{cursor:not-allowed}
+  .fish.dried .art{filter:grayscale(.95) brightness(.68) contrast(1.12)}
+  .fish.risk:not(.dried) .art{animation:risk 1.5s ease-in-out infinite}
+  @keyframes risk{50%{filter:brightness(1.28) drop-shadow(0 0 5px #ffe2a899)}}
   .fish.bump .art{animation:bump .32s ease}
-  .fish.blocker .art{filter:drop-shadow(0 0 7px var(--bad)) saturate(.45) brightness(1.15)}
   @keyframes bump{
     0%,100%{transform:translate(0,0)} 25%{transform:translate(-3px,2px)}
     50%{transform:translate(3px,-2px)} 75%{transform:translate(-2px,1px)}
   }
+  .fish.deadshake .art{animation:deadshake .3s ease}
+  @keyframes deadshake{25%{transform:rotate(1.6deg)} 75%{transform:rotate(-1.6deg)}}
+  .fish.blocker .art{filter:drop-shadow(0 0 7px var(--bad)) saturate(.45) brightness(1.15)}
+  .fish.dried.blocker .art{filter:grayscale(.95) brightness(.8) drop-shadow(0 0 7px var(--bad))}
 
-  .stats{display:flex; gap:18px; font-size:14px; color:var(--muted-txt)}
+  .stats{display:flex; gap:16px; align-items:center; font-size:14px; color:var(--muted-txt)}
   .stats b{color:var(--ink); font-variant-numeric:tabular-nums}
+  .mini{
+    font:inherit; font-size:13px; color:var(--muted-txt); background:var(--panel);
+    border:1px solid #ffffff14; padding:8px 14px; border-radius:999px; cursor:pointer;
+  }
+  .sr-only{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap;
+  }
+  .mini:active{transform:translateY(1px)}
 
   .panel{
     background:var(--panel); border:1px solid #ffffff0e; border-radius:16px;
@@ -97,6 +128,7 @@
   .stars{font-size:26px; letter-spacing:4px; margin:8px 0}
   .stars .dim{opacity:.2; filter:grayscale(1)}
   .panel p{color:var(--muted-txt); font-size:14px}
+  .timeline{font-size:15px; letter-spacing:1px; word-break:break-all; margin-top:6px}
   .btn{
     font:inherit; font-weight:700; font-size:15px; margin-top:14px;
     background:linear-gradient(180deg,var(--amber),#c8873a); color:#2a1a06;
@@ -105,7 +137,7 @@
   .btn:active{transform:translateY(1px)}
   .btn.ghost{background:none; color:var(--muted-txt); border:1px solid #ffffff1a; margin-top:8px}
 
-  details{max-width:380px; width:100%; font-size:14px; color:var(--muted-txt)}
+  details{max-width:400px; width:100%; font-size:14px; color:var(--muted-txt)}
   summary{cursor:pointer; text-align:center; color:var(--amber-dim); list-style:none}
   summary::-webkit-details-marker{display:none}
   details p{margin-top:10px}
@@ -117,7 +149,7 @@
 
 <header>
   <h1>ŠPROTAI</h1>
-  <p class="tagline">A tin of sprats. Set them free.</p>
+  <p class="tagline">The oil drains as they leave. Save every sprat.</p>
 </header>
 
 <div class="tabs" role="tablist">
@@ -127,38 +159,70 @@
 
 <div class="meta" id="meta"></div>
 
-<div class="tin"><div class="tin-inner" id="tin"><div class="grid" id="grid"></div></div></div>
+<div class="tin"><div class="tin-inner" id="tin">
+  <div class="grid" id="grid"></div>
+  <div class="ticks" id="ticks"></div>
+  <div class="oil" id="oil"></div>
+</div></div>
 
 <div class="stats">
-  <span>Freed <b id="freed">0</b></span>
-  <span>Bumps <b id="bumps">0</b></span>
+  <span>Saved <b id="saved">0</b></span>
+  <span>Dried <b id="dried">0</b></span>
+  <button class="mini" id="retry" title="Restart this tin">↺ Retry</button>
 </div>
 
-<div class="panel" id="result" hidden></div>
+<div class="panel" id="result" role="status" aria-live="polite" hidden></div>
+<span id="live" class="sr-only" role="status" aria-live="polite"></span>
 
 <details>
   <summary>How to play</summary>
-  <p>Each sprat faces one way. <b>Click a sprat to let it swim out of the tin</b> — it only escapes if every cell ahead of it is empty.</p>
-  <p>Bump into another fish and it stays put, and you take a bump. Empty the tin with <b>zero bumps</b> for three stars.</p>
-  <p>You can never get stuck: freeing a fish only ever clears the way for others.</p>
+  <p><b>Tap a sprat to lift it out.</b> It rises straight up, so every cell above it must already be clear.</p>
+  <p>Each rescue drains oil equal to the sprat's own length — a long sprat takes more oil with it. The ticks on the left wall show the drop.</p>
+  <p>Any sprat left poking above the oil line <b>dries out and locks in place</b>: lost, and in the way of everyone beneath it.</p>
+  <p>A perfect rescue order always exists. Save the whole tin.</p>
 </details>
 
 <footer>sprot.ai</footer>
+
+<!-- shared art defs for every sprat -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"    stop-color="#5c330b"/>
+    <stop offset=".30"  stop-color="#b0711b"/>
+    <stop offset=".55"  stop-color="#efb955"/>
+    <stop offset=".80"  stop-color="#f9dfa4"/>
+    <stop offset="1"    stop-color="#fdf0d8"/>
+  </linearGradient>
+</defs></svg>
 
 <script>
 "use strict";
 
 /* === generator:start === */
-// Everything between these markers is pure (no DOM) and is extracted and
-// re-verified by tools/verify.mjs. Keep it DOM-free so the shipped code and
-// the verified code can never drift apart.
-const DIRS = { R:[0,1], L:[0,-1], D:[1,0], U:[-1,0] };
+// Everything between these markers is pure — no DOM, no clock reads, no
+// nondeterministic randomness — and is extracted verbatim by tools/verify.mjs,
+// which re-checks every board with an independent exhaustive solver.
+//
+// OIL LINE model — all integers, measured in "units" (half-cells of volume):
+//   - a fish of length L cells has volume L*UPC units
+//   - a fully packed row of the tin holds cols*UPC units of fish
+//   - the oil surface starts H units above the top row (the headroom)
+//   - each rescue drops the surface by the rescued fish's volume
+//   - a fish whose top edge (H + r*cols*UPC) ends up strictly above the
+//     surface depth dries out and locks in place forever
+//
+// Boards are packed full, then H is set to (minimum feasible + slack). The
+// minimum comes from the witness order — rows top-down, shortest fish first
+// within a row — which is provably the most oil-efficient order, so the
+// witness itself is the proof that a perfect clear exists. Lower slack means
+// the order is more forced.
+const UPC = 2;
 const SIZES = {
-  small:  { rows:5, cols:5, target:15, label:"Small" },
-  medium: { rows:6, cols:6, target:22, label:"Medium" },
-  large:  { rows:8, cols:8, target:42, label:"Large" },
+  small:  { rows:4, cols:6, slack:2, attempts:12, label:"Small" },
+  medium: { rows:5, cols:7, slack:1, attempts:12, label:"Medium" },
+  large:  { rows:6, cols:8, slack:0, attempts:12, label:"Large" },
 };
-const DAILY = { rows:7, cols:7, target:30 };
+const DAILY = { rows:5, cols:7, slack:1, attempts:16 };
 const EPOCH = Date.UTC(2026, 0, 1);
 
 /* ---------- deterministic RNG ---------- */
@@ -183,113 +247,159 @@ function mulberry32(a){
   };
 }
 
-/* ---------- generation ----------
-   Built in reverse escape order: every fish is placed only where its run to the
-   rim is currently clear, which is exactly the board it will face in play. So
-   the placement order is itself a solution — puzzles are solvable by
-   construction. Placements are biased toward corking already-placed fish, which
-   is what forces the player to work out an order instead of clicking at random.
-*/
-function clearRun(grid, rows, cols, r, c, d){
-  const [dr, dc] = DIRS[d];
-  let rr = r + dr, cc = c + dc, len = 0;
-  while (rr >= 0 && rr < rows && cc >= 0 && cc < cols){
-    if (grid[rr][cc]) return null;
-    len++; rr += dr; cc += dc;
-  }
-  return len;
+/* ---------- board model ---------- */
+const volU = f => f.len * UPC;
+const topU = (board, f) => board.H + f.r * board.cols * UPC;
+// g blocks f's straight lift when g lies in any row above f and their column
+// spans overlap.
+const blocks = (g, f) => g.r < f.r && g.c < f.c + f.len && f.c < g.c + g.len;
+
+// Ordered ways to fill one row of `cols` cells with fish of length 2..4.
+function compositions(n){
+  const out = [];
+  (function go(left, acc){
+    if (left === 0){ out.push(acc.slice()); return; }
+    for (const p of [2, 3, 4]) if (p <= left){ acc.push(p); go(left - p, acc); acc.pop(); }
+  })(n, []);
+  return out;
 }
-function blockerAt(grid, rows, cols, r, c, d){
-  const [dr, dc] = DIRS[d];
-  let rr = r + dr, cc = c + dc;
-  while (rr >= 0 && rr < rows && cc >= 0 && cc < cols){
-    if (grid[rr][cc]) return grid[rr][cc];
-    rr += dr; cc += dc;
-  }
-  return null;
-}
-function corkValue(grid, rows, cols, placed, r, c){
-  let n = 0;
-  for (const f of placed){
-    const [dr, dc] = DIRS[f.d];
-    if (dr === 0 && f.r !== r) continue;
-    if (dc === 0 && f.c !== c) continue;
-    if (dr !== 0 && Math.sign(r - f.r) !== dr) continue;
-    if (dc !== 0 && Math.sign(c - f.c) !== dc) continue;
-    if (clearRun(grid, rows, cols, f.r, f.c, f.d) !== null) n++;
-  }
-  return n;
-}
-function generate(rng, rows, cols, target){
-  const grid = Array.from({length: rows}, () => Array(cols).fill(null));
-  const placed = [];
-  while (placed.length < target){
-    const cands = [];
-    for (let r = 0; r < rows; r++){
-      for (let c = 0; c < cols; c++){
-        if (grid[r][c]) continue;
-        const opts = [];
-        for (const d in DIRS){
-          const len = clearRun(grid, rows, cols, r, c, d);
-          if (len !== null) opts.push({ d, len });
-        }
-        if (!opts.length) continue;
-        opts.sort((a, b) => b.len - a.len);
-        const i = Math.min(opts.length - 1, Math.floor(rng() * rng() * opts.length));
-        cands.push({ r, c, d: opts[i].d, cork: corkValue(grid, rows, cols, placed, r, c) });
-      }
+
+function packTin(rng, rows, cols){
+  const comps = compositions(cols);
+  const fish = [];
+  for (let r = 0; r < rows; r++){
+    const comp = comps[Math.floor(rng() * comps.length)];
+    let c = 0;
+    for (const len of comp){
+      fish.push({
+        id: fish.length, r, c, len,
+        face: rng() < 0.5 ? -1 : 1,   // cosmetic: which way the sprat looks
+        jy: rng() * 2 - 1,            // cosmetic jitter, [-1,1]
+        ja: rng() * 2 - 1,
+      });
+      c += len;
     }
-    if (!cands.length) break;
-    cands.sort((a, b) => b.cork - a.cork);
-    const j = Math.min(cands.length - 1, Math.floor(rng() * rng() * cands.length * 0.5));
-    const f = { id: placed.length, r: cands[j].r, c: cands[j].c, d: cands[j].d };
-    grid[f.r][f.c] = f;
-    placed.push(f);
   }
-  return { rows, cols, fish: placed };
+  return fish;
+}
+
+// Rows top-down, shortest fish first within a row. Saving the longest fish of
+// a row for last minimizes the oil spent before each row-mate's rescue, so no
+// other order needs less headroom — this order is both the solvability proof
+// and the basis for the minimum-headroom computation.
+const witness = fish => fish.slice().sort((a, b) => a.r - b.r || a.len - b.len || a.c - b.c);
+
+function minHeadroom(fish, cols){
+  let H = 0, B = 0;
+  for (const f of witness(fish)){
+    H = Math.max(H, B - f.r * cols * UPC);
+    B += volU(f);
+  }
+  return H;
+}
+
+// Optimal continuation (Jackson's rule on start-deadlines): among rescuable
+// fish, always take the one with the smallest (top edge + volume). Used only
+// to score candidate boards; correctness never rests on it — the witness
+// order is the proof, and tools/verify.mjs re-searches every board anyway.
+function greedyPerfect(board, removedIds, depth){
+  const left = board.fish.filter(f => !removedIds.has(f.id));
+  let d = depth;
+  while (left.length){
+    if (left.some(f => topU(board, f) < d)) return false;   // someone dried
+    let pick = null, pi = -1;
+    for (let i = 0; i < left.length; i++){
+      const f = left[i];
+      if (left.some(g => g !== f && blocks(g, f))) continue;
+      if (!pick || topU(board, f) + volU(f) < topU(board, pick) + volU(pick)){ pick = f; pi = i; }
+    }
+    if (!pick) return false;
+    left.splice(pi, 1);
+    d += volU(pick);
+  }
+  return true;
+}
+
+// Replay the witness order and count "traps": rescuable alternatives at each
+// step that would make a perfect clear impossible. More traps = a board that
+// punishes casual clicking = a more interesting daily.
+function spice(board){
+  const removed = new Set();
+  let d = 0, traps = 0;
+  for (const w of witness(board.fish)){
+    const alive = board.fish.filter(f => !removed.has(f.id));
+    for (const f of alive){
+      if (f === w) continue;
+      if (alive.some(g => g !== f && blocks(g, f))) continue;
+      const after = new Set(removed); after.add(f.id);
+      if (!greedyPerfect(board, after, d + volU(f))) traps++;
+    }
+    removed.add(w.id);
+    d += volU(w);
+  }
+  return traps;
+}
+
+function generate(rng, cfg){
+  let best = null;
+  for (let a = 0; a < cfg.attempts; a++){
+    const fish = packTin(rng, cfg.rows, cfg.cols);
+    const board = { rows: cfg.rows, cols: cfg.cols, fish, H: 0 };
+    board.H = minHeadroom(fish, cfg.cols) + cfg.slack;
+    const rowStrs = new Set();
+    for (let r = 0; r < cfg.rows; r++){
+      rowStrs.add(fish.filter(f => f.r === r).map(f => f.len).join(""));
+    }
+    const score = spice(board) * 100 + rowStrs.size;
+    if (!best || score > best.score) best = { board, score };
+  }
+  return best.board;
 }
 /* === generator:end ==================================================== */
 
-/* ---------- the sprat ---------- */
-/* Sprats are slender and blunt-tailed. The tail and fins are deliberately a
-   darker tone than the body: at thumbnail size that contrast, not the eye, is
-   what makes the facing readable in a single glance. */
-const FISH_SVG = `
-<svg class="art" viewBox="0 0 100 100" aria-hidden="true">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"    stop-color="#5c330b"/>
-      <stop offset=".30"  stop-color="#b0711b"/>
-      <stop offset=".55"  stop-color="#efb955"/>
-      <stop offset=".80"  stop-color="#f9dfa4"/>
-      <stop offset="1"    stop-color="#fdf0d8"/>
-    </linearGradient>
-  </defs>
+/* ---------- the sprat, side view ---------- */
+/* Slender profile spanning len cells. The tail and fins are a darker tone
+   than the body so the silhouette reads at a glance; the body leaves a little
+   air above and below its cell so the packing looks organic, not gridded. */
+function spratSVG(len){
+  const w = len * 100;
+  return `
+<svg class="art" viewBox="0 0 ${w} 100" aria-hidden="true" preserveAspectRatio="none">
   <g fill="#8a5010">
-    <path d="M31 50 L3 24 Q14 50 3 76 Z"/>
-    <path d="M43 32 L55 13 L67 28 Z"/>
-    <path d="M50 70 L57 87 L68 73 Z"/>
+    <path d="M ${w*0.15} 50 L 6 20 Q ${w*0.065} 50 6 80 Z"/>
+    <path d="M ${w*0.46} 21 L ${w*0.52} 5 L ${w*0.60} 19 Z"/>
+    <path d="M ${w*0.55} 79 L ${w*0.60} 94 L ${w*0.67} 77 Z"/>
   </g>
-  <path fill="url(#g)"
-        d="M29 50 C41 27 63 21 81 29 C91 33 97 41 99 50
-           C97 59 91 67 81 71 C63 79 41 73 29 50 Z"/>
-  <path d="M74 34 Q68 50 74 66" fill="none" stroke="#0000003d" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M40 43 C56 37 74 38 88 45" fill="none" stroke="#ffffff33" stroke-width="2.2" stroke-linecap="round"/>
-  <circle cx="86" cy="45" r="5" fill="#221002"/>
-  <circle cx="87.8" cy="43.2" r="1.9" fill="#fff" opacity=".92"/>
+  <path fill="url(#sg)"
+        d="M ${w*0.10} 50
+           C ${w*0.22} 22 ${w*0.55} 16 ${w*0.76} 26
+           C ${w*0.90} 33 ${w*0.97} 44 ${w-3} 50
+           C ${w*0.97} 56 ${w*0.90} 67 ${w*0.76} 74
+           C ${w*0.55} 84 ${w*0.22} 78 ${w*0.10} 50 Z"/>
+  <path fill="#5c330b66"
+        d="M ${w*0.11} 47
+           C ${w*0.23} 24 ${w*0.55} 18 ${w*0.76} 27
+           C ${w*0.86} 31 ${w*0.93} 38 ${w*0.96} 44
+           C ${w*0.86} 36 ${w*0.60} 30 ${w*0.40} 33
+           C ${w*0.27} 35 ${w*0.16} 41 ${w*0.11} 47 Z"/>
+  <path d="M ${w*0.80} 34 Q ${w*0.77} 50 ${w*0.80} 66"
+        fill="none" stroke="#0000003d" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M ${w*0.20} 63 C ${w*0.45} 72 ${w*0.68} 70 ${w*0.85} 60"
+        fill="none" stroke="#ffffff2c" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="${w*0.885}" cy="42" r="5" fill="#221002"/>
+  <circle cx="${w*0.9}" cy="40.4" r="1.8" fill="#fff" opacity=".92"/>
 </svg>`;
-const SPIN = { R:"", L:"scaleX(-1)", D:"rotate(90deg)", U:"rotate(-90deg)" };
-const ARROW = { R:"right", L:"left", D:"down", U:"up" };
+}
 
 /* ---------- state ---------- */
 const $ = id => document.getElementById(id);
-const tinEl = $("tin"), gridEl = $("grid"), metaEl = $("meta"), resultEl = $("result");
-let S = null, size = "medium", mode = "daily", cell = 56;
+const tinEl = $("tin"), gridEl = $("grid"), oilEl = $("oil"), ticksEl = $("ticks"),
+      metaEl = $("meta"), resultEl = $("result");
+let S = null, size = "medium", mode = "daily", cell = 52;
 
-const todayKey = () => {
-  const n = new Date();
-  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
-};
+const keyFor = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const todayKey = () => keyFor(new Date());
+const yesterdayKey = () => { const y = new Date(); y.setDate(y.getDate() - 1); return keyFor(y); };
 const dailyNumber = () => {
   const n = new Date();
   return Math.floor((Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) - EPOCH) / 86400000) + 1;
@@ -299,141 +409,266 @@ const store = {
   set(k, v){ try { localStorage.setItem("sprotai."+k, JSON.stringify(v)); } catch {} },
 };
 
-function starsFor(bumps){ return bumps === 0 ? 3 : bumps <= 3 ? 2 : 1; }
+function starsFor(saved, total){ return saved === total ? 3 : saved >= total - 2 ? 2 : 1; }
+function starsHTML(stars){
+  return `<div class="stars" role="img" aria-label="${stars} of 3 stars"><span aria-hidden="true">${
+    "⭐".repeat(stars)}<span class="dim">${"⭐".repeat(3 - stars)}</span></span></div>`;
+}
+
+let liveFlip = false;
+function announce(msg){
+  // Alternate a trailing space so identical messages re-announce.
+  liveFlip = !liveFlip;
+  $("live").textContent = msg + (liveFlip ? "" : " ");
+}
 
 function bumpStreak(){
   const st = store.get("streak", { count:0, last:null });
   const key = todayKey();
   if (st.last === key) return st;
-  const y = new Date(); y.setDate(y.getDate() - 1);
-  const yKey = `${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,"0")}-${String(y.getDate()).padStart(2,"0")}`;
-  const next = { count: st.last === yKey ? st.count + 1 : 1, last: key };
+  const next = { count: st.last === yesterdayKey() ? st.count + 1 : 1, last: key };
   store.set("streak", next);
   return next;
 }
 
-/* ---------- rendering ---------- */
+/* ---------- geometry ---------- */
+const unitPx  = () => cell / (S.board.cols * UPC);
+const headPx  = () => S.board.H * unitPx();
+const fishTop = f => headPx() + f.r * cell;
+const surfY   = () => S.depth * unitPx();
+
 function layout(){
-  const avail = Math.min(window.innerWidth - 72, 460);
-  cell = Math.max(34, Math.floor(avail / S.puzzle.cols));
-  document.documentElement.style.setProperty("--cell", cell + "px");
-  tinEl.style.width  = cell * S.puzzle.cols + "px";
-  tinEl.style.height = cell * S.puzzle.rows + "px";
+  const avail = Math.min(window.innerWidth - 72, 480);
+  cell = Math.max(34, Math.min(54, Math.floor(avail / S.board.cols)));
+  tinEl.style.width  = S.board.cols * cell + "px";
+  tinEl.style.height = Math.round(headPx() + S.board.rows * cell) + "px";
+
   gridEl.innerHTML = "";
-  for (let r = 1; r < S.puzzle.rows; r++){
-    const i = document.createElement("i"); i.className = "h"; i.style.top = r*cell+"px"; gridEl.append(i);
+  for (let r = 0; r <= S.board.rows; r++){
+    const i = document.createElement("i");
+    i.style.top = Math.round(fishTop({ r })) + "px";
+    gridEl.append(i);
   }
-  for (let c = 1; c < S.puzzle.cols; c++){
-    const i = document.createElement("i"); i.className = "v"; i.style.left = c*cell+"px"; gridEl.append(i);
-  }
-  for (const f of S.puzzle.fish){
+  // gauge on the left wall: a faint tick per cell of volume, brighter per row
+  const cv = cell / S.board.cols;
+  ticksEl.style.backgroundImage = `
+    repeating-linear-gradient(180deg, transparent 0, transparent ${cv-1}px, #f0b45535 ${cv-1}px, #f0b45535 ${cv}px),
+    repeating-linear-gradient(180deg, transparent 0, transparent ${cell-1}px, #f0b45560 ${cell-1}px, #f0b45560 ${cell}px)`;
+
+  for (const f of S.board.fish){
     const el = S.els.get(f.id);
-    if (el && !el.classList.contains("gone")) place(el, f);
+    if (!el) continue;
+    el.style.width  = f.len * cell + "px";
+    el.style.height = cell + "px";
+    if (!el.classList.contains("gone")){
+      el.style.left = f.c * cell + "px";
+      el.style.top  = fishTop(f) + "px";
+      el.style.transform = "";
+    }
   }
-}
-function place(el, f){
-  el.style.left = f.c * cell + "px";
-  el.style.top  = f.r * cell + "px";
-  el.style.transform = "";
+  oilEl.style.transition = "none";
+  oilEl.style.top = surfY() + "px";
+  void oilEl.offsetHeight;
+  oilEl.style.transition = "";
 }
 
-function build(puzzle){
-  S = { puzzle, grid:null, els:new Map(), remaining:puzzle.fish.length, bumps:0, log:[], done:false, busy:0 };
-  S.grid = Array.from({length: puzzle.rows}, () => Array(puzzle.cols).fill(null));
-  for (const f of puzzle.fish) S.grid[f.r][f.c] = f;
-
+/* ---------- build ---------- */
+function build(board){
+  S = {
+    board, depth:0, removed:new Set(), dried:new Set(),
+    saved:[], timeline:[], over:false,
+  };
+  S.els = new Map();
   tinEl.querySelectorAll(".fish").forEach(n => n.remove());
-  for (const f of puzzle.fish){
+  for (const f of board.fish){
     const el = document.createElement("button");
     el.className = "fish";
-    el.innerHTML = FISH_SVG;
-    el.querySelector(".art").style.transform = SPIN[f.d];
-    el.setAttribute("aria-label", `Sprat at row ${f.r+1} column ${f.c+1}, facing ${ARROW[f.d]}`);
+    el.dataset.r = f.r; el.dataset.c = f.c; el.dataset.len = f.len;
+    const wrap = document.createElement("span");
+    wrap.className = "wrap";
+    wrap.innerHTML = spratSVG(f.len);
+    wrap.style.transform =
+      `translateY(${(f.jy*2).toFixed(1)}px) rotate(${(f.ja*1.2).toFixed(2)}deg)` +
+      (f.face < 0 ? " scaleX(-1)" : "");
+    el.append(wrap);
+    el.setAttribute("aria-label",
+      `Sprat, ${f.len} cells long, row ${f.r+1}, columns ${f.c+1} to ${f.c+f.len}`);
     el.addEventListener("click", () => tap(f));
     tinEl.append(el);
     S.els.set(f.id, el);
   }
   resultEl.hidden = true;
   layout();
+  updateRisk();
   paint();
 }
 
 function paint(){
-  $("freed").textContent = `${S.puzzle.fish.length - S.remaining}/${S.puzzle.fish.length}`;
-  $("bumps").textContent = S.bumps;
+  $("saved").textContent = `${S.saved.length}/${S.board.fish.length}`;
+  $("dried").textContent = S.dried.size;
 }
 
 /* ---------- play ---------- */
-function tap(f){
-  if (S.done || S.grid[f.r][f.c] !== f) return;
-  const el = S.els.get(f.id);
-  const run = clearRun(S.grid, S.puzzle.rows, S.puzzle.cols, f.r, f.c, f.d);
+const inTin = f => !S.removed.has(f.id);
+const isWet = f => inTin(f) && !S.dried.has(f.id);
 
-  if (run === null){
-    S.bumps++; S.log.push("💢"); paint();
-    el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
-    const blocker = blockerAt(S.grid, S.puzzle.rows, S.puzzle.cols, f.r, f.c, f.d);
-    const bel = S.els.get(blocker.id);
-    bel.classList.add("blocker");
-    setTimeout(() => bel.classList.remove("blocker"), 420);
+function blockerList(f){
+  return S.board.fish.filter(g => g !== f && inTin(g) && blocks(g, f));
+}
+function rescuable(f){
+  return isWet(f) && blockerList(f).length === 0;
+}
+function anyRescuable(){
+  return S.board.fish.some(f => rescuable(f));
+}
+
+function updateRisk(){
+  // Shimmer on any wet fish that could end up above the line after one more
+  // rescue — honest, derivable information, surfaced so the causality reads.
+  let worst = 0;
+  for (const f of S.board.fish) if (rescuable(f)) worst = Math.max(worst, volU(f));
+  for (const f of S.board.fish){
+    const el = S.els.get(f.id);
+    el.classList.toggle("risk",
+      !S.over && isWet(f) && topU(S.board, f) < S.depth + worst);
+  }
+}
+
+function tap(f){
+  if (S.over || S.removed.has(f.id)) return;
+  const el = S.els.get(f.id);
+
+  if (S.dried.has(f.id)){
+    el.classList.remove("deadshake"); void el.offsetWidth; el.classList.add("deadshake");
+    announce("Dried out — this sprat is stuck for good");
     return;
   }
 
-  S.grid[f.r][f.c] = null;
-  S.remaining--; S.log.push("🐟"); paint();
+  const blockers = blockerList(f);
+  if (blockers.length){
+    announce("Blocked — the path up is not clear");
+    el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+    for (const g of blockers){
+      const bel = S.els.get(g.id);
+      bel.classList.add("blocker");
+      setTimeout(() => bel.classList.remove("blocker"), 420);
+    }
+    return;
+  }
 
-  const [dr, dc] = DIRS[f.d];
-  const dist = (run + 1.4) * cell;
+  /* State updates are atomic here; the animations below just replay them:
+     lift-out, then the glug as the oil drops, then any drying locks. Each
+     deferred callback checks `run` so a Retry or tab switch mid-animation
+     can't leak a stale finish, glug, or drying into the rebuilt board. */
+  const run = S;
+  if (!resultEl.hidden) resultEl.hidden = true;   // stale panel from a past run
+  S.removed.add(f.id);
+  S.saved.push(f.id);
+  S.timeline.push("🐟");
+  S.depth += volU(f);
+  const newlyDried = [];
+  for (const g of S.board.fish){
+    if (isWet(g) && topU(S.board, g) < S.depth){
+      S.dried.add(g.id);
+      newlyDried.push(g);
+      S.timeline.push("💀");
+    }
+  }
+  S.over = !anyRescuable();
+
   el.disabled = true;
   el.classList.add("gone");
-  el.style.transform = `translate(${dc*dist}px, ${dr*dist}px)`;
+  el.style.transform =
+    `translateY(-${fishTop(f) + cell * 1.5}px) rotate(${(-4 * f.face).toFixed(0)}deg)`;
+  paint();
 
-  if (S.remaining === 0){
-    S.done = true;
-    setTimeout(finish, 460);
-  }
+  const cx = (f.c + f.len / 2) * cell;
+  setTimeout(() => {
+    if (S !== run) return;
+    oilEl.style.top = surfY() + "px";
+    oilEl.classList.remove("glug"); void oilEl.offsetWidth; oilEl.classList.add("glug");
+    for (let i = 0; i < 1 + f.len; i++){
+      const b = document.createElement("div");
+      b.className = "bubble";
+      b.style.left = cx + (Math.random() - 0.5) * cell * 0.8 + "px";
+      b.style.top  = surfY() + 8 + Math.random() * 18 + "px";
+      tinEl.append(b);
+      setTimeout(() => b.remove(), 800);
+    }
+  }, 240);
+
+  setTimeout(() => {
+    if (S !== run) return;
+    for (const g of newlyDried){
+      const gel = S.els.get(g.id);
+      gel.classList.add("dried");
+      gel.classList.remove("deadshake"); void gel.offsetWidth; gel.classList.add("deadshake");
+      gel.setAttribute("aria-label", gel.getAttribute("aria-label") + ", dried out");
+    }
+    if (newlyDried.length){
+      announce(`${newlyDried.length} sprat${newlyDried.length === 1 ? "" : "s"} dried out`);
+    }
+    updateRisk();
+    paint();
+  }, 720);
+
+  if (S.over) setTimeout(() => { if (S === run) finish(); }, newlyDried.length ? 1300 : 950);
+  else setTimeout(() => { if (S === run) updateRisk(); }, 730);
 }
 
+/* ---------- finish, share ---------- */
 function finish(){
-  const bumps = S.bumps, stars = starsFor(bumps);
+  const total = S.board.fish.length, saved = S.saved.length;
+  const stars = starsFor(saved, total);
+  // Wet fish left unreachable under dried blockers are lost too — they get
+  // their skulls at the end of the timeline.
+  const driedN = S.dried.size;
+  const stranded = total - saved - driedN;
+  const tl = S.timeline.join("") + "💀".repeat(stranded);
   let extra = "";
+
   if (mode === "daily"){
-    const key = todayKey();
-    const seen = store.get("done." + key, null);
-    if (!seen) store.set("done." + key, { bumps, log:S.log.join("") });
+    // The board's own day, stamped at build time — a run that straddles
+    // midnight is recorded against the tin actually played.
+    const key = "oil." + S.board.dayKey;
+    const d = store.get(key, { best:-1, tl:"", bestTry:0, tries:0 });
+    d.tries++;
+    if (saved > d.best){ d.best = saved; d.tl = tl; d.bestTry = d.tries; }
+    store.set(key, d);
     const st = bumpStreak();
     extra = `<p>Streak: <b style="color:var(--ink)">${st.count}</b> day${st.count === 1 ? "" : "s"}</p>`;
+    if (d.best > saved) extra += `<p>Best today: ${d.best}/${total} (try ${d.bestTry})</p>`;
     renderMeta();
   }
-  showResult(bumps, stars, extra, S.log.join(""));
-}
 
-function showResult(bumps, stars, extra, log){
   resultEl.hidden = false;
   resultEl.innerHTML = `
-    <h2>Tin emptied</h2>
-    <div class="stars">${"⭐".repeat(stars)}<span class="dim">${"⭐".repeat(3-stars)}</span></div>
-    <p>${bumps === 0 ? "Not a single bump. Immaculate." : `${bumps} bump${bumps === 1 ? "" : "s"}`}</p>
+    <h2>${saved === total ? "Perfect tin!" : `${saved}/${total} saved`}</h2>
+    ${starsHTML(stars)}
+    <p>${saved === total
+        ? "Every last sprat out before the oil left them. Immaculate."
+        : `${driedN} dried out${stranded ? `, ${stranded} trapped beneath them` : ""}.`}</p>
+    <div class="timeline">${tl}</div>
     ${extra}
-    <button class="btn" id="share">${mode === "daily" ? "Share result" : "Next tin"}</button>
-    ${mode === "daily" ? '<button class="btn ghost" id="again">Play endless</button>' : ""}`;
+    ${mode === "daily"
+      ? '<button class="btn" id="share">Share result</button><button class="btn ghost" id="again">Run it back</button>'
+      : '<button class="btn" id="share">Next tin</button><button class="btn ghost" id="again">Run it back</button>'}`;
 
   $("share").onclick = mode === "daily"
-    ? (e) => shareDaily(e.target, bumps, stars, log)
+    ? e => shareDaily(e.target, total)
     : () => newEndless();
-  const again = $("again");
-  if (again) again.onclick = () => switchMode("endless");
+  $("again").onclick = () => { build(S.board); };
   resultEl.scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
-function shareDaily(btn, bumps, stars, log){
+function shareDaily(btn, total){
+  const d = store.get("oil." + S.board.dayKey, null);
+  if (!d) return;
   // Count by code point, not .length — every emoji here is a surrogate pair.
-  const syms = [...log], CAP = 40;
-  const shown = syms.slice(0, CAP);
+  const syms = [...d.tl];
   const rows = [];
-  for (let i = 0; i < shown.length; i += 10) rows.push(shown.slice(i, i + 10).join(""));
-  if (syms.length > CAP && rows.length) rows[rows.length - 1] += "…";
-  const text = `🥫 Šprotai #${dailyNumber()}\n${"⭐".repeat(stars)} · ${bumps} bump${bumps === 1 ? "" : "s"}\n${rows.join("\n")}\nsprot.ai`;
+  for (let i = 0; i < syms.length; i += 10) rows.push(syms.slice(i, i + 10).join(""));
+  const text = `🥫 Šprotai #${S.board.num} · ${d.best}/${total} · try ${d.bestTry}\n${rows.join("\n")}\nsprot.ai`;
   navigator.clipboard?.writeText(text).then(
     () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share result", 1600); },
     () => { window.prompt("Copy your result:", text); }
@@ -445,7 +680,9 @@ function renderMeta(){
   if (mode === "daily"){
     const d = new Date().toLocaleDateString(undefined, { day:"numeric", month:"long" });
     const st = store.get("streak", { count:0, last:null });
-    const streak = st.last === todayKey() || st.count ? ` · 🔥 <b>${st.count}</b>` : "";
+    // A streak is only alive if it can still be continued today.
+    const alive = st.count && (st.last === todayKey() || st.last === yesterdayKey());
+    const streak = alive ? ` · 🔥 <b>${st.count}</b>` : "";
     metaEl.innerHTML = `Tin <b>#${dailyNumber()}</b> · ${d}${streak}`;
   } else {
     metaEl.innerHTML = `<span class="sizes">${
@@ -459,16 +696,31 @@ function renderMeta(){
 }
 
 function newDaily(){
-  const seed = xmur3("sprotai-daily-" + todayKey())();
-  build(generate(mulberry32(seed), DAILY.rows, DAILY.cols, DAILY.target));
-  const seen = store.get("done." + todayKey(), null);
-  if (seen) showResult(seen.bumps, starsFor(seen.bumps),
-    `<p>Already emptied today. Come back tomorrow for a fresh tin.</p>`, seen.log || "");
+  const key = todayKey();
+  const seed = xmur3("sprotai-daily-" + key)();
+  const board = generate(mulberry32(seed), DAILY);
+  board.dayKey = key;
+  board.num = dailyNumber();
+  build(board);
+  const d = store.get("oil." + key, null);
+  if (d && d.tries > 0){
+    const total = S.board.fish.length;
+    resultEl.hidden = false;
+    resultEl.innerHTML = `
+      <h2>${d.best === total ? "Perfect tin!" : `Best today: ${d.best}/${total}`}</h2>
+      ${starsHTML(starsFor(d.best, total))}
+      <div class="timeline">${d.tl}</div>
+      <p>${d.tries} tr${d.tries === 1 ? "y" : "ies"} so far. The tin resets at midnight.</p>
+      <button class="btn" id="share">Share result</button>
+      <button class="btn ghost" id="again">Run it back</button>`;
+    $("share").onclick = e => shareDaily(e.target, total);
+    $("again").onclick = () => build(S.board);
+  }
 }
 function newEndless(){
   const cfg = SIZES[size];
   const seed = xmur3("sprotai-endless-" + Math.floor(Math.random() * 1e9))();
-  build(generate(mulberry32(seed), cfg.rows, cfg.cols, cfg.target));
+  build(generate(mulberry32(seed), cfg));
 }
 function switchMode(next){
   mode = next;
@@ -480,6 +732,7 @@ function switchMode(next){
 
 $("tab-daily").onclick = () => switchMode("daily");
 $("tab-endless").onclick = () => switchMode("endless");
+$("retry").onclick = () => S && build(S.board);
 window.addEventListener("resize", () => S && layout());
 
 switchMode("daily");
