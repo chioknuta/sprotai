@@ -1,25 +1,28 @@
 #!/usr/bin/env node
 /**
- * Verifies the ŠPROTAI "OIL LINE" generator.
+ * Verifies the ŠPROTAI tin generator.
  *
  * The generator is not reimplemented here — it is extracted verbatim from the
  * `generator:start` / `generator:end` block in index.html, so this can never
  * drift from the code that actually ships. The solver below IS independent:
- * it rebuilds the rules from scratch (volumes, exposure thresholds, straight
- * lift-out) and exhaustively searches rescue orders for a perfect clear, with
- * memoization on the set of rescued fish. A board passes only if a perfect
- * order exists.
+ * it works on a plain 2D grid of cells with no bitmasks anywhere, re-derived
+ * from the rules of the game rather than from the generator's own helpers.
  *
- * It also reports difficulty stats:
- *   traps   — states along the ideal line where a legal-but-fatal tap exists
- *   digger  — fraction saved by a player who always grabs the deepest fish
- *   random  — fraction saved by uniformly random legal taps (20 trials/board)
- *   greedy^ — boards where the in-page greedy policy fails but the exhaustive
- *             search still finds a perfect order (informational; should be 0,
- *             a nonzero count means the page's trap metric is approximate)
+ * That independence is the whole point. An earlier version of the generator
+ * packed occupancy into a single 32-bit word, and `1 << 35` is `1 << 3` in
+ * JavaScript, so the bottom of the board silently aliased onto the top. The
+ * shipped par was wrong on 259 of the first 300 tins and 9 tins shipped
+ * already solved. Nothing caught it, because the only thing checking the
+ * solver was the solver.
  *
- *   node tools/verify.mjs            # quick pass (400 boards per config)
- *   node tools/verify.mjs 2000       # deeper pass
+ * For each tin this asserts:
+ *   - the sprats do not overlap and all lie inside the tin
+ *   - the little one is not already free at move zero
+ *   - a solution exists
+ *   - the shipped `par` equals the true minimum number of slides
+ *
+ *   node tools/verify.mjs           # quick pass (60 tins)
+ *   node tools/verify.mjs 400       # deeper pass
  */
 
 import { readFile } from "node:fs/promises";
@@ -27,8 +30,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SAMPLES = Number(process.argv[2]) || 400;
-const NODE_CAP = 2_000_000;
+const COUNT = Number(process.argv[2]) || 60;
 
 const src = await readFile(join(ROOT, "index.html"), "utf8");
 const block = src.match(/generator:start[^\n]*\n([\s\S]*?)\n[^\n]*generator:end/);
@@ -36,156 +38,109 @@ if (!block) {
   console.error("Could not find the generator:start/end block in index.html.");
   process.exit(1);
 }
-for (const banned of ["Math.random", "Date.now", "new Date"]) {
+for (const banned of ["document", "window", "Math.random", "Date.now", "new Date"]) {
   if (block[1].includes(banned)) {
-    console.error(`Generator block contains ${banned} — it must stay deterministic.`);
+    console.error(`Generator block contains ${banned} — it must stay pure and deterministic.`);
     process.exit(1);
   }
 }
-const G = new Function(
-  `${block[1]}\nreturn { UPC, SIZES, DAILY, xmur3, mulberry32, generate };`
-)();
+const W = 6, H = 6;
+const G = new Function("W", "H", `${block[1]}\nreturn { makeTin, bandFor };`)(W, H);
 
-/* ---------- independent rules model ----------
- * Re-derived from the game rules, not from the generator's helpers:
- *   volume(f) = 2 * len            (units, half-cells)
- *   top(f)    = H + r * 2 * cols   (exposure threshold of f's top edge)
- *   f is liftable iff no fish remains in a row above f overlapping f's span
- *   after each rescue depth += volume; any remaining fish with top < depth
- *   dries out; a perfect clear means nobody ever dries.
- */
-function model(board) {
-  const { rows, cols, H, fish } = board;
-  const F = fish.length;
-  const vol = fish.map(f => 2 * f.len);
-  const top = fish.map(f => H + f.r * 2 * cols);
-  const blockers = fish.map(f => {
-    let m = 0;
-    for (const g of fish) {
-      if (g.r < f.r && g.c < f.c + f.len && f.c < g.c + g.len) m |= 1 << g.id;
+/* ---------- independent solver: plain 2D grid, no bitmasks ---------- */
+const isH = f => f.dir === "R" || f.dir === "L";
+const posOf = f => (isH(f) ? f.c : f.r);
+const cellsOf = (f, p) => {
+  const out = [];
+  for (let i = 0; i < f.len; i++) out.push(isH(f) ? [f.r, p + i] : [p + i, f.c]);
+  return out;
+};
+function gridOf(fish, ps) {
+  const g = Array.from({ length: H }, () => Array(W).fill(-1));
+  for (let i = 0; i < fish.length; i++) {
+    for (const [r, c] of cellsOf(fish[i], ps[i])) {
+      if (r < 0 || r >= H || c < 0 || c >= W) return null;
+      if (g[r][c] !== -1) return null;
+      g[r][c] = i;
     }
-    return m;
-  });
-  return { F, full: (1 << F) - 1, vol, top, blockers, fish, rows, cols, H };
-}
-
-/** Exhaustive: does any rescue order save every fish? Memoized on the set of
- *  rescued fish (depth is a function of that set, so the state is complete). */
-function perfectExists(m) {
-  const failed = new Set();
-  let nodes = 0;
-  function dfs(mask, depth) {
-    if (mask === m.full) return true;
-    if (failed.has(mask)) return false;
-    if (++nodes > NODE_CAP) throw new Error("node cap exceeded");
-    const order = [];
-    for (let i = 0; i < m.F; i++) {
-      if (mask & (1 << i)) continue;
-      if (m.top[i] < depth) return false;            // someone already dried
-      if ((m.blockers[i] & ~mask) === 0) order.push(i);
-    }
-    order.sort((a, b) => (m.top[a] + m.vol[a]) - (m.top[b] + m.vol[b]));
-    for (const i of order) {
-      if (dfs(mask | (1 << i), depth + m.vol[i])) return true;
-    }
-    failed.add(mask);
-    return false;
   }
-  const ok = dfs(0, 0);
-  return { ok, nodes };
+  return g;
 }
-
-/** Play out a policy; returns number saved. policy(liftable[]) -> index. */
-function play(m, policy) {
-  let mask = 0, depth = 0, driedMask = 0, saved = 0;
-  for (;;) {
-    const liftable = [];
-    for (let i = 0; i < m.F; i++) {
-      if (mask & (1 << i)) continue;
-      if (driedMask & (1 << i)) continue;
-      if ((m.blockers[i] & ~mask) === 0) liftable.push(i);
-    }
-    if (!liftable.length) return saved;
-    const i = policy(liftable);
-    mask |= 1 << i;
-    depth += m.vol[i];
-    saved++;
-    for (let j = 0; j < m.F; j++) {
-      if (!(mask & (1 << j)) && !(driedMask & (1 << j)) && m.top[j] < depth) {
-        driedMask |= 1 << j;
+/** The little one is free when her row is clear from her nose to the rim. */
+function isFree(fish, ps, g) {
+  const f = fish[0], head = ps[0] + f.len - 1;
+  for (let c = head + 1; c < W; c++) if (g[f.r][c] !== -1) return false;
+  return true;
+}
+/** Fewest slides to free her (a slide of any distance counts as one), or null. */
+function trueMinimum(fish, cap = 400000) {
+  const start = fish.map(posOf);
+  const g0 = gridOf(fish, start);
+  if (!g0) return "OVERLAP";
+  if (isFree(fish, start, g0)) return 0;
+  const key = ps => ps.join(",");
+  const seen = new Set([key(start)]);
+  let front = [start], depth = 0;
+  while (front.length) {
+    const next = [];
+    for (const ps of front) {
+      const g = gridOf(fish, ps);
+      for (let i = 0; i < fish.length; i++) {
+        const f = fish[i], max = (isH(f) ? W : H) - f.len;
+        for (const d of [1, -1]) {
+          for (let p = ps[i] + d; p >= 0 && p <= max; p += d) {
+            let blocked = false;
+            for (const [r, c] of cellsOf(f, p)) {
+              const o = g[r][c];
+              if (o !== -1 && o !== i) { blocked = true; break; }
+            }
+            if (blocked) break;
+            const np = ps.slice(); np[i] = p;
+            const k = key(np);
+            if (seen.has(k)) continue;
+            seen.add(k);
+            const ng = gridOf(fish, np);
+            if (ng && isFree(fish, np, ng)) return depth + 1;
+            next.push(np);
+          }
+        }
       }
     }
+    front = next; depth++;
+    if (seen.size > cap) return null;
   }
+  return null;
 }
 
-const greedyPolicy = m => ls =>
-  ls.reduce((a, b) => (m.top[a] + m.vol[a] <= m.top[b] + m.vol[b] ? a : b));
-const diggerPolicy = m => ls =>
-  ls.reduce((a, b) => (m.top[a] >= m.top[b] ? a : b));
+/* ---------- run ---------- */
+let failures = 0, worstMs = 0, totalMs = 0;
+const byBand = new Map();
 
-const dayKey = i => {
-  const d = new Date(Date.UTC(2026, 0, 1) + i * 86400000);
-  return d.toISOString().slice(0, 10);
-};
+for (let n = 1; n <= COUNT; n++) {
+  const t0 = Date.now();
+  const tin = G.makeTin(n);
+  const ms = Date.now() - t0;
+  totalMs += ms; worstMs = Math.max(worstMs, ms);
 
-const CONFIGS = [
-  { label: "daily", seed: i => `sprotai-daily-${dayKey(i)}`, cfg: G.DAILY },
-  ...Object.entries(G.SIZES).map(([k, v]) => ({
-    label: `endless:${k}`,
-    seed: i => `sprotai-endless-${i}`,
-    cfg: v,
-  })),
-];
+  const fail = msg => { failures++; console.log(`FAIL  tin ${n}: ${msg}`); };
+  if (!tin) { fail("generator returned nothing"); continue; }
 
-let failed = 0;
-for (const { label, seed, cfg } of CONFIGS) {
-  const stats = { fish: 0, digger: 0, random: 0, nodes: 0, greedyGap: 0 };
-  const broken = [];
-  const rrng = G.mulberry32(G.xmur3("verify-random-" + label)());
+  const truth = trueMinimum(tin.fish);
+  if (truth === "OVERLAP") { fail("sprats overlap or sit outside the tin"); continue; }
+  if (truth === 0) { fail(`already solved at move zero (label says par ${tin.par})`); continue; }
+  if (truth === null) { fail("no solution exists"); continue; }
+  if (truth !== tin.par) { fail(`par says ${tin.par}, true minimum is ${truth}`); continue; }
 
-  for (let i = 0; i < SAMPLES; i++) {
-    const rng = G.mulberry32(G.xmur3(seed(i))());
-    const board = G.generate(rng, cfg);
-    const m = model(board);
-
-    // structural sanity: full pack, every row sums to cols
-    for (let r = 0; r < board.rows; r++) {
-      const sum = board.fish.filter(f => f.r === r).reduce((s, f) => s + f.len, 0);
-      if (sum !== board.cols) broken.push({ i, why: `row ${r} sums to ${sum}` });
-    }
-
-    let res;
-    try { res = perfectExists(m); }
-    catch (e) { broken.push({ i, why: e.message }); continue; }
-    if (!res.ok) broken.push({ i, why: "no perfect order exists" });
-    stats.nodes = Math.max(stats.nodes, res.nodes);
-
-    if (play(m, greedyPolicy(m)) !== m.F && res.ok) stats.greedyGap++;
-
-    stats.fish += m.F;
-    stats.digger += play(m, diggerPolicy(m)) / m.F;
-    let rsum = 0;
-    for (let t = 0; t < 20; t++) {
-      rsum += play(m, ls => ls[Math.floor(rrng() * ls.length)]) / m.F;
-    }
-    stats.random += rsum / 20;
-  }
-
-  const ok = broken.length === 0;
-  if (!ok) failed++;
-  console.log(
-    `${ok ? "PASS" : "FAIL"}  ${label.padEnd(15)} ${cfg.cols}x${cfg.rows} ` +
-    `slack=${cfg.slack}  fish=${(stats.fish / SAMPLES).toFixed(1)}  ` +
-    `digger=${(stats.digger / SAMPLES).toFixed(2)}  ` +
-    `random=${(stats.random / SAMPLES).toFixed(2)}  ` +
-    `greedyGap=${stats.greedyGap}  maxNodes=${stats.nodes}`
-  );
-  for (const b of broken.slice(0, 3)) console.log(`      sample ${b.i}: ${b.why}`);
+  const b = byBand.get(tin.band) ?? { n: 0, min: 99, max: 0 };
+  b.n++; b.min = Math.min(b.min, tin.par); b.max = Math.max(b.max, tin.par);
+  byBand.set(tin.band, b);
 }
 
+for (const [band, b] of byBand) {
+  console.log(`  ${band.padEnd(8)} ${String(b.n).padStart(3)} tins   par ${b.min}-${b.max}`);
+}
 console.log(
-  failed
-    ? `\n${failed} config(s) FAILED across ${SAMPLES} samples each.`
-    : `\nAll configs perfect-solvable across ${SAMPLES} samples each.`
+  `\ngeneration: ${(totalMs / COUNT).toFixed(0)}ms mean, ${worstMs}ms worst` +
+  `\n${failures ? `${failures} of ${COUNT} tins FAILED` : `All ${COUNT} tins solvable, and every par is the proven minimum.`}`
 );
-process.exit(failed ? 1 : 0);
+process.exit(failures ? 1 : 0);

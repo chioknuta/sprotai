@@ -25,19 +25,21 @@ and what's next. Update it before the context window gets cleared.
 | Path | What |
 |---|---|
 | `index.html` | The entire game |
-| `tools/verify.mjs` | Solvability + difficulty verifier |
+| `oil-line.html` | Retired prototype, kept for reference (see STATUS.md) |
+| `tools/verify.mjs` | Solvability + par verifier |
 | `.claude/hooks/context-nudge.sh` | Stop hook: says when to `/clear` |
 | `.claude/launch.json` | Local preview server config |
 
 ## Commands
 
-Verify every puzzle config is solvable (run this after touching the generator):
+Verify every tin is solvable and every par is honest (run after touching the
+generator):
 
 ```bash
 node tools/verify.mjs
 ```
 
-Deeper pass: `node tools/verify.mjs 2000`
+Deeper pass: `node tools/verify.mjs 400`
 
 Preview locally — use the `sprotai` config via the preview tool, or:
 
@@ -45,20 +47,38 @@ Preview locally — use the `sprotai` config via the preview tool, or:
 python3 -m http.server 4173
 ```
 
+## The game
+
+A 6×6 tin packed with sprats. Each sprat is 2–3 cells long and slides along its
+own lane, both ways; it can't turn. One little pink sprat has to reach the gap
+in the rim. Rush Hour, in a tin. Tins are numbered and endless.
+
 ## The generator contract
 
 The pure, DOM-free generator lives between `generator:start` and
 `generator:end` markers in `index.html`. `tools/verify.mjs` **extracts that
 exact block** and runs it against an independent solver, so the verified code
 and the shipped code can't drift. Keep that block DOM-free or verification
-breaks.
+breaks. Keep `generator:start` on its own closed comment line, or extraction
+produces a syntax error.
 
-Puzzles are built in reverse escape order — each fish is placed only where its
-path out is already clear — so the placement order is itself a solution.
-Placement is biased toward cells that block already-placed fish, which is what
-forces a real solving order instead of random clicking. `tightness` in the
-verifier output is the share of fish legal on an average turn; lower is more
-demanding. Around 0.3 is the current target.
+Tin *N* is seeded from *N* alone, so everyone gets the same tin *N*. Sprats are
+scattered, then the board is solved exhaustively; a tin only ships once a
+solution is proven, and its `par` is that proven minimum. Random scattering
+almost never produces a hard tin (70% of random boards are par ≤3), so the
+generator **hill-climbs**: it mutates one sprat at a time and keeps changes
+that raise par, restarting when it plateaus. The climb budget is counted in
+**solver calls, never milliseconds**, so a tin is identical on a fast laptop
+and a slow phone.
+
+Two traps, both of which have already bitten:
+
+- **Occupancy must stay a two-word bitmask.** JS shifts modulo 32, so on a
+  36-cell board `1 << 35` is `1 << 3` and the bottom of the tin aliases onto
+  the top. A single word silently corrupted par on 259 of the first 300 tins.
+- **The verifier's solver must not share code with the generator's.** The bug
+  above survived a "zero mismatches" test that checked the solver against
+  itself. `verify.mjs` uses a plain 2D grid and no bitmasks for this reason.
 
 ## Notes
 

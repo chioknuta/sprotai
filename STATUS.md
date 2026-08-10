@@ -1,49 +1,36 @@
 # Status
 
-_Last updated: 2026-08-10 (afternoon — OIL LINE built)_
+_Last updated: 2026-08-10_
 
 ## Where things stand
 
-**OIL LINE is built and is the game now.** `index.html` was rewritten around
-the side-view tin: tap a sprat with a clear path up, it lifts out, the oil
-drops by the sprat's own volume, and anything left poking above the line dries
-out and locks. Score is saved/total, instant retry, best-of-day share block,
-streak and stars carried over from v0. The v0 top-down loop is gone.
+**The game is now a sliding puzzle: a tin of sprats, and one little pink one
+who has to get out.** `index.html` is the whole thing. Sprats are 2–3 cells
+long, slide along their own lane both ways, and can't turn — Rush Hour, in a
+tin. Tins are numbered, endless, and generated deterministically from the tin
+number, so tin #12 is the same tin for everyone.
 
-Verified: `node tools/verify.mjs 2000` — 8,000 boards across all four configs,
-every one has a perfect rescue order (exhaustive independent search, not the
-generator's own logic). Played in the real DOM: perfect run, botched run with
-drying cascade + stranding, retry, best-of-day, storage.
+Every tin is solved exhaustively before it ships, so it is provably winnable
+and its **par is a proven minimum**, not a designer's guess. `node
+tools/verify.mjs` re-checks this with a solver that shares no code with the
+generator.
 
-An adversarial review pass (10 agents: logic, math, UX finders + independent
-verification of each claim) confirmed 7 issues, all fixed same day: stale
-animation timers leaking into a rebuilt board after instant Retry (the big
-one — could corrupt the daily record), midnight rollover misattributing a
-run to the wrong day's record, missing aria-live/star semantics for screen
-readers, undersized Retry/size buttons, stale streak flame. The math finder
-tried and failed to refute the minimum-headroom proof and the greedy-policy
-claim by brute force — both held.
+Feel: every move, the little one blows a bubble with a soft rising *bloop*.
+When she gets out, the tin holds still for a beat, every other sprat turns its
+**pupils** to watch her, she gathers herself backwards and darts out at full
+size, and the oil closes over the gap while the tin rings. Sound is
+synthesised in-page; there are no assets.
 
-## How the build works (decisions made 2026-08-10, PM)
+## Deployed
 
-- **Units.** Integer half-cells. A length-L fish has volume 2L; a full row of
-  a `cols`-wide tin holds 2·cols units; oil starts H units above row 0. Fish
-  are length 2–4, packed into full rows (compositions of `cols`).
-- **Solvable by construction.** The witness order — rows top-down, shortest
-  fish first within a row — is provably the most oil-efficient order (the
-  mechanic maps to single-machine scheduling with start-deadlines; blockers
-  always have strictly earlier deadlines, so Jackson's rule applies). The
-  generator computes the minimum headroom that order needs and ships
-  H = minimum + slack. The witness itself is the proof a perfect clear exists.
-- **Slack is the difficulty dial.** Daily/medium slack 1: digs are always
-  fatal and the longest fish of a (2,2,3)-type row must go last. Small slack
-  2 (forgiving), large slack 0 (any wrong within-row order kills).
-- **Board selection.** 16 candidate packings per day, scored by "traps" —
-  states along the ideal line where a legal-but-fatal tap exists — so the
-  daily punishes casual clicking. Difficulty stats from the verifier:
-  deepest-first player saves ~33%, random tapping ~47%.
-- Verifier stats: `digger`/`random` = saved fraction under those policies;
-  `greedyGap` should stay 0; `maxNodes` = fish count means zero backtracking.
+GitHub Pages, from the `chioknuta/sprotai` repo. `sprot.ai` is not pointed at
+it yet — that needs DNS records in Spaceship.
+
+---
+
+# Retired prototype: OIL LINE
+
+Kept because the analysis below is what led to the current game.
 
 ## CONFIRMED FLAW: the loop is solved by a fixed rule
 
