@@ -21,6 +21,21 @@ When she gets out, the tin holds still for a beat, every other sprat turns its
 size, and the oil closes over the gap while the tin rings. Sound is
 synthesised in-page; there are no assets.
 
+## DECIDED: the difficulty spikes stay (2026-08-10)
+
+Par varies wildly *inside* a band — a "tricky" tin can be par 11 or par 32,
+because the hill-climber accepts the first board at or above the band's floor
+and sometimes overshoots hard on the final jump. This was offered as a bug to
+fix (give each band a ceiling, keep climbing past overshoots) and Aiste
+declined: **she likes it.** Verified across tins 1–100: every one solvable,
+every par the proven minimum, so the spikes are honest difficulty, not broken
+tins.
+
+**Do not "fix" this.** Uneven difficulty is a deliberate property of the game,
+and it matches how the genre's best-liked entries actually feel — the research
+pass found players praising *Arrows* specifically because consecutive levels
+differ in difficulty rather than ramping smoothly.
+
 ## Deployed
 
 GitHub Pages, from the `chioknuta/sprotai` repo. `sprot.ai` is not pointed at
