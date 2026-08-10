@@ -62,7 +62,7 @@
     font:inherit; font-size:13.5px; font-weight:600; color:#a8895c;
     background:none; border:0; padding:7px 16px; border-radius:999px; cursor:pointer;
   }
-  .modes button[aria-selected="true"]{background:#fff8ea; color:var(--accent)}
+  .modes button[aria-pressed="true"]{background:#fff8ea; color:var(--accent)}
   .tinbar{display:flex; align-items:center; gap:10px}
   .tinbar[hidden],#dailyhead[hidden]{display:none}
   .tinlabel{font-size:14.5px; color:var(--muted-txt); min-width:132px; text-align:center}
@@ -178,6 +178,9 @@
   details p{margin-top:8px}
   details b{color:var(--ink)}
   footer{font-size:12px; color:#c0ad92}
+  footer a,.tip{color:#c09a63; text-decoration:none}
+  footer a:hover,.tip:hover{text-decoration:underline}
+  .tip{display:inline-block; margin-top:12px; font-size:13px}
 </style>
 </head>
 <body>
@@ -187,9 +190,9 @@
   <p class="tagline">Free the little one.</p>
 </header>
 
-<div class="modes" role="tablist">
-  <button role="tab" id="tab-daily" aria-selected="true">Today's tin</button>
-  <button role="tab" id="tab-ladder" aria-selected="false">All tins</button>
+<div class="modes" role="group" aria-label="Which tin">
+  <button id="tab-daily" aria-pressed="true">Today's tin</button>
+  <button id="tab-ladder" aria-pressed="false">All tins</button>
 </div>
 
 <div class="tinbar" id="laddernav">
@@ -212,7 +215,7 @@
   <button class="btn" id="mute" aria-pressed="false" title="Sound">🔊</button>
 </div>
 
-<div class="panel" id="win" hidden></div>
+<div class="panel" id="win" role="status" aria-live="polite" hidden></div>
 
 <details>
   <summary>How to play</summary>
@@ -220,7 +223,7 @@
   <p>Sprats can't turn around in a tin this full, so clear a path and slide the <b>little pink one</b> out through the gap.</p>
 </details>
 
-<footer>sprot.ai</footer>
+<footer>sprot.ai<span id="kofifoot"></span></footer>
 
 <script>
 "use strict";
@@ -568,6 +571,14 @@ const Snd = {
   },
 };
 
+/* ---------- tip jar ----------
+   Set this to the Ko-fi handle and the links appear; leave it empty and there
+   is no tip jar anywhere. It shows in the footer, and once in the win panel
+   after the daily — the moment someone actually feels something. Never before
+   play, never a popup, and it never gates anything. */
+const KOFI = "";
+const kofiURL = () => "https://ko-fi.com/" + KOFI;
+
 /* ---------- state ---------- */
 const $ = id => document.getElementById(id);
 const tinEl = $("tin"), gridEl = $("grid"), notchEl = $("notch"), winEl = $("win");
@@ -705,8 +716,17 @@ function commit(i, to){
   off[i] = to;
   place(i);
   paint();
-  if (laneClear()) escape();
+  if (laneClear()){ recordWin(); escape(); }
   else { Snd.bubble(); heroBubble(); saveRun(); }
+}
+/** Bank the result the instant she is free, not when the animation ends —
+    a phone that backgrounds the tab mid-escape used to lose the win. */
+function recordWin(){
+  const key = "best." + boardId();
+  const prev = store.get(key, null);
+  if (prev === null || hist.length < prev) store.set(key, hist.length);
+  done = true;
+  saveRun();
 }
 
 /** Every move, the little one blows a bubble — the game answering you each
@@ -730,7 +750,13 @@ function heroBubble(){
 const pad = n => String(n).padStart(2, "0");
 const dayKeyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const todayKey = () => dayKeyOf(new Date());
-const prettyDay = () => new Date().toLocaleDateString(undefined, { day:"numeric", month:"long" });
+/* Always formatted from the key the board was actually generated from, never
+   from the live clock — a tab left open across midnight would otherwise label
+   and share yesterday's tin with today's date. */
+const prettyDay = k => {
+  const [y, m, d] = (k || todayKey()).split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { day:"numeric", month:"long" });
+};
 
 const tinCache = new Map(), dailyCache = new Map();
 function tinFor(n){
@@ -746,17 +772,28 @@ const currentTin = () => mode === "daily" ? dailyFor(dayK) : tinFor(lvl);
 const boardId = () => mode === "daily" ? "d:" + dayK : "t:" + lvl;
 
 /* ---------- build ---------- */
+/* Any deferred build must check it is still wanted when it fires. Without
+   this, tapping the other tab inside the 16ms window builds the wrong board
+   under the new mode — which once left a ladder tin behind the daily's
+   "already done" panel and let Share publish that score as the day's result. */
+let modeRun = 0;
+
 /** Generating a hard tin can take a moment, so paint the wait first. */
 function goTo(n){
   if (n < 1) return;
   const cached = tinCache.has(n);
   $("tinno").textContent = n;
   if (cached) return build(n);
+  const run = ++modeRun;
   tinEl.parentElement.classList.add("busy");
   $("band").textContent = "· packing…";
-  setTimeout(() => { tinEl.parentElement.classList.remove("busy"); build(n); }, 16);
+  setTimeout(() => {
+    if (run !== modeRun) return;
+    tinEl.parentElement.classList.remove("busy");
+    build(n);
+  }, 16);
 }
-function build(n, restore){
+function build(n, fresh){
   if (n) lvl = n;
   done = false; drag = null;
   clearEscape();
@@ -766,16 +803,7 @@ function build(n, restore){
   par = tin.par;
   off = fish.map(() => 0);
   hist = [];
-  // Bring back a half-finished tin after a refresh, but only if it is really
-  // the same board — a stale save must never be replayed onto a different one.
-  if (restore && restore.id === boardId() && Array.isArray(restore.hist)){
-    for (const m of restore.hist){
-      if (typeof m?.i === "number" && fish[m.i] && typeof m.to === "number"){
-        off[m.i] = m.to; hist.push(m);
-      }
-    }
-    if (!gridValid()){ off = fish.map(() => 0); hist = []; }
-  }
+  if (!fresh) replay(savedFor(boardId()));
   tinEl.querySelectorAll(".fish").forEach(e => e.remove());
   els = fish.map((f, i) => {
     const el = document.createElement("button");
@@ -800,6 +828,27 @@ function build(n, restore){
   }
   saveRun();
 }
+/** Replay a saved move list onto the fresh board.
+    localStorage is user-editable, so nothing in the save is trusted: each move
+    must name a real sprat, land on an integer offset, and leave the board
+    legal — and `from` is RECOMPUTED rather than read, because Undo walks back
+    through it. A save claiming from:99 used to put sprats outside the tin and
+    could hand someone the daily in one move. Anything odd and the whole
+    replay is dropped for a clean board. */
+function replay(saved){
+  if (!Array.isArray(saved) || !saved.length) return;
+  const restored = [];
+  for (const m of saved){
+    if (!Number.isInteger(m?.i) || !fish[m.i] || !Number.isInteger(m?.to)) return reset();
+    restored.push({ i: m.i, from: off[m.i], to: m.to });
+    off[m.i] = m.to;
+    if (!gridValid()) return reset();
+  }
+  if (laneClear()) return reset();      // a save that arrives already won
+  hist = restored;
+  function reset(){ off = fish.map(() => 0); hist = []; }
+}
+
 /** Every sprat inside the tin, nobody overlapping — used to reject a bad save. */
 function gridValid(){
   const seen = new Set();
@@ -815,22 +864,33 @@ function gridValid(){
 }
 function renderHead(){
   const daily = mode === "daily";
-  $("tab-daily").setAttribute("aria-selected", String(daily));
-  $("tab-ladder").setAttribute("aria-selected", String(!daily));
+  $("tab-daily").setAttribute("aria-pressed", String(daily));
+  $("tab-ladder").setAttribute("aria-pressed", String(!daily));
   $("laddernav").hidden = daily;
   $("dailyhead").hidden = !daily;
   if (daily){
-    $("dailydate").textContent = prettyDay();
+    $("dailydate").textContent = prettyDay(dayK);
   } else {
     $("tinno").textContent = lvl;
     $("band").textContent = "· " + currentTin().band;
     $("prev").disabled = lvl <= 1;
   }
 }
-/* ---------- a half-played tin survives a refresh ---------- */
+/* ---------- a half-played tin survives a refresh ----------
+   Saved per board, not in one shared slot: switching to the other tab and
+   back used to wipe whichever tin you had half-finished. */
+const savedFor = id => {
+  const r = store.get("runs", {});
+  return r && typeof r === "object" ? r[id] : null;
+};
 function saveRun(){
-  if (done) { store.set("run", null); return; }
-  store.set("run", { id: boardId(), mode, lvl, dayK, hist });
+  const runs = store.get("runs", {}) || {};
+  if (done || !hist.length) delete runs[boardId()];
+  else runs[boardId()] = hist;
+  const keys = Object.keys(runs);
+  for (let i = 0; i < keys.length - 12; i++) delete runs[keys[i]];   // keep it small
+  store.set("runs", runs);
+  store.set("last", { mode, lvl, dayK });
 }
 /** Build the next tin while the player is busy with this one, so Next is instant. */
 function prefetch(n){
@@ -959,10 +1019,7 @@ function skipEscape(){
 }
 function showWin(){
   const n = hist.length;
-  const key = "best." + boardId();
-  const prevBest = store.get(key, null);
-  if (prevBest === null || n < prevBest) store.set(key, n);
-  store.set("run", null);                       // finished: nothing to resume
+  recordWin();                                  // idempotent; already banked
   paint();
   const perfect = n === par;
   const daily = mode === "daily";
@@ -976,7 +1033,8 @@ function showWin(){
       ? `<button class="go" id="share">Share</button>
          <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`
       : `<button class="go" id="gonext">Next tin →</button>`}
-    ${perfect ? "" : `<button class="btn" id="showpar" style="margin-top:8px;width:100%">Was there a shorter way?</button>`}`;
+    ${perfect ? "" : `<button class="btn" id="showpar" style="margin-top:8px;width:100%">Was there a shorter way?</button>`}
+    ${daily && KOFI ? `<div><a class="tip" href="${kofiURL()}" target="_blank" rel="noopener noreferrer">☕ buy me a coffee</a></div>` : ""}`;
   if (daily){
     $("share").onclick = e => shareDaily(e.target, n, perfect);
     $("toladder").onclick = () => setMode("ladder");
@@ -987,7 +1045,7 @@ function showWin(){
   if (sp) sp.onclick = () => {
     sp.outerHTML = `<p style="margin-top:10px">Shortest possible: <b style="color:var(--ink)">${par}</b></p>
       <button class="btn" id="retry" style="margin-top:8px;width:100%">Try again</button>`;
-    $("retry").onclick = () => build();
+    $("retry").onclick = () => build(null, true);
   };
 }
 function undo(){
@@ -1012,7 +1070,7 @@ $("mute").onclick = () => {
   if (Snd.on){ Snd.init(); Snd.pop(); }
 };
 $("undo").onclick = undo;
-$("reset").onclick = () => build();
+$("reset").onclick = () => build(null, true);
 $("prev").onclick = () => goTo(lvl - 1);
 $("next").onclick = () => goTo(lvl + 1);
 $("tab-daily").onclick = () => setMode("daily");
@@ -1023,26 +1081,33 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- daily ---------- */
-function setMode(next, restore){
+function setMode(next){
+  const run = ++modeRun;
   mode = next;
   store.set("mode", next);
   if (next === "daily"){
     dayK = todayKey();
-    const cached = dailyCache.has(dayK);
-    if (!cached){
+    if (!dailyCache.has(dayK)){
       tinEl.parentElement.classList.add("busy");
       renderHead();
-      setTimeout(() => { tinEl.parentElement.classList.remove("busy"); build(null, restore); afterDaily(); }, 16);
+      $("dailydate").textContent = "packing…";
+      setTimeout(() => {
+        if (run !== modeRun) return;            // they tapped the other tab
+        tinEl.parentElement.classList.remove("busy");
+        build();
+        afterDaily();
+      }, 16);
       return;
     }
-    build(null, restore);
+    build();
     afterDaily();
   } else {
-    build(lvl, restore);
+    build(lvl);
   }
 }
 /** If today's tin is already done, say so instead of pretending it is fresh. */
 function afterDaily(){
+  if (mode !== "daily") return;
   const best = store.get("best." + boardId(), null);
   if (best === null || hist.length) return;
   done = true;
@@ -1054,34 +1119,38 @@ function afterDaily(){
     <button class="btn" id="again" style="margin-top:8px;width:100%">Play it again</button>
     <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`;
   $("share").onclick = e => shareDaily(e.target, best, best === par);
-  $("again").onclick = () => { done = false; build(); };
+  $("again").onclick = () => { done = false; build(null, true); };
   $("toladder").onclick = () => setMode("ladder");
 }
-/** Spoiler-free: the score, never the board. */
+/** Spoiler-free: your score, never the board — and never the day's par, which
+    is the one fact that would hand a reader the answer before they play. */
 function shareDaily(btn, moves, perfect){
-  const text = `🥫 Šprotai · ${prettyDay()}\n`
+  const text = `🥫 Šprotai · ${prettyDay(dayK)}\n`
     + (perfect
         ? `Freed her in ${moves} — the shortest way out.\n`
-        : `Freed her in ${moves} moves (shortest is ${par}).\n`)
+        : `Freed her in ${moves} moves.\n`)
     + `https://sprot.ai`;
-  const done = () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share", 1600); };
-  if (navigator.share) {
-    navigator.share({ text }).catch(() => navigator.clipboard?.writeText(text).then(done, () => {}));
-  } else {
-    navigator.clipboard?.writeText(text).then(done, () => window.prompt("Copy your result:", text));
-  }
+  const ok = () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share", 1600); };
+  const copy = () => navigator.clipboard?.writeText(text).then(ok, () => window.prompt("Copy your result:", text));
+  if (navigator.share){
+    // Backing out of the share sheet is not a failure — don't quietly seize
+    // the clipboard and then claim success.
+    navigator.share({ text }).catch(e => { if (e && e.name !== "AbortError") copy(); });
+  } else copy();
+}
+
+if (KOFI){
+  $("kofifoot").innerHTML =
+    ` · <a href="${kofiURL()}" target="_blank" rel="noopener noreferrer">buy me a coffee</a>`;
 }
 
 /* ---------- start ---------- */
 (function start(){
-  const run = store.get("run", null);
-  if (run && run.id && run.hist?.length){
-    // resume exactly where they were, daily or ladder
-    if (run.mode === "daily" && run.dayK === todayKey()){ lvl = run.lvl || 1; return setMode("daily", run); }
-    if (run.mode === "ladder"){ lvl = run.lvl || 1; return setMode("ladder", run); }
-  }
-  lvl = store.get("reached", 1);
-  setMode(store.get("mode", "daily"));
+  // Come back to whichever tin they were last on; build() reloads that board's
+  // own saved moves, so both a daily and a ladder tin can be half-finished.
+  const last = store.get("last", null);
+  lvl = (last && Number.isInteger(last.lvl) && last.lvl >= 1) ? last.lvl : store.get("reached", 1);
+  setMode(last?.mode === "ladder" ? "ladder" : "daily");
 })();
 </script>
 </body>
