@@ -1,6 +1,41 @@
 # Status
 
-_Last updated: 2026-08-10_
+_Last updated: 2026-08-11_
+
+## LIVE at https://sprot.ai
+
+Deployed on GitHub Pages from `chioknuta/sprotai` (public). HTTPS on, HTTP
+redirects to it. **Deploying is just `git push`** — Pages builds from `main`.
+
+DNS: sprot.ai sits on Cloudflare (nameservers `meadow`/`patryk.ns.cloudflare.com`,
+switched at Spaceship on 2026-08-10). Four A records to GitHub Pages plus a
+`www` CNAME, all **DNS-only on purpose** — Cloudflare's orange-cloud proxy
+blocks GitHub's certificate issuance. The Google MX record is preserved; the
+domain never had SPF/DKIM/DMARC. `CNAME` in the repo root is what tells Pages
+the domain, and it must survive any restructure.
+
+Two gotchas already paid for: GitHub stalled issuing the certificate and only
+retried after the custom domain was **removed and re-added**; and auto-renew
+on sprot.ai is **off**, expiring 2027-11-20.
+
+## Two modes
+
+- **Today's tin** — one daily puzzle seeded from the local date, same for
+  everyone, fixed band (par 10–18, median 10) that deliberately never
+  escalates. Sharing is score-only; it must never leak the board or the par.
+- **All tins** — the endless numbered ladder, par climbing 3 → 27ish.
+
+A half-played tin survives a refresh, saved **per board**, so a daily and a
+ladder tin can both be mid-solve. Saves are untrusted input: `replay()`
+recomputes `from` rather than reading it, revalidates after every move, and
+throws the whole save away on anything odd.
+
+## Open thread
+
+**Ko-fi tip jar is built but switched off.** Set the `KOFI` constant in
+index.html to the handle and links appear in the footer and the daily win
+panel. Aiste was signing up. Placement is deliberate: never before play,
+never a popup, never gating anything.
 
 ## Where things stand
 
@@ -127,12 +162,26 @@ stuck". That is a harder generator, and it is the thing to prototype next.
 
 ## Known gaps
 
-- Refreshing mid-puzzle restarts the run (board is identical; best-of-day
-  survives — only the in-progress attempt is lost)
-- No sound
-- Not deployed anywhere yet
+- No analytics, so there is no idea whether anyone plays. Cloudflare gives
+  this free without tracking individuals; the proxy is off, so it needs
+  turning on (safe now the certificate exists).
+- Daily generation is a synchronous main-thread hill-climb: median 89ms but
+  p99 ~800ms and a measured worst case of 1.46s over 1096 dates. The board
+  dims and says "packing…", but a slow phone will feel it. A Worker built
+  from a blob URL is the fix — it must be tested on `file://`, where Chromium
+  blocks blob Workers.
 - Mobile fold-fit verified in an emulated 375px viewport, not yet on a
-  physical phone
+  physical phone.
+
+## Lesson that keeps repeating — read before adding any setTimeout
+
+Three separate bugs, all the same shape: a deferred callback fired onto a
+board that had since been rebuilt. It has caused a permanent unbeatable best
+of 0, dried-out sprats on a live board, and a daily Share publishing a ladder
+tin's score as the day's result. **Any deferred work must capture a token and
+bail if it is stale** — `escRun` for animation, `modeRun` for builds. Also:
+localStorage is user-editable, so treat every value in it as hostile input.
+Both classes of bug were found by adversarial review, not by testing.
 
 ## Decisions on record
 
