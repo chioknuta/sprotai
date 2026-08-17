@@ -55,6 +55,11 @@ requests.
 - The countdown to the next tin needs no staleness token: it holds the element
   it writes into and stops when that element leaves the document. `build()`
   also calls `stopTick()`.
+- **The social preview is `og.jpg`, not `og.png`** — 84KB instead of 436KB, at
+  the same 1200×630 and no visible loss. The old PNG was over the size at which
+  some chat apps quietly decline to render a link preview at all, which matters
+  now that the share grid is the growth path. `og.png` is kept, unreferenced, so
+  anything re-crawling an old link still resolves.
 
 ## Open thread: login and a leaderboard
 
@@ -74,6 +79,26 @@ Asked for on 2026-08-17 after friends played. Assessed, not built:
   server-verifiable; time is not.
 - **A live leaderboard leaks par**, which the share text deliberately hides.
   Friends-only, or unlocked after you have played.
+
+## Open thread: analytics is built but switched off
+
+**Set `CFA` in index.html to the Cloudflare Web Analytics token and it starts
+counting.** Same idiom as `KOFI`: empty means the page makes **no external
+request at all**, which is what keeps index.html runnable straight off a disk.
+Setting it is the one deliberate exception to that rule, and even then the game
+still plays with the network unplugged — the beacon just fails.
+
+To get the token: Cloudflare → Web Analytics → Add a site → `sprot.ai`, then
+copy the token out of the snippet it shows. It **must** be the manual JS beacon,
+not the automatic orange-cloud injection: the DNS records are DNS-only by
+design (the proxy blocks GitHub's certificate issuance), so there is nothing
+proxied to inject into.
+
+What it answers: is anyone playing, and do they come back. What it **cannot**
+answer: what share of players finish the daily, or whether streaks retain
+anyone — Cloudflare Web Analytics has no custom events. That needs a Worker of
+our own, which is the same infrastructure the leaderboard would need, so the
+two should be decided together rather than built twice.
 
 ## Open thread
 

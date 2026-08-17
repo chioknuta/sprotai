@@ -13,14 +13,14 @@
 <meta property="og:url" content="https://sprot.ai/">
 <meta property="og:title" content="Šprotai — free the little one">
 <meta property="og:description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day.">
-<meta property="og:image" content="https://sprot.ai/og.png">
+<meta property="og:image" content="https://sprot.ai/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="A tin of cartoon sprats seen from above, one of them pink, beside the word ŠPROTAI.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Šprotai — free the little one">
 <meta name="twitter:description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day.">
-<meta name="twitter:image" content="https://sprot.ai/og.png">
+<meta name="twitter:image" content="https://sprot.ai/og.jpg">
 
 <link rel="icon" href="/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/icon-180.png">
@@ -615,6 +615,32 @@ const Snd = {
    play, never a popup, and it never gates anything. */
 const KOFI = "";
 const kofiURL = () => "https://ko-fi.com/" + KOFI;
+
+/* ---------- how many people actually play ----------
+   Cloudflare Web Analytics, and off until a token is set. Off is the default
+   on purpose: with CFA empty this page makes NO external request of any kind,
+   which is the whole reason index.html can be opened straight off a disk.
+   Setting it is the one deliberate exception to that rule, and even then the
+   game still plays with the network unplugged — the beacon just fails.
+
+   It has to be the manual JS beacon rather than Cloudflare's automatic
+   injection, because the DNS records are DNS-only by design: the orange-cloud
+   proxy blocks GitHub's certificate issuance, so nothing is proxied to inject
+   into. Token comes from Cloudflare → Web Analytics → Add a site → sprot.ai.
+
+   It counts visits, not people: no cookies, no fingerprinting, no cross-site
+   identifier, nothing that says who was here. It answers "is anyone playing,
+   and do they come back", which is the question. It cannot answer "how many
+   finish the daily" — that needs custom events, which this product has none
+   of, and which would mean running a Worker of our own. */
+const CFA = "";
+if (CFA){
+  const beacon = document.createElement("script");
+  beacon.defer = true;
+  beacon.src = "https://static.cloudflareinsights.com/beacon.min.js";
+  beacon.setAttribute("data-cf-beacon", JSON.stringify({ token: CFA }));
+  document.head.append(beacon);
+}
 
 /* ---------- state ---------- */
 const $ = id => document.getElementById(id);
