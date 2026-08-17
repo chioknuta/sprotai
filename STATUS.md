@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-08-11_
+_Last updated: 2026-08-17_
 
 ## LIVE at https://sprot.ai
 
@@ -29,6 +29,51 @@ A half-played tin survives a refresh, saved **per board**, so a daily and a
 ladder tin can both be mid-solve. Saves are untrusted input: `replay()`
 recomputes `from` rather than reading it, revalidates after every move, and
 throws the whole save away on anything odd.
+
+## Streaks, stats, and the share grid (2026-08-17)
+
+The retention pass, all client-side — no backend, no accounts, no new network
+requests.
+
+- **The day record** (`sprotai.slide.days`) is one row per finished daily:
+  moves *and the par they were measured against*. Par is **stored, never
+  recomputed** — recomputing means re-running the hill-climb for every day she
+  has ever played. Rows are re-validated on read like every other save.
+- **It back-fills itself.** `seedDays()` sweeps the old `best.d:` keys on
+  start, so an existing player sees the streak she already earned. Seeded rows
+  have no par, so they count as played but never as perfect, and the stats
+  panel says so in a footnote rather than quietly under-counting.
+- **A streak survives an unplayed today** — it counts back from today if done,
+  from yesterday if not. Today unfinished is a streak in progress, not a broken
+  one.
+- **The share grid is her move count drawn six across**, because the tin is six
+  across: `🟡` per move, `🐟` last, capped at six rows. Fewer rows is visibly
+  better. It encodes **only her own moves — never par**, which keeps the
+  spoiler-free promise the share text already made.
+- The streak chip in the daily header is repainted on win as well as on build,
+  or the header sits one behind the panel that just congratulated her.
+- The countdown to the next tin needs no staleness token: it holds the element
+  it writes into and stops when that element leaves the document. `build()`
+  also calls `stopTick()`.
+
+## Open thread: login and a leaderboard
+
+Asked for on 2026-08-17 after friends played. Assessed, not built:
+
+- **Login is the wrong tool.** Progress already persists; login only adds
+  cross-device sync, and it buys a permanent support burden (resets, recovery,
+  personal data). If sync is ever really wanted, ship a **sync code** — one
+  random string, one row, no identity.
+- **A leaderboard needs a backend** (Cloudflare Workers + D1 is the fit — the
+  DNS is already there). The hard part is cheating, and this game has an
+  unusually clean answer: **submit the move list, not the score**, and let the
+  server replay it against the same deterministic tin. `replay()` already does
+  exactly this validation client-side.
+- **Time is the weak half.** There is no timer in the game at all today, a move
+  list can't prove elapsed time, and a clock changes the game's feel. Moves are
+  server-verifiable; time is not.
+- **A live leaderboard leaks par**, which the share text deliberately hides.
+  Friends-only, or unlocked after you have played.
 
 ## Open thread
 

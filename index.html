@@ -151,8 +151,12 @@
     .ripple,.bub{display:none}
   }
 
+  /* Two rows on purpose: the count reads as a status line, the controls as a
+     row of controls. As one row it wrapped raggedly on a phone anyway. */
   .bar{display:flex; align-items:center; gap:11px; font-size:14px; color:var(--muted-txt); flex-wrap:wrap; justify-content:center}
   .bar b{color:var(--ink); font-variant-numeric:tabular-nums}
+  .bar.tools{gap:9px; margin-top:-4px}
+  .btn.icon{padding:9px 12px}
   .btn{
     font:inherit; font-size:14px; font-weight:600; color:#8a6b42;
     background:#f7e8ce; border:0; padding:9px 16px; border-radius:999px; cursor:pointer;
@@ -181,6 +185,32 @@
   footer a,.tip{color:#c09a63; text-decoration:none}
   footer a:hover,.tip:hover{text-decoration:underline}
   .tip{display:inline-block; margin-top:12px; font-size:13px}
+
+  /* ---- streak, stats, and the countdown ---- */
+  .flame{color:#d9762e; font-weight:700; white-space:nowrap}
+  .panel .streak{margin-top:6px; font-size:14px}
+  .panel .nextin{margin-top:10px; font-size:12.5px; color:#bdaa8a}
+
+  .sheet{
+    position:fixed; inset:0; z-index:20; padding:16px;
+    display:flex; align-items:center; justify-content:center;
+    background:#4a352047; -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  }
+  .sheet[hidden]{display:none}
+  .sheet .panel{max-width:340px; max-height:100%; overflow:auto; text-align:center}
+  .statgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:15px 0 2px}
+  .stat b{display:block; font-size:23px; line-height:1.1; font-variant-numeric:tabular-nums}
+  .stat span{display:block; margin-top:3px; font-size:10.5px; line-height:1.25; color:var(--muted-txt)}
+  .dist{margin-top:17px; text-align:left}
+  .dist h3{font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted-txt)}
+  .drow{display:flex; align-items:center; gap:7px; margin-top:5px; font-size:12.5px}
+  .drow i{font-style:normal; width:30px; text-align:right; color:var(--muted-txt); font-variant-numeric:tabular-nums}
+  .drow u{
+    text-decoration:none; padding:2px 7px; border-radius:5px; min-width:26px; text-align:right;
+    background:#ecd9b4; color:#8a6b42; font-size:11.5px; font-variant-numeric:tabular-nums;
+  }
+  .drow.best u{background:linear-gradient(180deg,var(--oil-1),var(--oil-2)); color:#fff}
+  .statfoot{margin-top:16px; font-size:12px; color:var(--muted-txt)}
 </style>
 </head>
 <body>
@@ -200,7 +230,7 @@
   <span class="tinlabel">Tin <b id="tinno">1</b> <span id="band"></span></span>
   <button class="btn nav" id="next" aria-label="Next tin">→</button>
 </div>
-<p class="tinlabel" id="dailyhead" hidden><b id="dailydate"></b></p>
+<p class="tinlabel" id="dailyhead" hidden><b id="dailydate"></b><span id="dailystreak"></span></p>
 
 <div class="tin"><div class="tin-inner" id="tin">
   <div class="clip"><div class="grid" id="grid"></div></div>
@@ -210,12 +240,19 @@
 <div class="bar">
   <span>Moves <b id="moves">0</b></span>
   <span>Best <b id="best">—</b></span>
+</div>
+<div class="bar tools">
   <button class="btn" id="undo" disabled>↶ Undo</button>
   <button class="btn" id="reset">↺ Reset</button>
-  <button class="btn" id="mute" aria-pressed="false" title="Sound">🔊</button>
+  <button class="btn icon" id="stats-open" title="Your tins" aria-label="Your tins">📊</button>
+  <button class="btn icon" id="mute" aria-pressed="false" title="Sound" aria-label="Sound">🔊</button>
 </div>
 
 <div class="panel" id="win" role="status" aria-live="polite" hidden></div>
+
+<div class="sheet" id="stats" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Your tins" id="statsbody"></div>
+</div>
 
 <details>
   <summary>How to play</summary>
@@ -725,6 +762,9 @@ function recordWin(){
   const key = "best." + boardId();
   const prev = store.get(key, null);
   if (prev === null || hist.length < prev) store.set(key, hist.length);
+  // The day's row carries par as well as moves, so the stats panel can say how
+  // close she got without ever regenerating an old tin to find out.
+  if (mode === "daily") recordDay(dayK, hist.length, par);
   done = true;
   saveRun();
 }
@@ -771,6 +811,131 @@ const currentTin = () => mode === "daily" ? dailyFor(dayK) : tinFor(lvl);
 /** Stable id for storage, so a daily and a ladder tin never collide. */
 const boardId = () => mode === "daily" ? "d:" + dayK : "t:" + lvl;
 
+/* ---------- the daily record: streaks, stats, the share grid ----------
+   One row per day she has finished: the moves she took, and the par those
+   moves were measured against. Par is STORED, never recomputed — recomputing
+   it would mean re-running the hill-climb for every day she has ever played,
+   which is seconds of work to draw one panel.
+   Everything read back is hostile input (localStorage is user-editable), so
+   every row is re-validated on the way out and silently dropped if it is odd.
+   A dropped row costs a streak; a trusted one could show her a lie. */
+const DAYRE = /^\d{4}-\d{2}-\d{2}$/;
+const BESTPFX = "sprotai.slide.best.d:";
+
+function days(){
+  const raw = store.get("days", null), out = {};
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+  for (const [k, v] of Object.entries(raw)){
+    const m = v?.m, p = v?.p;
+    if (!DAYRE.test(k) || !Number.isInteger(m) || m < 1) continue;
+    out[k] = { m, p: Number.isInteger(p) && p > 0 && p <= m ? p : null };
+  }
+  return out;
+}
+/** Days played before this record existed still count. Every win she ever had
+    is already sitting in its own `best.d:` key, so the streak she has already
+    earned shows up the first time she opens the new panel. Their par was never
+    stored, so they count as played but never as perfect — better to under-claim
+    than to invent a perfect solve she may not have had. */
+function seedDays(){
+  let keys = [];
+  try { keys = Object.keys(localStorage); } catch { return; }
+  const all = days();
+  let added = false;
+  for (const raw of keys){
+    if (!raw.startsWith(BESTPFX)) continue;
+    const k = raw.slice(BESTPFX.length);
+    if (!DAYRE.test(k) || all[k]) continue;
+    const m = store.get("best.d:" + k, null);
+    if (!Number.isInteger(m) || m < 1) continue;
+    all[k] = { m, p: null };
+    added = true;
+  }
+  if (added) store.set("days", all);
+}
+/** Keep her best run for the day, and backfill par onto a seeded row. */
+function recordDay(k, m, p){
+  if (!DAYRE.test(k) || !Number.isInteger(m) || m < 1) return;
+  const all = days(), prev = all[k];
+  const par_ = Number.isInteger(p) && p > 0 ? p : null;
+  all[k] = (!prev || m < prev.m) ? { m, p: par_ } : { m: prev.m, p: prev.p ?? par_ };
+  store.set("days", all);
+}
+/** Same calendar arithmetic the day keys are built from: step the day field
+    and let Date normalise it, so month ends and DST can't drop a day. */
+const shiftKey = (k, by) => {
+  const [y, m, d] = k.split("-").map(Number);
+  return dayKeyOf(new Date(y, m - 1, d + by));
+};
+/** Today unplayed does not break a streak — it is a streak with the day still
+    to go. Count back from today if it is done, from yesterday if it isn't. */
+function streaks(all){
+  const played = new Set(Object.keys(all));
+  const today = todayKey();
+  let cur = 0, k = played.has(today) ? today : shiftKey(today, -1);
+  while (played.has(k)){ cur++; k = shiftKey(k, -1); }
+  let max = cur;
+  for (const start of played){
+    if (played.has(shiftKey(start, -1))) continue;      // not the head of a run
+    let n = 0, c = start;
+    while (played.has(c)){ n++; c = shiftKey(c, 1); }
+    if (n > max) max = n;
+  }
+  return { cur, max };
+}
+/** Her bubble trail, six across because the tin is six across. Shorter is
+    better, so the shape alone tells the story — and it encodes only her own
+    move count, never par, which is the one fact that would spoil the day for
+    whoever reads it. */
+const GRIDROWS = 6;
+function shareGrid(moves){
+  const total = Math.max(1, moves), cap = W * GRIDROWS;
+  const trunc = total > cap, n = trunc ? cap : total;
+  let out = "";
+  for (let i = 0; i < n; i++){
+    out += i === n - 1 ? (trunc ? "…🐟" : "🐟") : "🟡";
+    if ((i + 1) % W === 0 && i + 1 < n) out += "\n";
+  }
+  return out;
+}
+/** Time left on today's tin. Built from local midnight, the same boundary the
+    day key is cut on, so the countdown and the new tin agree. */
+function untilNext(){
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const s = Math.max(0, Math.floor((next - now) / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+  return h ? `${h}h ${m}m` : m ? `${m}m` : "under a minute";
+}
+/* The countdown is deferred work, and deferred work here has a history of
+   landing on a board that no longer exists. This one needs no token: it holds
+   the element it writes into and stops the moment that element leaves the
+   document, which is exactly when build() replaces the panel. */
+let tickTimer = null;
+const stopTick = () => { if (tickTimer){ clearInterval(tickTimer); tickTimer = null; } };
+function startTick(el){
+  stopTick();
+  const tick = () => {
+    if (!el.isConnected) return stopTick();
+    el.textContent = todayKey() !== dayK ? "ready now — refresh" : untilNext();
+  };
+  tick();
+  tickTimer = setInterval(tick, 20000);
+}
+/** A live streak is worth seeing before she plays, not only after she wins —
+    and it has to be repainted the moment today's win lands, or the header sits
+    one behind the panel that just congratulated her. */
+function paintStreakChip(){
+  const n = streaks(days()).cur;
+  $("dailystreak").innerHTML = n >= 2 ? ` · <span class="flame">🔥 ${n}</span>` : "";
+}
+/** The one line that says "come back tomorrow", used by both daily panels. */
+const streakLine = () => {
+  const n = streaks(days()).cur;
+  return n >= 2 ? `<p class="streak"><span class="flame">🔥 ${n}-day streak</span></p>` : "";
+};
+const nextLine = () => `<p class="nextin">Next tin in <b id="nextin">…</b></p>`;
+
 /* ---------- build ---------- */
 /* Any deferred build must check it is still wanted when it fires. Without
    this, tapping the other tab inside the 16ms window builds the wrong board
@@ -797,6 +962,7 @@ function build(n, fresh){
   if (n) lvl = n;
   done = false; drag = null;
   clearEscape();
+  stopTick();
   tinEl.classList.remove("freeze");
   const tin = currentTin();
   fish = tin.fish.map(f => ({ r:f.r, c:f.c, len:f.len, dir:f.dir }));
@@ -870,6 +1036,7 @@ function renderHead(){
   $("dailyhead").hidden = !daily;
   if (daily){
     $("dailydate").textContent = prettyDay(dayK);
+    paintStreakChip();
   } else {
     $("tinno").textContent = lvl;
     $("band").textContent = "· " + currentTin().band;
@@ -1029,15 +1196,21 @@ function showWin(){
   winEl.innerHTML = `
     <h2>Out she goes.</h2>
     <p>${n} move${n === 1 ? "" : "s"}${perfect ? " — the shortest way out." : ""}</p>
+    ${daily ? streakLine() : ""}
     ${daily
       ? `<button class="go" id="share">Share</button>
+         <button class="btn" id="seestats" style="margin-top:8px;width:100%">Your tins</button>
          <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`
       : `<button class="go" id="gonext">Next tin →</button>`}
     ${perfect ? "" : `<button class="btn" id="showpar" style="margin-top:8px;width:100%">Was there a shorter way?</button>`}
+    ${daily ? nextLine() : ""}
     ${daily && KOFI ? `<div><a class="tip" href="${kofiURL()}" target="_blank" rel="noopener noreferrer">☕ buy me a coffee</a></div>` : ""}`;
   if (daily){
     $("share").onclick = e => shareDaily(e.target, n, perfect);
+    $("seestats").onclick = openStats;
     $("toladder").onclick = () => setMode("ladder");
+    startTick($("nextin"));
+    paintStreakChip();
   } else {
     $("gonext").onclick = () => goTo(lvl + 1);
   }
@@ -1048,6 +1221,50 @@ function showWin(){
     $("retry").onclick = () => build(null, true);
   };
 }
+/* ---------- your tins ----------
+   Four numbers and one chart, all derived from the day record — nothing here
+   is stored twice. The chart is how far over par she landed, which is a fair
+   thing to show her about her own past days and still says nothing about
+   today's tin. */
+function statsHTML(){
+  const all = days(), ks = Object.keys(all), st = streaks(all);
+  const rated = ks.filter(k => all[k].p !== null);
+  const over = k => Math.max(0, all[k].m - all[k].p);
+  const perfect = rated.filter(k => over(k) === 0).length;
+  const buckets = [0, 0, 0, 0, 0];
+  for (const k of rated) buckets[Math.min(over(k), 4)]++;
+  const top = Math.max(1, ...buckets);
+  const labels = ["par", "+1", "+2", "+3", "+4"];
+  const rows = buckets.map((n, i) => `
+    <div class="drow${n && n === top ? " best" : ""}">
+      <i>${labels[i]}</i>
+      <u style="width:${(6 + 94 * n / top).toFixed(1)}%">${n}</u>
+    </div>`).join("");
+  const unrated = ks.length - rated.length;
+  return `
+    <h2>Your tins</h2>
+    <div class="statgrid">
+      <div class="stat"><b>${ks.length}</b><span>tins freed</span></div>
+      <div class="stat"><b>${st.cur}</b><span>day streak</span></div>
+      <div class="stat"><b>${st.max}</b><span>best streak</span></div>
+      <div class="stat"><b>${perfect}</b><span>shortest way</span></div>
+    </div>
+    ${rated.length
+      ? `<div class="dist"><h3>How close to the shortest way</h3>${rows}</div>`
+      : `<p style="margin-top:14px">Free today's little one to start a streak.</p>`}
+    ${unrated ? `<p class="statfoot">${unrated} earlier tin${unrated === 1 ? "" : "s"} count toward your streak but not the chart — they were played before scores were kept this way.</p>` : ""}
+    <button class="go" id="statsclose">Close</button>`;
+}
+const statsEl = $("stats");
+function openStats(){
+  $("statsbody").innerHTML = statsHTML();
+  statsEl.hidden = false;
+  $("statsclose").onclick = closeStats;
+  $("statsclose").focus();
+}
+function closeStats(){ statsEl.hidden = true; }
+statsEl.onclick = e => { if (e.target === statsEl) closeStats(); };
+
 function undo(){
   if (!hist.length || done) return;
   const m = hist.pop();
@@ -1071,6 +1288,7 @@ $("mute").onclick = () => {
 };
 $("undo").onclick = undo;
 $("reset").onclick = () => build(null, true);
+$("stats-open").onclick = openStats;
 $("prev").onclick = () => goTo(lvl - 1);
 $("next").onclick = () => goTo(lvl + 1);
 $("tab-daily").onclick = () => setMode("daily");
@@ -1078,6 +1296,7 @@ $("tab-ladder").onclick = () => setMode("ladder");
 window.addEventListener("resize", () => fish.length && layout());
 document.addEventListener("keydown", e => {
   if ((e.key === "z" || e.key === "Z") && (e.metaKey || e.ctrlKey)){ e.preventDefault(); undo(); }
+  if (e.key === "Escape" && !statsEl.hidden) closeStats();
 });
 
 /* ---------- daily ---------- */
@@ -1115,20 +1334,28 @@ function afterDaily(){
   winEl.innerHTML = `
     <h2>Today's tin is done.</h2>
     <p>You freed her in ${best} move${best === 1 ? "" : "s"}${best === par ? " — the shortest way out." : ""}</p>
+    ${streakLine()}
     <button class="go" id="share">Share</button>
+    <button class="btn" id="seestats" style="margin-top:8px;width:100%">Your tins</button>
     <button class="btn" id="again" style="margin-top:8px;width:100%">Play it again</button>
-    <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>`;
+    <button class="btn" id="toladder" style="margin-top:8px;width:100%">More tins</button>
+    ${nextLine()}`;
   $("share").onclick = e => shareDaily(e.target, best, best === par);
+  $("seestats").onclick = openStats;
   $("again").onclick = () => { done = false; build(null, true); };
   $("toladder").onclick = () => setMode("ladder");
+  startTick($("nextin"));
 }
 /** Spoiler-free: your score, never the board — and never the day's par, which
     is the one fact that would hand a reader the answer before they play. */
 function shareDaily(btn, moves, perfect){
+  const st = streaks(days());
   const text = `🥫 Šprotai · ${prettyDay(dayK)}\n`
+    + shareGrid(moves) + "\n"
     + (perfect
         ? `Freed her in ${moves} — the shortest way out.\n`
         : `Freed her in ${moves} moves.\n`)
+    + (st.cur >= 2 ? `🔥 ${st.cur}-day streak\n` : "")
     + `https://sprot.ai`;
   const ok = () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share", 1600); };
   const copy = () => navigator.clipboard?.writeText(text).then(ok, () => window.prompt("Copy your result:", text));
@@ -1146,6 +1373,8 @@ if (KOFI){
 
 /* ---------- start ---------- */
 (function start(){
+  // Fold every past win into the day record before anything reads a streak.
+  seedDays();
   // Come back to whichever tin they were last on; build() reloads that board's
   // own saved moves, so both a daily and a ladder tin can be half-finished.
   const last = store.get("last", null);
