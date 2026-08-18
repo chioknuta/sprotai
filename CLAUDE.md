@@ -33,7 +33,9 @@ and what's next. Update it before the context window gets cleared.
 ## Commands
 
 Verify every tin is solvable and every par is honest (run after touching the
-generator):
+generator — and if the change was meant to be a refactor, also diff the boards
+it emits against the previous revision's, because a daily that quietly changes
+changes it for everybody):
 
 ```bash
 node tools/verify.mjs
@@ -62,6 +64,12 @@ and the shipped code can't drift. Keep that block DOM-free or verification
 breaks. Keep `generator:start` on its own closed comment line, or extraction
 produces a syntax error.
 
+`makeBoard` and `minSlides` are **two-line drivers over the generator
+functions** `climbBoard` and `solveSteps`, which yield so the page can pack a
+tin across frames instead of freezing. Keep it that way: a yield must never be
+able to change the result, and anything that consumes the rng or accepts a
+board has to sit in the same order regardless of where control is handed back.
+
 Tin *N* is seeded from *N* alone, so everyone gets the same tin *N*. Sprats are
 scattered, then the board is solved exhaustively; a tin only ships once a
 solution is proven, and its `par` is that proven minimum. Random scattering
@@ -76,6 +84,10 @@ Two traps, both of which have already bitten:
 - **Occupancy must stay a two-word bitmask.** JS shifts modulo 32, so on a
   36-cell board `1 << 35` is `1 << 3` and the bottom of the tin aliases onto
   the top. A single word silently corrupted par on 259 of the first 300 tins.
+- **A cached tin is not a tin until it has been re-solved.** Finished tins are
+  kept in localStorage, which is user-editable. Reading one back costs a single
+  solver call against thousands to climb it, so `decodeTin` re-proves par and
+  throws the row away unless it matches exactly. Never shortcut that.
 - **The verifier's solver must not share code with the generator's.** The bug
   above survived a "zero mismatches" test that checked the solver against
   itself. `verify.mjs` uses a plain 2D grid and no bitmasks for this reason.
