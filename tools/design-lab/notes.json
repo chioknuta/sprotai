@@ -1,0 +1,30 @@
+{
+  "00-current": {
+    "wins": "It works, it's warm, and it has never confused anyone about which sprat is which.",
+    "costs": "The way out is an 11px nub that disappears on a phone, and the little one is a pink copy of the same fish — nothing about her says <em>special</em>."
+  },
+  "riso": {
+    "wins": "The fastest hero to find of all six, and the only board where counting a sprat's length stays effortless — flat inks, hard edges, no soft falloff. The most distinctive thing here; it looks like a printed poster rather than a game asset.",
+    "costs": "The door is framed in her exact fluorescent pink, so at the one moment the game most wants you to watch her — swimming out — she and the opening share an ink."
+  },
+  "deco": {
+    "wins": "The best-made object in the review. The lid wound onto a real winding key is the most convincing <em>opened tin</em> anyone drew, and the whole thing could be the game's identity rather than a skin.",
+    "costs": "The hole itself is a thin dark slot that's easy to miss on a phone, and the gilded hero reads expensive rather than magical — her eye is a cut gem, so she's the one sprat with no pupil."
+  },
+  "neon": {
+    "wins": "You can see the way out from across the room, and the hero actually emits light — the fastest find of the six by a distance, and the most dramatic board.",
+    "costs": "It trades the warm oily tin for a dark aquarium, and a glow is the first thing a compressed screenshot throws away — which is how this game spreads."
+  },
+  "holo": {
+    "wins": "The everyday sprats are the best-looking fish here, and the most truthful — a real Baltic sprat is exactly this oil-slick chrome.",
+    "costs": "The hero is pale against warm oil, so she takes about a second to find; she's the one fish in the set that looks less crafted than her own extras."
+  },
+  "paper": {
+    "wins": "A white cut-edge around every fish makes length and lane effortless to read — the calmest, most legible board of the six, and the hero has the best face.",
+    "costs": "She's carried by saturation, and saturation is the first thing to die in sunlight; her silhouette then has to find her on its own."
+  },
+  "plush": {
+    "wins": "The most literal answer to <em>unicorny</em> — spiral horn, rainbow felt mane, heart tail, stitched seams. The funniest object anyone drew, and the one board that looks like a toy you would want.",
+    "costs": "The warm bellies sit close to the oil, so at phone size the sprats sink into the board — the least legible of the six, and the hero is found by her colour rather than her shape."
+  }
+}

@@ -123,6 +123,39 @@ Also fixed on the way past: the ladder tab called `build()` without waiting for
 its tin, which with a cold cache read an unpacked board straight out of the map.
 On the boot path — a returning ladder player — that was a white screen.
 
+## Open decision: the art direction, six candidates drawn (2026-08-18)
+
+Asked for on 2026-08-18: make the door visible — "an opened can thingy" — and
+make the fish hipper, with the little one "unicorny, glittery, special".
+**Nothing has been chosen and `index.html` is untouched.** The candidates and
+the harness live in `tools/design-lab/`; read its README before lifting one.
+
+- **Six directions**, each drawing both the fish and the door: *Riso Print*,
+  *Tin Label 1936*, *Night Catch*, *Holo Foil*, *Cut Paper*, *Sprat Plush*. The
+  shipping design is included as the control. The **fish and the door are
+  separable** — a chosen pair need not come from the same direction.
+- **They are drawn against real tins**, dealt by the shipping generator, at
+  56px and 38px cells. `harness/render.mjs` renders any direction to a PNG and
+  `harness/doors.mjs` renders every door with no fish, which is the test that
+  actually separates them: cover the board and see whether the shape says
+  *opened tin* or says *clip, pen, sticky note, padlock*.
+- **The 38px board is the decider, not the 56px one.** Three directions were
+  beautiful at desk size and broken at phone size, all in the same way: fish
+  edges dissolving into the ground so **length stopped being countable**, which
+  is the puzzle's own information. Deco's tails were dark teal on dark teal;
+  Night Catch's sprats merged into each other end-to-end; Plush's fins splayed
+  outside their own lane. All three were repaired; Plush is still the weakest.
+- **`harness/validate.mjs` is the part worth keeping** whatever gets chosen. It
+  checks the things that look fine in a gallery and break the real game: a
+  missing `<g class="eye">` (which silently kills the everyone-watches-her-leave
+  moment), id collisions between the many copies that share a page, external
+  references, filters on the ordinary sprats, and unscoped `@keyframes`.
+- Every candidate confines its animation to the hero and the door — nothing
+  animates across all 14 fish — and every one honours `prefers-reduced-motion`.
+- Cost to watch if one is adopted: the hero runs 3.7–5.1KB of markup against
+  today's 1.2KB. One fish per board, so it is not real; the **ordinary** sprat
+  at 2.6–3.7KB is the one that is on screen fourteen times.
+
 ## Open thread: login and a leaderboard
 
 Asked for on 2026-08-17 after friends played. Assessed, not built:
