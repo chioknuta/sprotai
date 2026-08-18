@@ -88,7 +88,6 @@ const page = `<title>Šprotai Proof Sheets</title>
     margin-top:34px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
     display:grid; grid-template-columns:repeat(3,1fr);
   }
-  @media (max-width:760px){ .brief{grid-template-columns:1fr} }
   .brief > div{padding:20px 26px 22px; border-left:1px solid var(--rule-soft)}
   .brief > div:first-child{border-left:0; padding-left:0}
   .brief h3{
@@ -97,6 +96,15 @@ const page = `<title>Šprotai Proof Sheets</title>
   }
   .brief p{font-size:14px; color:var(--muted); line-height:1.5}
   .brief p b{color:var(--ink); font-weight:600}
+  /* Stacked, the vertical rules become indents on nothing — rule above instead.
+     This block must stay AFTER the .brief > div rules it overrides: same
+     specificity, so source order is what decides it. */
+  @media (max-width:760px){
+    .brief{grid-template-columns:1fr}
+    .brief > div,
+    .brief > div:first-child{border-left:0; border-top:1px solid var(--rule-soft); padding:16px 0 17px}
+    .brief > div:first-child{border-top:0}
+  }
 
   /* ---------- the size control ---------- */
   .toolbar{
@@ -132,7 +140,18 @@ const page = `<title>Šprotai Proof Sheets</title>
     display:flex; align-items:center; justify-content:center; min-height:100%;
     overflow:hidden;
   }
-  @media (max-width:860px){ .stage{border-right:0; border-bottom:1px solid var(--rule)} }
+  /* On a phone a 62px tin is wider than the screen. Let it scroll inside its
+     own stage rather than clipping the door off or pushing the page sideways. */
+  @media (max-width:860px){
+    .stage{
+      border-right:0; border-bottom:1px solid var(--rule);
+      overflow-x:auto; overflow-y:hidden; justify-content:flex-start;
+      padding:22px 22px 22px 18px; -webkit-overflow-scrolling:touch;
+    }
+    .wrap{padding:0 14px}
+    .info{padding:20px 18px 22px}
+    .toolbar{gap:9px}
+  }
   /* crop marks — this is a proof of artwork, and it is pinned to the game's ground */
   .stage::before,.stage::after{
     content:""; position:absolute; width:11px; height:11px; pointer-events:none;
@@ -159,10 +178,12 @@ const page = `<title>Šprotai Proof Sheets</title>
     color:var(--faint); margin-bottom:11px;
   }
   .cast{margin-top:24px; padding-top:20px; border-top:1px solid var(--rule-soft)}
+  /* .art is overflow:visible by design — horns, manes and sparkles reach past
+     the fish's own cell — so the strip needs headroom or they cross the label. */
   .castrow{
     display:flex; align-items:center; gap:16px; flex-wrap:wrap;
     background:var(--proof); border:1px solid var(--rule-soft); border-radius:3px;
-    padding:12px 14px;
+    padding:26px 14px 18px;
   }
 
   .ledger{margin-top:auto; padding-top:22px; font-size:14px; line-height:1.5}
@@ -364,5 +385,32 @@ for (const [id, c] of Object.entries(sizes)){
 }
 </script>`;
 
+/* Two outputs from one page body.
+
+   `out/gallery.html` is content only — no doctype, no <head> — because that is
+   what the Artifact publisher wants; it wraps the file itself.
+
+   `index.html` is the same body as a real document, so GitHub Pages can serve
+   it at /tools/design-lab/ and it can be opened on a phone. The viewport tag is
+   the whole point of the second file: without it mobile Safari lays the page
+   out at 980px and zooms out, which is precisely the judgement this page exists
+   to support. */
 await writeFile(join(SP, "out", "gallery.html"), page);
+
+const standalone = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Six candidate art directions for the ŠPROTAI sprats and the opened-tin door, drawn on the game's own boards.">
+</head>
+<body>
+${page}
+</body>
+</html>`;
+await writeFile(join(SP, "index.html"), standalone);
+
 console.log(join(SP, "out", "gallery.html"));
+console.log(join(SP, "index.html"));
