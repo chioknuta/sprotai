@@ -204,9 +204,9 @@
 
 <div class="wrap">
 <header>
-  <p class="eyebrow">Šprotai · art direction · six candidates</p>
-  <h1>Pick the tin.<br><span>And pick the way out of it.</span></h1>
-  <p class="standfirst">Two decisions, drawn six ways. Every sheet below is the <b>same real tin — number 12</b>, dealt by the game's own generator, so nothing here is a mock-up and nothing is flattered by a friendlier board.</p>
+  <p class="eyebrow">Šprotai · the four looks in the game, and three that were drawn</p>
+  <h1>Four tins.<br><span>Pick one in the game.</span></h1>
+  <p class="standfirst">The first four are <b>in the game now</b> — tap the palette in the tools row to switch, and the choice sticks. The last three were drawn and not shipped. Every sheet is the <b>same real tin — number 12</b>, dealt by the game's own generator, and the four shipped looks are read straight out of <code>index.html</code>, so this page cannot show art the game does not draw.</p>
 
   <div class="brief">
     <div>
@@ -218,8 +218,8 @@
       <p>Today it is an 11px sliver on the right rim. Every direction redraws it as <b>an opened tin</b> — lid sheared and wound back, mostly on a key.</p>
     </div>
     <div>
-      <h3>How to judge</h3>
-      <p>Set it to <b>Phone</b> and find the little one without hunting. That is the whole game, and it is where these separate hardest.</p>
+      <h3>Same puzzle</h3>
+      <p>A look is paint only. It cannot reach the generator, so <b>every player gets the same tin and the same par</b> whichever one they pick.</p>
     </div>
   </div>
 </header>
@@ -238,29 +238,31 @@
 <footer>
   <span>Tin 12 · par 7 · 11 sprats</span>
   <span>Boards from the shipping generator</span>
-  <span>The fish and the door are separable — you can mix two directions</span>
+  <span>Change it in the game: the palette button, next to sound</span>
 </footer>
 </div>
 
 <script>
 const DESIGNS = {};
 const TIN = {"t4":{"fish":[{"r":1,"c":0,"len":2,"dir":"R"},{"r":4,"c":3,"len":2,"dir":"R"},{"r":5,"c":3,"len":3,"dir":"L"},{"r":5,"c":1,"len":2,"dir":"R"},{"r":3,"c":2,"len":3,"dir":"R"},{"r":3,"c":0,"len":2,"dir":"D"},{"r":0,"c":2,"len":2,"dir":"R"},{"r":3,"c":5,"len":2,"dir":"D"},{"r":2,"c":1,"len":2,"dir":"U"},{"r":1,"c":5,"len":2,"dir":"U"},{"r":1,"c":4,"len":2,"dir":"D"},{"r":4,"c":1,"len":2,"dir":"L"}],"par":8,"band":"gentle"},"t12":{"fish":[{"r":2,"c":1,"len":2,"dir":"R"},{"r":1,"c":3,"len":2,"dir":"U"},{"r":1,"c":0,"len":3,"dir":"D"},{"r":4,"c":2,"len":2,"dir":"L"},{"r":3,"c":5,"len":2,"dir":"U"},{"r":5,"c":4,"len":2,"dir":"R"},{"r":3,"c":2,"len":2,"dir":"R"},{"r":0,"c":3,"len":3,"dir":"R"},{"r":4,"c":1,"len":2,"dir":"D"},{"r":1,"c":4,"len":2,"dir":"R"},{"r":0,"c":0,"len":2,"dir":"L"}],"par":7,"band":"steady"},"t40":{"fish":[{"r":1,"c":0,"len":2,"dir":"R"},{"r":1,"c":2,"len":2,"dir":"D"},{"r":3,"c":1,"len":2,"dir":"D"},{"r":3,"c":3,"len":2,"dir":"L"},{"r":0,"c":2,"len":3,"dir":"R"},{"r":4,"c":3,"len":3,"dir":"R"},{"r":1,"c":3,"len":2,"dir":"U"},{"r":5,"c":2,"len":3,"dir":"L"},{"r":2,"c":5,"len":2,"dir":"U"},{"r":0,"c":0,"len":2,"dir":"L"},{"r":3,"c":0,"len":3,"dir":"U"},{"r":3,"c":2,"len":2,"dir":"D"}],"par":17,"band":"tricky"}};
-const NOTES = {"00-current":{"wins":"It works, it's warm, and it has never confused anyone about which sprat is which.","costs":"The way out is an 11px nub that disappears on a phone, and the little one is a pink copy of the same fish — nothing about her says <em>special</em>."},"riso":{"wins":"The fastest hero to find of all six, and the only board where counting a sprat's length stays effortless — flat inks, hard edges, no soft falloff. The most distinctive thing here; it looks like a printed poster rather than a game asset.","costs":"The door is framed in her exact fluorescent pink, so at the one moment the game most wants you to watch her — swimming out — she and the opening share an ink."},"deco":{"wins":"The best-made object in the review. The lid wound onto a real winding key is the most convincing <em>opened tin</em> anyone drew, and the whole thing could be the game's identity rather than a skin.","costs":"The hole itself is a thin dark slot that's easy to miss on a phone, and the gilded hero reads expensive rather than magical — her eye is a cut gem, so she's the one sprat with no pupil."},"neon":{"wins":"You can see the way out from across the room, and the hero actually emits light — the fastest find of the six by a distance, and the most dramatic board.","costs":"It trades the warm oily tin for a dark aquarium, and a glow is the first thing a compressed screenshot throws away — which is how this game spreads."},"holo":{"wins":"The everyday sprats are the best-looking fish here, and the most truthful — a real Baltic sprat is exactly this oil-slick chrome.","costs":"The hero is pale against warm oil, so she takes about a second to find; she's the one fish in the set that looks less crafted than her own extras."},"paper":{"wins":"A white cut-edge around every fish makes length and lane effortless to read — the calmest, most legible board of the six, and the hero has the best face.","costs":"She's carried by saturation, and saturation is the first thing to die in sunlight; her silhouette then has to find her on its own."},"plush":{"wins":"The most literal answer to <em>unicorny</em> — spiral horn, rainbow felt mane, heart tail, stitched seams. The funniest object anyone drew, and the one board that looks like a toy you would want.","costs":"The warm bellies sit close to the oil, so at phone size the sprats sink into the board — the least legible of the six, and the hero is found by her colour rather than her shape."}};
+const NOTES = {"riso":{"wins":"The fastest hero to find of all six, and the only board where counting a sprat's length stays effortless — flat inks, hard edges, no soft falloff. The most distinctive thing here; it looks like a printed poster rather than a game asset.","costs":"The door is framed in her exact fluorescent pink, so at the one moment the game most wants you to watch her — swimming out — she and the opening share an ink. <b>Not in the game</b> — kept here as a drawn alternative."},"deco":{"wins":"The best-made object in the review. The lid wound onto a real winding key is the most convincing <em>opened tin</em> anyone drew, and the whole thing could be the game's identity rather than a skin.","costs":"The hole itself is a thin dark slot that's easy to miss on a phone, and the gilded hero reads expensive rather than magical — her eye is a cut gem, so she's the one sprat with no pupil."},"neon":{"wins":"You can see the way out from across the room, and the hero actually emits light — the fastest find of the six by a distance, and the most dramatic board.","costs":"It trades the warm oily tin for a dark aquarium, and a glow is the first thing a compressed screenshot throws away — which is how this game spreads."},"holo":{"wins":"The everyday sprats are the best-looking fish here, and the most truthful — a real Baltic sprat is exactly this oil-slick chrome.","costs":"The hero is pale against warm oil, so she takes about a second to find; she's the one fish in the set that looks less crafted than her own extras. <b>Not in the game</b> — kept here as a drawn alternative."},"paper":{"wins":"A white cut-edge around every fish makes length and lane effortless to read — the calmest, most legible board of the six, and the hero has the best face.","costs":"She's carried by saturation, and saturation is the first thing to die in sunlight; her silhouette then has to find her on its own. <b>Not in the game</b> — kept here as a drawn alternative."},"plush":{"wins":"The most literal answer to <em>unicorny</em> — spiral horn, rainbow felt mane, heart tail, stitched seams. The funniest object anyone drew, and the one board that looks like a toy you would want.","costs":"The warm bellies sit close to the oil, so at phone size the sprats sink into the board — the least legible of the six, and the hero is found by her colour rather than her shape."},"classic":{"wins":"Warm, legible, and the look the game has always had — it stays the default, so nobody arriving from a link meets a stranger.","costs":"It is the plainest of the four, and the little one is still a pink version of the same fish rather than a creature of her own."}};
+const SHIPPED = ["classic","deco","neon","plush"];
 const SPIN = { R:"", L:"scaleX(-1)", D:"rotate(90deg)", U:"rotate(-90deg)" };
 const W = 6, H = 6;
 </script>
 <script>
-/* The design that ships today — the control. */
-DESIGNS["00-current"] = {
-  name: "Current (shipping today)",
-  blurb: "the control — what the game looks like right now",
+const SKINS = {
+  classic: {
+  name: "Classic",
+  blurb: "smoked blue sprats in honey oil",
+  swatch: "linear-gradient(160deg,#f0bd6d,#dc9c44)",
   css: `
-  .dz-00-current .notch{
+  [data-skin="classic"] .notch{
     position:absolute; left:100%; width:11px; border-radius:0 4px 4px 0;
     top:calc(var(--top) + 4px); height:calc(var(--cell) - 8px);
     background:linear-gradient(90deg,#dc9c44,#f8dfae);
   }
-  .dz-00-current .notch::after{
+  [data-skin="classic"] .notch::after{
     content:""; position:absolute; right:-8px; top:50%; transform:translateY(-50%);
     border:6px solid transparent; border-left-color:#e8834a88;
   }`,
@@ -301,8 +303,951 @@ DESIGNS["00-current"] = {
   ${hero ? `<path d="M ${w*0.28} 28 l 3.5 -8 l 3.5 8 l 8 3.5 l -8 3.5 l -3.5 8 l -3.5 -8 l -8 -3.5 Z" fill="#fff6b8"/>` : ""}
 </svg>`;
   }
-};
+},
 
+  deco: {
+  name:  "Tin Label 1936",
+  blurb: "sea-teal lacquer, gold engraving, one gilded sprat",
+  swatch: "linear-gradient(160deg,#136068,#05262d)",
+
+  css: `
+  /* ---- the tin: aged brass frame, dark lacquered teal oil ---- */
+  [data-skin="deco"] .tin{
+    background:linear-gradient(145deg,#fbf1dc 0%,#cfb175 22%,#8b6c37 44%,#f0e0b3 58%,#a8874a 78%,#6a4f22 100%);
+    box-shadow:0 14px 28px #4a351240, inset 0 1px 0 #fff8e6;
+  }
+  [data-skin="deco"] .tin::before{                  /* engraved double keyline in the rim */
+    content:""; position:absolute; inset:4px; border-radius:16px;
+    border:1.5px solid #5d4416aa; box-shadow:inset 0 0 0 1.5px #fbeec4bb;
+    pointer-events:none;
+  }
+  [data-skin="deco"]{--bub-tint:#5fd6d055}
+  [data-skin="deco"] .tin-inner{
+    background:radial-gradient(130% 100% at 24% 6%, #1c6a70 0%, #115059 34%, #0a3941 68%, #05262d 100%);
+    box-shadow:inset 0 3px 16px #00000075, inset 0 0 0 1px #d8bb7a4d;
+  }
+  [data-skin="deco"] .grid i{ background:#f0dca61c; }
+
+  /* ---- the door: the rim punched clean out at the hero's row, and the
+         strip that was there torn off and wound onto the key ---- */
+  [data-skin="deco"] .mouth{                        /* the hole: no rim, the page beyond */
+    position:absolute; left:calc(100% - 3px); top:var(--top);
+    width:14px; height:var(--cell);
+    background:linear-gradient(90deg,#01141a 0%,#04222a 30%,#0b2b2c 44%,#2e2712 50%,
+                                      #f6e0a8 55%,#fffaee 58%,#fdf6e9 63%,#fdf6e9 100%);
+    box-shadow:inset 0 2px 0 #fff6da, inset 0 -2px 0 #fff6da,
+               inset 0 3.5px 0 #6b4d17, inset 0 -3.5px 0 #6b4d17,
+               inset 0 5px 0 #a9853d99, inset 0 -5px 0 #a9853d99;
+  }
+  [data-skin="deco"] .wash{                         /* daylight coming in through the hole */
+    position:absolute; left:calc(100% - var(--cell) * 1.3);
+    top:calc(var(--top) - var(--cell) * 0.36); width:calc(var(--cell) * 1.3);
+    height:calc(var(--cell) * 1.72);
+    clip-path:polygon(100% 32%, 100% 68%, 0% 97%, 0% 3%);
+    background:linear-gradient(270deg,#ffe9b278 0%,#ffdf9c26 26%,#ffdf9c00 66%);
+  }
+  [data-skin="deco"] .lid{                          /* the torn strip, rolled onto the key */
+    --s: clamp(30px, var(--cell), 42px);
+    position:absolute; left:calc(100% - 1px);
+    top:calc(var(--top) - var(--s) * 1.2);
+    width:calc(var(--s) * 1.34); height:calc(var(--s) * 1.2); overflow:visible;
+  }
+  [data-skin="deco"] .lid.dn{                       /* hero on row 0: roll it the other way */
+    top:calc(var(--top) + var(--cell)); transform:scaleY(-1);
+  }
+  [data-skin="deco"] .lid svg{ width:100%; height:100%; display:block; overflow:visible }
+
+  /* ---- the hero's foil gleam: her one animation, no filters ---- */
+  [data-skin="deco"] .gleam{ animation:deco-gleam 6s linear infinite; animation-delay:-1.9s }
+  @keyframes deco-gleam{
+    0%,10%  { transform:translateX(-90px); opacity:0 }
+    16%     { opacity:1 }
+    64%     { opacity:1 }
+    70%,100%{ transform:translateX(var(--gx,360px)); opacity:0 }
+  }
+  @media (prefers-reduced-motion: reduce){
+    [data-skin="deco"] .gleam{ animation:none; transform:translateX(45%); opacity:.5 }
+  }`,
+
+  door(g){
+    /* one strip of tin: torn out of the rim at the hero's row, run up the
+       side and wound into a tight coil on the key's shaft. Turns just touch,
+       so the dark outline shows between them and it reads as rolled metal. */
+    const COIL = "M46 81 A34 34 0 0 1 12 47 A34 34 0 0 1 46 13"
+      + " A31 31 0 0 1 77 47 A27 27 0 0 1 46 74"
+      + " A23 23 0 0 1 23 47 A19 19 0 0 1 46 28 A15 15 0 0 1 61 47 A11 11 0 0 1 46 58 A7 7 0 0 1 39 47";
+    const TAIL = "M54 68 C48 86 38 98 31 120 L3 120 C10 96 19 84 24 60 Z";
+    const BOW  = "M114 27 L129 37 L129 58 L114 68 L99 58 L99 37 Z";
+    const dn = g && g.row === 0 ? " dn" : "";
+    return `
+<div class="wash"></div>
+<div class="mouth"></div>
+<div class="lid${dn}"><svg viewBox="0 0 134 120" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="deco-brass" x1="0" y1="0" x2=".25" y2="1">
+      <stop offset="0" stop-color="#fff9e8"/><stop offset=".22" stop-color="#f2daa6"/>
+      <stop offset=".48" stop-color="#c69d45"/><stop offset=".7" stop-color="#8a6626"/>
+      <stop offset=".88" stop-color="#e0c281"/><stop offset="1" stop-color="#7a5920"/>
+    </linearGradient>
+    <linearGradient id="deco-strip" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6dd"/><stop offset=".4" stop-color="#d6b263"/>
+      <stop offset=".75" stop-color="#8b6829"/><stop offset="1" stop-color="#e6cd91"/>
+    </linearGradient>
+  </defs>
+  <path d="${TAIL}" fill="url(#deco-strip)" stroke="#4a3410" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M25 59 C20 80 13 96 6 118" fill="none" stroke="#fff6de" stroke-width="2.6" opacity=".85"/>
+  <rect x="40" y="40" width="72" height="15" rx="6" fill="#4a3410"/>
+  <rect x="42" y="42" width="70" height="11" rx="4.5" fill="url(#deco-brass)"/>
+  <path d="${BOW}" fill="none" stroke="#4a3410" stroke-width="16" stroke-linejoin="round"/>
+  <path d="${BOW}" fill="none" stroke="url(#deco-brass)" stroke-width="11" stroke-linejoin="round"/>
+  <circle cx="46" cy="47" r="42" fill="#63481a"/>
+  <path d="${COIL}" fill="none" stroke="#4a3410" stroke-width="18" stroke-linecap="round"/>
+  <path d="${COIL}" fill="none" stroke="url(#deco-brass)" stroke-width="13.5" stroke-linecap="round"/>
+  <path d="${COIL}" fill="none" stroke="#fff8e4" stroke-width="2.2" stroke-linecap="round"
+        opacity=".55" transform="translate(-2,-4)"/>
+</svg></div>`;
+  },
+
+  sprat(len, hero){
+    const w = len * 100, r = n => Math.round(n);
+    const id = "deco-" + (hero ? "h" : "n") + len;
+    const X = w - 5;      // snout tip — the head is a fixed size at both lengths,
+    const S = w - 80;     // back peak      so a 3-cell sprat is a LONGER fish,
+    const P = 46;         // peduncle       not a bigger one
+    const L = S - P;
+
+    const B = `M${X} 47C${X-14} 31 ${X-34} 20 ${X-58} 19C${r(S-L*.15)} 17 ${r(P+L*.35)} 24 ${P} 42`
+            + `L${P} 58C${r(P+L*.35)} 76 ${r(S-L*.15)} 83 ${X-58} 81C${X-34} 80 ${X-14} 69 ${X} 53Z`;
+
+    const d1=r(P+L*.34), d2=r(P+L*.74), dA=r(P+L*.34+L*.128), pv=r(P+L*.72);
+    const a1=r(P+L*.12), a2=r(P+L*.46), aA=r(P+L*.12+L*.116);
+    const TAIL = hero
+      ? `M48 40L3 2L23 50L3 98L48 60Z`          // hero: deep-forked, her own silhouette
+      : `M48 40L5 6Q27 50 5 94L48 60Z`;
+    const DORS = `M${d2} 26L${dA} 11Q${r(d1+(dA-d1)*.35)} 20 ${d1} 30Z`;
+    const ANAL = `M${a2} 74L${aA} 89Q${r(a1+(aA-a1)*.35)} 81 ${a1} 70Z`;
+    const PELV = `M${pv} 74L${pv-5} 87Q${pv-10} 83 ${pv-16} 72Z`;
+    const PECT = `M${X-46} 53C${X-56} 64 ${X-64} 73 ${X-74} 80C${X-75} 69 ${X-69} 60 ${X-43} 57Z`;
+    const SMALL = DORS + ANAL + PELV;   // the three small fins as one subpathed d
+    const fan = (x,y,p) => p.map(q => `M${x} ${y}L${q[0]} ${q[1]}`).join("");
+
+    const gold = hero ? "#8a5510" : "#e8cd93";
+    /* Fins are the length information, so they are lit like an engraver lights
+       them: the membrane runs PALE at its outer margin — the exact contour that
+       has to separate from the oil — and drops to body-teal where it meets the
+       fish. The gradient is objectBoundingBox, so it rotates with the strip and
+       the light stays on the outer edge in all four directions. */
+    const finF = `url(#${id}-ft)`;               // the TAIL only — it carries length
+    const finP = hero ? "#f4aab9" : "#2b7570";   // pectoral lies on the pale belly: stays mid
+    const finM = hero ? "#f0a3b4" : "#2f7a74";   // dorsal/anal/pelvic: subordinate to the tail
+    const finR = hero ? "#cf8394" : "#e9cf98";
+    const finS = hero ? "#b06d78" : "#f6e2b4";   // the outer contour, and it carries weight
+
+    const stops = hero
+      ? `<stop offset="0" stop-color="#fff6d5"/><stop offset=".14" stop-color="#f9de8c"/>`
+      + `<stop offset=".32" stop-color="#f1b62c"/><stop offset=".5" stop-color="#dd9508"/>`
+      + `<stop offset=".66" stop-color="#efb936"/><stop offset=".84" stop-color="#f9dd8d"/>`
+      + `<stop offset="1" stop-color="#b0720c"/>`
+      : `<stop offset="0" stop-color="#0b333a"/><stop offset=".24" stop-color="#155258"/>`
+      + `<stop offset=".5" stop-color="#22706c"/><stop offset=".74" stop-color="#3e9280"/>`
+      + `<stop offset=".9" stop-color="#7fb08d"/><stop offset="1" stop-color="#bfcb92"/>`;
+
+    const finStops = hero
+      ? `<stop offset="0" stop-color="#ffe4ee"/><stop offset=".36" stop-color="#f9bccb"/>`
+      + `<stop offset="1" stop-color="#e28ea6"/>`
+      : `<stop offset="0" stop-color="#dbe8bf"/><stop offset=".26" stop-color="#9cc59e"/>`
+      + `<stop offset=".56" stop-color="#3f8380"/><stop offset="1" stop-color="#1f5e66"/>`;
+
+    const E = X - 40;     // eye centre
+
+    return `<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true"`
++ ` stroke-linejoin="round" stroke-linecap="round"><defs>`
++ `<linearGradient id="${id}-g" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>`
++ `<linearGradient id="${id}-ft" x1="0" y1="0" x2="1" y2="0">${finStops}</linearGradient>`
++ `<pattern id="${id}-s" width="16" height="12" patternUnits="userSpaceOnUse">`
++ `<path d="M0 12Q8 2 16 12M-8 6Q0 -4 8 6M8 6Q16 -4 24 6" fill="none" stroke="${hero?"#a9720f":"#eddaab"}" stroke-width="1.25" opacity="${hero?.2:.55}"/></pattern>`
++ `<clipPath id="${id}-c"><path d="${B}"/></clipPath>`
++ `<clipPath id="${id}-f"><path d="${TAIL}"/><path d="${DORS}"/><path d="${ANAL}"/><path d="${PELV}"/><path d="${PECT}"/></clipPath>`
++ (hero ? `<linearGradient id="${id}-hn" x1="0" y1="1" x2=".35" y2="0">`
++ `<stop offset="0" stop-color="#ffd3df"/><stop offset=".45" stop-color="#fff9f0"/>`
++ `<stop offset="1" stop-color="#ffffff"/></linearGradient>`
++ `<linearGradient id="${id}-l" x1="0" y1="0" x2="1" y2="0">`
++ `<stop offset="0" stop-color="#fffdf0" stop-opacity="0"/><stop offset=".34" stop-color="#fffdf0" stop-opacity=".2"/>`
++ `<stop offset=".5" stop-color="#fffdf0" stop-opacity=".72"/><stop offset=".66" stop-color="#fffdf0" stop-opacity=".2"/>`
++ `<stop offset="1" stop-color="#fffdf0" stop-opacity="0"/></linearGradient>` : ``)
++ `</defs>`
+
+/* The counter. The oil goes dark right behind every trailing fin, so the pale
+   margin has something to be pale AGAINST wherever the tin's own gradient
+   happens to put it. Widest behind the tail, which is the one that carries
+   length; a hair behind the small fins, which only have to read as fins. */
++ `<path d="${SMALL}" fill="#03202a" stroke="#03202a" stroke-width="3.6"/>`
++ `<path d="${TAIL}" fill="#03202a" stroke="#03202a" stroke-width="5.4"/>`
++ `<path d="${SMALL}" fill="${finM}" stroke="${finS}" stroke-width="2.2"/>`
++ `<path d="${TAIL}" fill="${finF}" stroke="${finS}" stroke-width="2.8"/>`
+
++ `<path d="${B}" fill="url(#${id}-g)" stroke="${hero?"#7a4a0b":"#ebd29c"}" stroke-width="2.6"/>`
+
++ `<g clip-path="url(#${id}-c)">`
++ `<rect width="${w}" height="100" fill="url(#${id}-s)"/>`
++ `<path d="M${P+12} 60C${r(P+L*.4)} 80 ${S} 84 ${X-40} 72" fill="none" stroke="${hero?"#fff2cb":"#eef0d2"}" stroke-width="12" opacity="${hero?.22:.38}"/>`
++ `<path d="M${P+12} 46C${r((P+S)/2)} 39 ${S} 37 ${X-44} 39" fill="none" stroke="${gold}" stroke-width="1.8" stroke-dasharray="5 6" opacity=".6"/>`
++ (hero ? `<path class="gleam" style="--gx:${w+95}px" d="M0 -8L46 -8L24 108L-22 108Z" fill="url(#${id}-l)"/>` : ``)
++ `</g>`
+
++ `<path d="${PECT}" fill="${finP}" fill-opacity="${hero?.72:.94}" stroke="${hero?"#d295a3":gold}" stroke-width="${hero?1.2:1.5}"/>`
++ `<g clip-path="url(#${id}-f)" fill="none" stroke="${finR}" stroke-width="1.5" opacity=".92">`
++ fan(54,50,[[2,2],[4,20],[10,34],[2,98],[4,80],[10,66]])
++ fan(d1-2,36,[[dA,0],[r((dA+d2)/2),6],[d2,20]])
++ fan(a1-2,64,[[aA,100],[r((aA+a2)/2),94],[a2,80]])
++ fan(X-45,56,[[X-78,84],[X-72,76],[X-64,67]])
++ `</g>`
+
++ `<path d="M${X-42} 22C${X-56} 40 ${X-56} 60 ${X-42} 78" fill="none" stroke="${gold}" stroke-width="1.8" opacity=".75"/>`
++ `<path d="M${X-3} 51q-7 8 -19 7" fill="none" stroke="${gold}" stroke-width="2.3" opacity=".95"/>`
+
++ (hero
+  ? `<path d="M${X-32} 29L${X-4} 2L${X-18} 34Z" fill="url(#${id}-hn)" stroke="#7a4a0b" stroke-width="1.8"/>`
+  + `<g fill="none" stroke="#c26f80" stroke-width="1.5" opacity=".95">`
+  + `<path d="M${X-25} 22L${X-15} 27"/><path d="M${X-18} 14L${X-10} 19"/><path d="M${X-12} 7L${X-6} 11"/></g>`
+  + `<path d="M${X-29} 28L${X-6} 5" fill="none" stroke="#fffdf6" stroke-width="2.4" opacity=".95"/>` : ``)
+
++ `<circle cx="${E}" cy="40" r="11.8" fill="${hero?"#fff6df":"#f2e9cd"}" stroke="${hero?"#a9720f":"#c9a860"}" stroke-width="2"/>`
++ `<g class="eye">`
++ (hero
+  ? `<polygon points="${E},33 ${E+6},36 ${E+6},44 ${E},47 ${E-6},44 ${E-6},36" fill="#e0546e"/>`
+  + `<polygon points="${E},40 ${E},33 ${E-6},36" fill="#ffc6d3"/>`
+  + `<polygon points="${E},40 ${E-6},36 ${E-6},44" fill="#f28ba1"/>`
+  + `<polygon points="${E},40 ${E+6},36 ${E+6},44" fill="#c13f63"/>`
+  + `<polygon points="${E},40 ${E+6},44 ${E},47" fill="#96214a"/>`
+  + `<circle cx="${E-2.5}" cy="37" r="1.7" fill="#fff"/>`
+  : `<circle cx="${E}" cy="40" r="6.4" fill="#bf8d33"/>`
+  + `<circle cx="${E}" cy="40" r="4.2" fill="#0e2027"/>`
+  + `<circle cx="${E-2.4}" cy="37.3" r="2" fill="#fff" opacity=".95"/>`)
++ `</g></svg>`;
+  }
+},
+
+  neon: {
+  name: "Night Catch",
+  blurb: "black brine, cyan rim-light, one fish that glows",
+  swatch: "linear-gradient(160deg,#0c2b34,#010709)",
+
+  css: `
+  /* TIN: gunmetal frame, cold. */
+  [data-skin="neon"] .tin{
+    background:linear-gradient(145deg,#8b99a6,#333d47 36%,#5f6d7a 54%,#1e262e);
+    box-shadow:0 16px 34px #06121a55, inset 0 1px 0 #ffffff3d;
+  }
+  /* TIN: the oil goes deep — teal-black brine with a faint diagonal sheen.
+     Pulled a stop darker than the first cut: the brine has to stay clearly
+     BELOW every part of a fish in value, or the tails sink into it. */
+  [data-skin="neon"]{--bub-tint:#7fe9ff4d}
+  [data-skin="neon"] .tin-inner{
+    background:
+      linear-gradient(116deg, transparent 26%, #7fe9ff10 43%, #7fe9ff05 52%, transparent 64%),
+      radial-gradient(135% 95% at 20% 8%, #0c2b34 0%, #071d26 42%, #041014 76%, #010709 100%);
+    box-shadow:inset 0 3px 16px #000000c2, inset 0 0 0 1px #6fe6ff1f;
+  }
+  /* TIN: lane lines. Still faint, but they have to be countable — this is a
+     game about how many cells long a thing is. */
+  [data-skin="neon"] .grid i{ background:#7fe9ff1f; }
+
+  /* the hero paints over her neighbours so her glow can light them.
+     (real stylesheet: the hero's .fish element needs this z-index) */
+  [data-skin="neon"] .fish.hero{ z-index:5; }
+
+  /* ---------- THE DOOR: the lid, torn at her lane and peeled back ---------- */
+  /* daylight landing on the brine just inside the gap */
+  [data-skin="neon"] .neon-spill{
+    position:absolute; right:-6px;
+    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*1.6);
+    width:calc(var(--cell)*2.3); height:calc(var(--cell)*3.2);
+    background:radial-gradient(closest-side ellipse at 100% 50%,
+      rgba(226,255,255,.66) 0%, rgba(140,233,255,.32) 30%,
+      rgba(60,172,216,.12) 56%, rgba(0,0,0,0) 76%);
+  }
+  /* the shaft of light through the opening, widening as it enters */
+  [data-skin="neon"] .neon-beam{
+    position:absolute; right:-6px;
+    top:calc(var(--top) - var(--cell)*0.42); height:calc(var(--cell)*1.84);
+    width:calc(var(--cell)*1.5);
+    background:linear-gradient(270deg, rgba(240,255,255,.62), rgba(150,236,255,.17) 42%, rgba(0,0,0,0) 88%);
+    clip-path:polygon(100% 32%, 100% 68%, 0 98%, 0 2%);
+    -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 26%, #000 74%, transparent 100%);
+    mask-image:linear-gradient(180deg, transparent 0%, #000 26%, #000 74%, transparent 100%);
+  }
+  /* the gap itself: a bright cut clean through the rim */
+  [data-skin="neon"] .neon-gap{
+    position:absolute; left:calc(100% - 6px); width:21px;
+    background:linear-gradient(90deg,#8fe4ff 0%,#ffffff 30%,#dcf8ff 62%,#79dcff 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
+    mask-image:linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
+    box-shadow:0 0 14px 5px rgba(198,248,255,.72), 0 0 46px 20px rgba(90,206,244,.32),
+               0 0 90px 34px rgba(60,170,220,.16);
+  }
+  /* the light blasting back OUT through the torn lane, so the cream page
+     between the two flaps is part of the beam and not a bright lozenge.
+     --oh is its height in cells, centred on her lane; door() trims it on the
+     rows where there is no board to splay over (see there). Its last stop is
+     transparent, but the ramp is still visible at ~94% of the radius, so this
+     ellipse is the outermost thing the door paints — it, not the metal, is
+     what decides how far above and below the oil the door reaches. */
+  [data-skin="neon"] .neon-out{
+    position:absolute; left:calc(100% + 2px); --oh:2;
+    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*var(--oh)/2);
+    width:54px; height:calc(var(--cell)*var(--oh));
+    background:radial-gradient(farthest-side ellipse at 0% 50%,
+      rgba(160,238,255,.88) 0%, rgba(86,208,247,.52) 30%,
+      rgba(50,172,224,.2) 58%, rgba(40,150,205,0) 100%);
+  }
+  /* the two peeled halves of the lid. Width is fixed px (like the 11px rim —
+     it is a sheet of metal, not a grid unit); height tracks the cell so the
+     door never dwarfs the board on a small phone. */
+  [data-skin="neon"] .neon-panel{
+    position:absolute; left:calc(100% - 12px); width:53px; overflow:visible;
+  }
+  /* top/height are set inline by door(): the peel is clamped to the metal that
+     actually exists above and below the lane, so on row 0 or row 5 a flap is
+     shortened or dropped instead of floating off the board. */
+  [data-skin="neon"] .neon-panel.b{ transform:scaleY(-1); transform-origin:50% 50%; }
+
+  /* ---------- the hero's one animation ---------- */
+  @keyframes neon-breathe{ 0%,100%{opacity:.6} 50%{opacity:1} }
+  [data-skin="neon"] .neon-pulse{ animation:neon-breathe 3.6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce){
+    [data-skin="neon"] .neon-pulse{ animation:none; opacity:.85 }
+  }`,
+
+  door(g){
+    // the lid, torn across her lane and bent back off the rim: a bowed sheet
+    // of metal, its far edge rolled into a bead, its torn edge ragged, creased
+    // dark where it folds against the rim. Mirrored below the gap, so the peel
+    // works on any row and her lane straight out through it is always clear.
+    const PH = 1.06, r3 = n => Math.round(n * 1000) / 1000;
+    const row = g && g.row || 0, rows = g && g.H || 6;
+    const hT = Math.min(PH, row), hB = Math.min(PH, rows - row - 1);
+    // the cut only overhangs the lane where a peel exists to chew its edge
+    const oT = r3(Math.min(.13, hT)), oB = r3(Math.min(.13, hB));
+    // ...and the halo outside the gap splays only as far as there is peel to
+    // splay off. Two cells of it, centred on her lane, is 25px past the oil on
+    // row 0 and row 5 — over the date line and over the Moves row — because on
+    // those rows one flap is missing and the glow was still drawn as if both
+    // were there. Same rule as hT/hB: clamp it to the metal that exists.
+    const oh = (hT < 1 || hB < 1) ? 1.7 : 2;
+    const panel = (cls, h, top) => h < .12 ? "" : `
+<svg class="neon-panel ${cls}" style="top:${top};height:calc(var(--cell)*${h})"
+     viewBox="0 0 53 56" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M9 58 L11 7 C25 3 40 5 49 11 C52 24 52 42 49 56
+           L44 51 C37 55 33 49 26 52 C20 54 16 50 12 57 Z"
+        fill="#02080c" opacity=".4"/>
+  <path d="M5 55 L7 4 C21 0 36 2 45 8 C48 21 48 39 45 53
+           L40 48 C33 52 29 46 22 49 C16 51 12 47 8 54 Z"
+        fill="url(#neon-sheet)"/>
+  <path d="M45 53 L40 48 C33 52 29 46 22 49 C16 51 12 47 8 54"
+        fill="none" stroke="#cfeaf7" stroke-width="1.3" stroke-linejoin="round" opacity=".55"/>
+  <path d="M7 4 C21 0 36 2 45 8" fill="none" stroke="#040a0f" stroke-width="1.8" opacity=".75"/>
+  <path d="M5 55 L7 4" fill="none" stroke="#02070b" stroke-width="3.4" opacity=".85"/>
+  <path d="M9.6 5 L7.6 54" fill="none" stroke="#bcd6e8" stroke-width="1.4" opacity=".42"/>
+  <path d="M45 8 C48 21 48 39 45 53" fill="none" stroke="url(#neon-bead)"
+        stroke-width="6.4" stroke-linecap="round"/>
+  <path d="M43.4 11 C46 21 46 38 43.6 49.4" fill="none" stroke="#ffffff"
+        stroke-width="1.7" stroke-linecap="round" opacity=".88"/>
+  <path d="M26 2.6 C28.6 20 28.4 38 26.2 51" fill="none" stroke="#e6f6ff"
+        stroke-width="2.6" stroke-linecap="round" opacity=".3"/>
+</svg>`;
+    return `
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="neon-sheet" x1="0" y1="0" x2="1" y2=".16">
+      <stop offset="0" stop-color="#0a1218"/>
+      <stop offset=".38" stop-color="#1a2630"/>
+      <stop offset=".56" stop-color="#57697a"/>
+      <stop offset=".63" stop-color="#dcefff"/>
+      <stop offset=".71" stop-color="#2f3d48"/>
+      <stop offset="1" stop-color="#070e13"/>
+    </linearGradient>
+    <linearGradient id="neon-bead" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="51" y2="0">
+      <stop offset="0" stop-color="#080e13"/>
+      <stop offset=".42" stop-color="#e6f5ff"/>
+      <stop offset="1" stop-color="#141d25"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div class="neon-spill"></div>
+<div class="neon-beam"></div>
+<div class="neon-gap" style="top:calc(var(--top) - var(--cell)*${oT});height:calc(var(--cell)*${r3(1 + oT + oB)})"></div>` + panel("t", hT, `calc(var(--top) - var(--cell)*${hT})`)
+      + panel("b", hB, "calc(var(--top) + var(--cell))")
+      + `<div class="neon-out" style="--oh:${oh}"></div>`;
+  },
+
+  sprat(len, hero){
+    const w = len * 100;
+    const id = "neon-" + (hero ? "h" : "n") + len;
+    const r = n => Math.round(n * 10) / 10;
+    // head and tail are FIXED in user units; only the middle stretches — so a
+    // 3-cell sprat reads as longer, never as bigger.
+    const x0 = 24, x1 = w - 5, L = x1 - x0, mx = r(x0 + L * 0.38);
+    const P = p => r(x0 + L * p);
+
+    const C = hero
+      ? { top:"#fff3fb", mid:"#ff4fb8", low:"#e2118f", deep:"#7d0757",
+          rim:"#ffffff", fin:"#ff7ccd", finDeep:"#a20d78", gill:"#ffd9f2",
+          sclera:"#fff2fb", iris:"#ff3fae", warm:"#fff0a8" }
+      // the ordinary sprat is a CLOSED shape, not an edge: every stop here,
+      // including the darkest belly and the tail fan, sits above the brine.
+      : { top:"#6fb8ca", mid:"#1f5567", low:"#174350", deep:"#153a47",
+          rim:"#b4faff", fin:"#2b6274", finDeep:"#1a4453", gill:"#7fe0f2",
+          warm:"#ffb567" };
+    const ink = hero ? "#3d0129" : "#03131b";
+    const sclera = hero ? "#fff2fb" : "#e2f8ff";
+    const iris = hero ? "#ff3fae" : "#2f7f95";
+
+    // blunt caudal peduncle: the body ends in a waist, not a taper
+    const body =
+      `M ${x0} 38 C ${P(.05)} 22 ${P(.20)} 9 ${mx} 8.5` +
+      ` C ${P(.60)} 7.6 ${r(x1-56)} 19 ${x1} 51`;
+
+    // belly bounce: its lower edge IS the body's own ventral curve, so warm
+    // light can never leak outside the silhouette
+    const vent =
+      ` C ${r(x1-56)} 83 ${P(.60)} 93.4 ${mx} 92.5` +
+      ` C ${P(.20)} 92 ${P(.05)} 79 ${x0} 63`;
+    const belly =
+      `M ${x1} 51` + vent +
+      ` L ${x0+3} 57 C ${P(.11)} 76 ${P(.34)} 84 ${mx} 84.5` +
+      ` C ${P(.60)} 85 ${r(x1-54)} 76 ${x1} 51 Z`;
+
+    // HERO: fan tucked 16 units under the body. She is lit from inside and
+    // sits on her own glow, so a tucked fan still reads as hers.
+    const tail = `M ${x0+16} 50 L 3 5 Q ${x0+4} 50 3 95 Z`;
+
+    // ORDINARY SPRAT: the fan is not a separate shape tucked under the body,
+    // it is the far end of ONE closed silhouette — body, peduncle and fork in a
+    // single outline. Tucked-and-separately-outlined read as a detached lens
+    // floating in the seam between two fish; this cannot.
+    // The fork is deliberately narrower than the body and deeply notched: a fan
+    // as tall as the body made two tails meeting end to end read as one fat
+    // lozenge lying across the seam, which is the exact confusion to avoid.
+    const fan = `L 4 86 Q ${x0+9} 50 4 14 Z`;                // vent-end → fork
+    const fanFill = `M ${x0} 38 L 4 14 Q ${x0+9} 50 4 86 L ${x0} 63 Z`;
+    const sil = hero ? `${body}${vent} Z` : `${body}${vent} ${fan}`;
+
+    // dorsal + anal fins, unchanged and still drawn under the body. Tried
+    // moving them on top so the dark moat would stop eating them: at 38px they
+    // came back as arcs INSIDE the fish that read as scratches, which is worse
+    // than a clean closed sprat. Left where they were.
+    const fy = 0, ay = 100;
+    const fins =
+      `<path d="M ${r(mx-26)} 17 C ${r(mx-12)} ${fy} ${r(mx+8)} ${fy+1} ${r(mx+32)} 15 Z" fill="url(#${id}-f)"/>` +
+      `<path d="M ${r(mx-26)} 17 C ${r(mx-12)} ${fy} ${r(mx+8)} ${fy+1} ${r(mx+32)} 15" fill="none"` +
+      ` stroke="${C.rim}" stroke-width="2.6" stroke-linecap="round" opacity=".6"/>` +
+      `<path d="M ${r(mx+3)} 84 C ${r(mx+16)} ${ay} ${r(mx+32)} ${ay-1} ${r(mx+45)} 85 Z" fill="url(#${id}-f)"/>` +
+      `<path d="M ${r(mx+3)} 84 C ${r(mx+16)} ${ay} ${r(mx+32)} ${ay-1} ${r(mx+45)} 85" fill="none"` +
+      ` stroke="${C.rim}" stroke-width="2.2" stroke-linecap="round" opacity=".36"/>`;
+
+    // hero horn: a slender twisted spike off the forehead, tip up-and-forward.
+    // 3:1 length-to-base, split light/shadow down its own axis so it reads as a
+    // cone and not a party hat at 4px.
+    const hx = r(x1 - 30), hy = -20;                                // tip
+    const b1x = r(x1 - 66), b1y = 16, b2x = r(x1 - 48), b2y = 30;   // base, on the skull
+    const axx = r((b1x + b2x) / 2), axy = r((b1y + b2y) / 2);       // base midpoint
+    const lp = t => `${r(b1x + (hx - b1x) * t)} ${r(b1y + (hy - b1y) * t)}`;
+    const ap = t => `${r(axx + (hx - axx) * t)} ${r(axy + (hy - axy) * t)}`;
+
+    return (`
+<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+<linearGradient id="${id}-b" x2="0" y2="1">
+<stop offset="0" stop-color="${C.top}"/><stop offset=".24" stop-color="${C.mid}"/>
+<stop offset=".64" stop-color="${C.low}"/><stop offset="1" stop-color="${C.deep}"/>
+</linearGradient>
+<linearGradient id="${id}-r">
+<stop offset="0" stop-color="${C.rim}" stop-opacity="0"/>
+<stop offset=".24" stop-color="${C.rim}" stop-opacity=".95"/>
+<stop offset="1" stop-color="${C.rim}" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="${id}-f" x2="0" y2="1">
+<stop offset="0" stop-color="${C.fin}"/><stop offset="1" stop-color="${C.finDeep}"/>
+</linearGradient>
+<linearGradient id="${id}-w" x2="0" y2="1">
+<stop offset="${hero ? .68 : .42}" stop-color="${C.warm}" stop-opacity="0"/>
+<stop offset="1" stop-color="${C.warm}" stop-opacity="${hero ? .3 : .27}"/>
+</linearGradient>
+${hero ? "" : `<linearGradient id="${id}-c" x2="0" y2="1">
+<stop offset="0" stop-color="${C.rim}" stop-opacity=".95"/>
+<stop offset=".55" stop-color="#8fe2f4" stop-opacity=".6"/>
+<stop offset="1" stop-color="#dcab86" stop-opacity=".5"/>
+</linearGradient>`}
+<path id="${id}-bd" d="${sil}"/>
+${hero ? `<radialGradient id="${id}-g">
+<stop offset="0" stop-color="#ff8ad4" stop-opacity=".78"/>
+<stop offset=".34" stop-color="#ff3fae" stop-opacity=".42"/>
+<stop offset="1" stop-color="#d01f92" stop-opacity="0"/></radialGradient>
+<radialGradient id="${id}-bl">
+<stop offset="0" stop-color="#fff"/>
+<stop offset=".2" stop-color="#fff0fb" stop-opacity=".76"/>
+<stop offset="1" stop-color="#ff8ad8" stop-opacity="0"/></radialGradient>
+<linearGradient id="${id}-hn" y1="1" x2=".4" y2="0">
+<stop offset="0" stop-color="#ff86cf"/><stop offset=".45" stop-color="#ffdcf3"/>
+<stop offset="1" stop-color="#fff"/></linearGradient>
+<path id="${id}-s" d="M0-10 2-2 10 0 2 2 0 10-2 2-10 0-2-2Z"/>` : ""}
+</defs>
+${hero ? `<ellipse class="neon-pulse" cx="${r(w/2)}" cy="52" rx="${r(w*1.02)}" ry="136" fill="url(#${id}-g)"/>` : ""}
+${hero ? `<path d="${tail}" fill="url(#${id}-f)"/>
+<path d="M ${x0+15} 50 L 4 7" fill="none" stroke="${C.rim}"
+ stroke-width="2.4" stroke-linecap="round" opacity=".45"/>` : ""}
+${fins}
+${hero ? `<use href="#${id}-bd" fill="url(#${id}-b)"/>
+<use href="#${id}-bd" fill="url(#${id}-b)" stroke="#ffa6e0" stroke-width="3.4" opacity=".55"/>`
+      // a dark moat, then the body, then a rim light that goes ALL the way
+      // round. Two sprats lying end to end are two closed shapes with black
+      // between them, never one long one.
+      : `<use href="#${id}-bd" fill="none" stroke="#020b10" stroke-width="6.4"/>
+<use href="#${id}-bd" fill="url(#${id}-b)"/>
+<path d="${fanFill}" fill="url(#${id}-f)"/>
+<path d="M ${x0-1} 44 L 9 22 M ${x0-1} 57 L 9 78" fill="none" stroke="${C.rim}"
+ stroke-width="2" stroke-linecap="round" opacity=".3"/>
+<use href="#${id}-bd" fill="none" stroke="url(#${id}-c)" stroke-width="3.4"/>`}
+<path d="${belly}" fill="url(#${id}-w)"/>
+<path d="M ${r(x1-70)} 59 C ${r(x1-56)} 82 ${r(x1-36)} 80 ${r(x1-28)} 65 Z" fill="${C.rim}" opacity="${hero ? .18 : .12}"/>
+<path d="M ${x0+2} 40 C ${P(.06)} 23 ${P(.21)} 11.5 ${mx} 11 C ${P(.60)} 10.2 ${r(x1-54)} 21 ${r(x1-11)} 43"
+ fill="none" stroke="url(#${id}-r)" stroke-width="5.6" stroke-linecap="round"/>
+<path d="M ${P(.17)} 33.5 Q ${r(mx+L*0.09)} 23 ${P(.76)} 29.5 Q ${r(mx+L*0.09)} 27 ${P(.17)} 33.5 Z"
+ fill="url(#${id}-r)" opacity="${hero ? .62 : .34}"/>
+<path d="M ${r(x1-60)} 24 C ${r(x1-68)} 43 ${r(x1-68)} 59 ${r(x1-57)} 75" fill="none"
+ stroke="${C.gill}" stroke-width="2.6" opacity=".26"/>
+${hero ? `<g>
+<circle cx="${hx}" cy="${hy}" r="36" fill="url(#${id}-bl)"/>
+<path d="M ${b1x} ${b1y} L ${hx} ${hy} L ${b2x} ${b2y} Z" fill="url(#${id}-hn)"/>
+<path d="M ${axx} ${axy} L ${hx} ${hy} L ${b2x} ${b2y} Z" fill="#c00f79" opacity=".5"/>
+<path d="M ${lp(.26)} L ${ap(.20)} M ${lp(.55)} L ${ap(.50)}" fill="none"
+ stroke="#d70f92" stroke-width="2.1" stroke-linecap="round" opacity=".45"/>
+<path d="M ${b1x} ${b1y} L ${hx} ${hy}" fill="none" stroke="#ffffff"
+ stroke-width="3" stroke-linecap="round" opacity=".95"/>
+<path d="M ${hx} ${hy-17.6} l 3 14.6 15 3 -15 3 -3 15 -3 -15 -15 -3 15 -3 Z" fill="#ffffff"/>
+</g>
+<g fill="#ffffff">
+<use href="#${id}-s" transform="translate(${P(.15)} 24) scale(.8)" opacity=".95"/>
+<use href="#${id}-s" transform="translate(${P(.44)} 95) scale(.6)" opacity=".85"/>
+<use href="#${id}-s" transform="translate(${r(x1-8)} 27) scale(.55)" opacity=".9"/>
+<use href="#${id}-s" transform="translate(${r(mx+L*0.32)} 4) scale(.62)" opacity=".9"/>
+</g>` : ""}
+<circle cx="${r(x1-42)}" cy="41" r="15" fill="${sclera}"/>
+<circle cx="${r(x1-42)}" cy="41" r="15" fill="none" stroke="${iris}" stroke-width="2.6" opacity=".5"/>
+<g class="eye">
+<circle cx="${r(x1-40.8)}" cy="41.6" r="7.6" fill="${ink}"/>
+<circle cx="${r(x1-37.4)}" cy="38.2" r="3" fill="#ffffff"/>
+</g>
+<path d="M ${r(x1-1)} 54 Q ${r(x1-14)} ${hero ? 65 : 68} ${r(x1-(hero?26:30))} ${hero ? 62 : 64}"
+ fill="none" stroke="${ink}" stroke-width="${hero ? 2.6 : 3}" stroke-linecap="round"
+ opacity="${hero ? .5 : .75}"/>
+</svg>`).replace(/\n\s*/g, " ").trim();
+  }
+},
+
+  plush: {
+  name: "Sprat Plush",
+  blurb: "soft toys in dark oil; the little one is a unicorn",
+  swatch: "linear-gradient(160deg,#ad6527,#3d1f07)",
+
+  css: `
+  /* ---- tin restyle: bone-pewter frame, DEEP smoked-oil ground, readable
+         lanes. Lift these three rules to the real stylesheet if this wins.
+
+         The oil used to be honey (#f3b360) and the fish were pastel, so fish
+         and ground sat at the same lightness and separated by hue alone — a
+         1.05 luminance ratio, which cost a Plush player moves against a par
+         shared with three other looks. Real smoked-sprat oil is dark brown, so
+         the fix was free: take the ground down to chestnut and leave the toys
+         pastel. Nothing about the felt had to change. ---- */
+  [data-skin="plush"] .tin{
+    border-radius:26px;
+    background:linear-gradient(150deg,#fbf7f0,#d3cabb 42%,#efe8dc 58%,#bfb5a5);
+    box-shadow:0 16px 30px #4a2c0e4d, inset 0 2px 0 #fffffff2, inset 0 -2px 0 #00000014;
+  }
+  /* Not cocoa — oil. The radial is the tin's own gloss coming off the top-left
+     rim; the raking band over it is the sheen on the surface of the oil, which
+     is the thing that stops a dark ground reading as brown card. Kept a shade
+     lighter than it wants to be, because the door's throat is near-black and
+     needs to stay clearly darker than the oil it opens out of. */
+  [data-skin="plush"]{--bub-tint:#ffce8a55}
+  [data-skin="plush"] .tin-inner{
+    border-radius:16px;
+    background:
+      linear-gradient(114deg, #ffffff00 22%, #ffd89a2b 38%, #ffd89a0f 50%, #ffffff00 64%),
+      radial-gradient(112% 98% at 22% 2%, #ad6527 0%, #90521c 38%, #663810 72%, #3d1f07 100%);
+    box-shadow:inset 0 3px 14px #00000073, inset 0 0 0 1px #ffd9a026;
+  }
+  /* lanes: warm cream, not white — they are puzzle information (which track a
+     sprat slides along), so they have to be countable, not decorative. */
+  [data-skin="plush"] .grid i{background:#ffe6bf3b}
+
+  /* ---- the door. Everything is sized off --cell so the hole keeps the same
+         share of the corridor at 38px as at 58px. The whole thing is one SVG
+         with a fixed aspect (1.30 : 2.40 cells, viewBox 130x240, so one user
+         unit is exactly 1/100 of a cell) — uniform scale, nothing distorts.
+         The oil's right edge is at x=30 in that box; the hero's lane is the
+         band y 70..170, and nothing solid is drawn inside it. ---- */
+  [data-skin="plush"] .door{
+    position:absolute; left:100%; top:var(--top);
+    width:0; height:var(--cell);
+  }
+  [data-skin="plush"] .cut{
+    position:absolute; left:calc(var(--cell) * -.30); top:50%;
+    width:calc(var(--cell) * 1.30); height:calc(var(--cell) * 2.4);
+    transform:translateY(-50%); overflow:visible;
+  }
+
+  /* ---- the one animation: a gentle pulse, shared by every sparkle
+         and by the hero's iridescent sheen ---- */
+  @keyframes plush-pulse{
+    0%,100%{opacity:.55; transform:scale(.84)}
+    50%    {opacity:1;   transform:scale(1.1)}
+  }
+  [data-skin="plush"] .tw{
+    animation:plush-pulse 2.6s ease-in-out infinite;
+    transform-box:fill-box; transform-origin:center;
+  }
+  [data-skin="plush"] .tw-b{animation-duration:3.4s; animation-delay:-.9s}
+  [data-skin="plush"] .tw-c{animation-duration:2.1s; animation-delay:-1.6s}
+  [data-skin="plush"] .sheen{
+    animation:plush-pulse 5.2s ease-in-out infinite;
+    transform-box:fill-box; transform-origin:62% 50%;
+  }
+  @media (prefers-reduced-motion: reduce){
+    [data-skin="plush"] .tw,[data-skin="plush"] .sheen{animation:none}
+  }
+  `,
+
+  door(g){
+    // A hole, then the hardware. The loudest thing here is the aperture: a
+    // near-black throat where the oil ends, flaring outward and brightening to
+    // daylight, so it goes dark-to-light left-to-right and never caps off at
+    // the far end. The two cut lips frame it and bend away from each other; one
+    // of them winds onto the key.
+    //
+    // WHICH one is the only thing --row changes. The key normally winds off the
+    // metal ABOVE her lane, which is fine on rows 1-5 because there is board up
+    // there to wind onto. On row 0 there is not: 24px above the oil the date
+    // line starts, and the key was landing on it. So on row 0 the whole
+    // assembly — roll, key, and the little tab on the far lip — is reflected
+    // about her lane and winds off the metal BELOW instead. Everything that
+    // does NOT move (throat, both lips, the dribble) is drawn symmetrically
+    // about y=120 and inside y 38..202, i.e. within 0.35 of a cell of the oil's
+    // edge, so it clears the date line and the Moves row at every row. The hole
+    // itself is untouched by the flip: she swims out of exactly the same gap.
+    // (fit/door-budget.mjs measures this; fit/rows.mjs walks all six rows.)
+    const lip = (d) => `<path d="${d}" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8" stroke-linejoin="round"/>`;
+    const flip = (g && g.row === 0) ? ` transform="matrix(1 0 0 -1 0 240)"` : "";
+    return `<div class="door">
+  <svg class="cut" viewBox="0 0 130 240" aria-hidden="true">
+    <defs>
+      <linearGradient id="plush-throat" gradientUnits="userSpaceOnUse" x1="12" y1="0" x2="114" y2="0">
+        <stop offset="0" stop-color="#150a01"/>
+        <stop offset=".34" stop-color="#251202"/>
+        <stop offset=".58" stop-color="#7d4d18"/>
+        <stop offset=".74" stop-color="#f0d7a8"/>
+        <stop offset=".86" stop-color="#fffdf5" stop-opacity=".92"/>
+        <stop offset="1" stop-color="#fffdf5" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="plush-oil" gradientUnits="userSpaceOnUse" x1="-14" y1="0" x2="30" y2="0">
+        <stop offset="0" stop-color="#3a1e04" stop-opacity="0"/>
+        <stop offset="1" stop-color="#2c1602" stop-opacity=".85"/>
+      </linearGradient>
+      <linearGradient id="plush-metal" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8e8574"/>
+        <stop offset=".22" stop-color="#fffdf7"/>
+        <stop offset=".62" stop-color="#ded6c5"/>
+        <stop offset="1" stop-color="#8a8170"/>
+      </linearGradient>
+      <radialGradient id="plush-roll" cx=".34" cy=".28" r=".82">
+        <stop offset="0" stop-color="#fdfbf5"/>
+        <stop offset=".46" stop-color="#d5ccba"/>
+        <stop offset="1" stop-color="#8a8170"/>
+      </radialGradient>
+      <linearGradient id="plush-key" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffeec4"/>
+        <stop offset="1" stop-color="#c68f34"/>
+      </linearGradient>
+    </defs>
+
+    <!-- the oil goes dark as it runs up to the cut -->
+    <rect x="-14" y="72" width="44" height="96" fill="url(#plush-oil)"/>
+
+    <!-- THE HOLE: a flaring throat, black where the tin was, daylight outward -->
+    <path d="M 12 72 C 46 68 82 56 118 34 L 118 206 C 82 184 46 172 12 168 Z"
+          fill="url(#plush-throat)"/>
+    <path d="M 12 74 C 46 70 82 60 110 44" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
+    <path d="M 12 166 C 46 170 82 180 110 196" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
+
+    <!-- The two cut lips, bent back off the hole. They used to splay to y 24
+         and 216 — 28px past the oil at a 58px cell, over the date line — so
+         they are tucked to 38/202 and now lie along the throat's own edge
+         instead of outside it. The hole keeps its full flare (34..206); only
+         the metal around it comes in. -->
+    ${lip("M 8 59 C 44 55 78 48 101 38 L 107 50 C 82 62 46 70 10 73 Z")}
+    ${lip("M 8 181 C 44 185 78 192 101 202 L 107 190 C 82 178 46 170 10 167 Z")}
+    <path d="M 10 73 C 46 70 82 62 107 50" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M 10 167 C 46 170 82 178 107 190" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
+
+    <!-- THE HARDWARE, and the only thing --row moves: the little bent tab on
+         one lip, and the lid wound onto its key on the other. -->
+    <g${flip}>
+      <g transform="rotate(32 105 194)">
+        <ellipse cx="105" cy="194" rx="5" ry="9.5" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8"/>
+        <path d="M 103 187 V 201" fill="none" stroke="#5d5344" stroke-opacity=".5" stroke-width="1.6"/>
+      </g>
+      <circle cx="92" cy="31" r="15.5" fill="url(#plush-roll)" stroke="#544b3a" stroke-width="2.3"/>
+      <path d="M 92 19 A 12 12 0 1 1 80 34 A 7.5 7.5 0 1 1 94 38" fill="none" stroke="#7e7563" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M 82 22 A 12 12 0 0 1 94 17" fill="none" stroke="#fffdf6" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/>
+      <g stroke-linecap="round" fill="none">
+        <path d="M 92 31 L 113 14" stroke="#4a4232" stroke-width="8"/>
+        <ellipse cx="119" cy="11" rx="7.5" ry="5.8" fill="none" stroke="#4a4232" stroke-width="7"/>
+        <path d="M 92 31 L 113 14" stroke="url(#plush-key)" stroke-width="5"/>
+        <ellipse cx="119" cy="11" rx="7.5" ry="5.8" fill="none" stroke="url(#plush-key)" stroke-width="4.4"/>
+      </g>
+      <circle cx="92" cy="31" r="3.6" fill="url(#plush-key)" stroke="#4a4232" stroke-width="1.6"/>
+    </g>
+
+    <!-- oil dribbling out under the lower lip (shorter than it was: it hung
+         31px past the oil and landed on the Moves row on row 5), and a little
+         glitter outside -->
+    <path d="M 34 176 C 39 187 37 196 31 202 C 26 194 27 186 28 175 Z" fill="#c9832c" opacity=".5"/>
+    <g fill="#dd9a3e">
+      <path class="tw" d="M 118 56 q 2 -2 2.5 -7.5 q .5 5.5 2.5 7.5 q -2 2 -2.5 7.5 q -.5 -5.5 -2.5 -7.5 Z"/>
+      <path class="tw tw-b" d="M 104 186 q 1.5 -1.5 1.9 -5.6 q .4 4.1 1.9 5.6 q -1.5 1.5 -1.9 5.6 q -.4 -4.1 -1.9 -5.6 Z"/>
+      <path class="tw tw-c" d="M 122 152 q 1.4 -1.4 1.7 -5 q .3 3.6 1.7 5 q -1.4 1.4 -1.7 5 q -.3 -3.6 -1.7 -5 Z"/>
+    </g>
+  </svg>
+</div>`;
+  },
+
+  sprat(len, hero){
+    const w = len * 100;
+    const r = v => Math.round(v);
+    const sfx = (hero ? "h" : "n") + len;
+    const ID = k => `plush-${k}-${sfx}`;
+    const L = (a, b, t) => r(a + (b - a) * t);
+
+    // ---- ONE continuous silhouette, and it is a FISH, not a capsule. Three
+    // landmarks do the work: a snout at `nose`, a gill line at `hb`, and a
+    // waist at `pd`. Between them the belly swells to FULL depth (y 6..94) at
+    // `xp` and tapers off both ways — the taper is what stops a three-cell
+    // sprat reading as a tube, and it costs almost nothing in packing because
+    // the neighbour's own taper meets it. Head (74u) and tail (44u) are
+    // ABSOLUTE, so a 3-cell sprat is a 2-cell sprat plus one cell of belly.
+    const nose = w - 4;
+    const hb   = nose - 74;                  // gill line / base of the head
+    const pd   = 44;                         // peduncle — the waist
+    const xp   = r(pd + (hb - pd) * 0.56);   // deepest point of the belly
+
+    // snout -> forehead -> nape. The snout is conical, not a dome.
+    const head = `M ${nose} 48 C ${nose - 2} 34 ${nose - 10} 24 ${nose - 25} 19` +
+                 ` C ${nose - 42} 15 ${nose - 57} 15 ${hb} 15`;
+    // nape -> over the belly's peak -> down into the waist
+    const back = ` C ${L(hb, xp, .40)} 15 ${L(xp, hb, .42)} 5.5 ${xp} 6` +
+                 ` C ${L(xp, pd, .42)} 6.5 ${L(pd, xp, .40)} 15 ${pd} 36`;
+    // forked caudal, reaching x=5 and fanning nearly the full height there
+    const tail = hero
+      ? ` C 30 20 13 3 4 8 C 17 25 30 42 33 50 C 30 58 17 75 4 92 C 13 97 30 80 ${pd} 64`
+      : ` C 34 26 18 13 5 9 C 14 24 24 38 27 50 C 24 62 14 76 5 91 C 18 87 34 74 ${pd} 64`;
+    // waist -> under the belly's deepest -> up the throat -> jaw -> snout
+    const belly = ` C ${L(pd, xp, .40)} 82 ${L(xp, pd, .42)} 93.5 ${xp} 94` +
+                  ` C ${L(xp, hb, .48)} 94 ${L(hb, xp, .40)} 88 ${hb} 86` +
+                  ` C ${nose - 57} 86 ${nose - 42} 85 ${nose - 26} 79` +
+                  ` C ${nose - 10} 71 ${nose - 2} 60 ${nose} 48 Z`;
+    const body = head + back + tail + belly;
+
+    // ---- colour. The ordinary sprat is a SMOKED sprat rendered in felt:
+    // powder-blue satin back, a silver flank, and an oatmeal underside. Every
+    // stop sits WELL ABOVE the chestnut oil in value — the old top stop
+    // (#3f677f) was darker than some of the ground and the back sank into it,
+    // which is exactly how you lose count of a sprat's length. `tint` is the
+    // separate, lighter blue used on the tail, because the tail is the thinnest
+    // part of the silhouette and the last thing that should go dim.
+    // White belongs to the hero. The ordinary sprat now bottoms out at wheat
+    // (#ffe4a6), not at near-white — it stays far above the oil, but it is a
+    // WARM pale, so the hero's cool white-pink is the only near-white object in
+    // the tin and she separates by hue and by value at once.
+    const pal = hero
+      ? { stops: [[0,"#fffcfe"],[.40,"#ffcee3"],[1,"#ff9dc5"]],
+          fin:"#ff8fbc", tint:"#ffa8ca", pec:"#ff8fbc", fuzz:"#fff0f7",
+          belly:"#fff6fb", blush:"#ff5f97", shade:"#7a3a55", }
+      : { stops: [[0,"#5f9ab9"],[.13,"#86b8d0"],[.30,"#bcd6e0"],[.44,"#e7e2cd"],
+                  [.60,"#f8da93"],[.80,"#ffdf99"],[1,"#ffe7b4"]],
+          fin:"#4e88a8", tint:"#82b3ce", pec:"#eda94e", fuzz:"#fff6ea",
+          belly:"#ffdf9c", blush:"#ff8a63", shade:"#3d2611", };
+
+    const felt = `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.4"`;
+
+    // ---- crest. Every fin lives INSIDE the silhouette — a felt patch appliqued
+    // onto the back — so a fish never splays past its own lane and you can
+    // always tell which lane it is in and which way up it lies.
+    let crest;
+    if (hero){
+      const x0 = 78, x1 = hb - 8, n = len === 2 ? 5 : 7, step = (x1 - x0) / n;
+      const cols = ["#b9a3f2","#8fcdf5","#8fe4bb","#ffdc7a","#ffab74","#ff8fb8","#c0a6ff"];
+      crest = `<g ${felt}>`;
+      for (let i = 0; i < n; i++){
+        const a = r(x0 + i * step), b = r(a + step * 1.5), m = r((a + b) / 2);
+        const top = 13 + (i % 2) * 4;
+        crest += `<path d="M ${a} 36 C ${a} ${top + 8} ${m - 4} ${top} ${m} ${top} ` +
+                 `C ${r(m + 4)} ${top} ${b} ${top + 9} ${b} 34 Q ${m} 41 ${a} 36 Z" fill="${cols[i % 7]}"/>`;
+      }
+      crest += `</g>`;
+    } else {
+      // a felt sail sewn onto the back: steep leading edge, long concave
+      // trailing edge, and a base that ARCS with the back so it can never
+      // read as a ruled line. It is a shade DARKER than the back it sits on,
+      // which is what makes it a patch instead of an outline.
+      const bx0 = L(xp, hb, .55), ax = L(xp, hb, .22), bx1 = L(xp, pd, .35);
+      const sail = `M ${bx0} 35 C ${bx0 - 4} 22 ${ax + 9} 9 ${ax} 9 ` +
+                   `C ${ax - 20} 12 ${bx1 + 14} 22 ${bx1} 31 ` +
+                   `C ${L(bx1, bx0, .34)} 36 ${L(bx1, bx0, .70)} 38 ${bx0} 35 Z`;
+      crest = `<path d="${sail}" fill="${pal.fin}"/>` +
+              `<path d="M ${bx0} 35 C ${bx0 - 4} 22 ${ax + 9} 9 ${ax} 9 ` +
+              `C ${ax - 20} 12 ${bx1 + 14} 22 ${bx1} 31" fill="none" ` +
+              `stroke="${pal.fuzz}" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>` +
+              `<g stroke="#3d6a84" stroke-opacity=".3" stroke-width="1.8" ` +
+              `stroke-linecap="round" fill="none">` +
+              `<path d="M ${ax - 1} 32 Q ${ax - 5} 21 ${ax - 4} 13"/>` +
+              `<path d="M ${L(ax, bx1, .34)} 31 Q ${L(ax, bx1, .30)} 24 ${L(ax, bx1, .28)} 17"/></g>`;
+    }
+
+    // pectoral: a felt blade rooted behind the gill and swept back and down,
+    // with one stitched ray. It used to be a plain rotated ellipse, which on a
+    // pale belly read as a stain rather than a fin — the point at the trailing
+    // end is what makes it a flipper at 38px.
+    const fpx = hero ? hb - 6 : hb - 12;
+    const flipper =
+      `<g stroke="${pal.fuzz}" fill="none" stroke-width="2.2">` +
+      `<path d="M ${fpx + 11} 57 C ${fpx - 1} 60 ${fpx - 10} 70 ${fpx - 16} 85 ` +
+      `C ${fpx + 3} 82 ${fpx + 11} 71 ${fpx + 11} 57 Z" fill="${pal.pec}" ` +
+      `fill-opacity=".83" stroke-opacity=".62"/>` +
+      `<path d="M ${fpx + 5} 64 C ${fpx - 2} 70 ${fpx - 7} 76 ${fpx - 11} 82" ` +
+      `stroke-opacity=".34" stroke-linecap="round"/></g>`;
+
+    // ---- seams. A plush sprat is sewn from panels, and the panel joins sit on
+    // the cell lines: one seam means two cells, two seams mean three. Length is
+    // the puzzle information, so it gets stated twice — outline and stitching.
+    // Two threads, not one: a dark one laid a hair to the right of a light one.
+    // A single light dash disappeared against the cream belly and a single dark
+    // one disappeared against the slate back; the pair reads over both, so the
+    // cell count survives wherever the seam happens to cross.
+    let dark = "", light = "";
+    for (let k = 1; k < len; k++){
+      dark  += `M${k * 100 + 1.7} 4V96`;
+      light += `M${k * 100} 4V96`;
+    }
+    const seams = `<g fill="none" stroke-width="2.6" stroke-dasharray="7 8">` +
+      `<path d="${dark}" stroke="${pal.shade}" stroke-opacity=".26"/>` +
+      `<path d="${light}" stroke="${pal.fuzz}" stroke-opacity=".72"/></g>`;
+
+    const eyeX = r(nose - 33), eyeY = 44;
+
+    const star = (x, y, rad, cls) =>
+      `<path class="${cls}" d="M ${r(x)} ${r(y - rad)} q ${r(rad * .22)} ${r(rad * .78)} ${rad} ${rad} ` +
+      `q ${r(-rad * .78)} ${r(rad * .22)} ${-rad} ${rad} q ${r(-rad * .22)} ${r(-rad * .78)} ${-rad} ${-rad} ` +
+      `q ${r(rad * .78)} ${r(-rad * .22)} ${rad} ${-rad} Z"/>`;
+
+    const hx = r(nose - 50);
+    const horn = hero ? `
+      <path d="M ${hx - 7} 30 Q ${hx + 4} 11 ${nose - 14} 7 Q ${hx + 14} 21 ${hx + 8} 31 Z"
+            fill="url(#${ID('hn')})" stroke="#e0a94c" stroke-opacity=".6" stroke-width="1.6"/>
+      <g stroke="#e0a94c" stroke-opacity=".95" stroke-width="2.6" stroke-linecap="round" fill="none">
+        <path d="M ${hx - 3} 25 Q ${hx + 6} 21 ${hx + 13} 18"/>
+        <path d="M ${hx + 6} 18 Q ${hx + 14} 14 ${hx + 22} 11"/>
+      </g>` : "";
+
+    const sparkles = hero ? `<g fill="#fffcf0">` +
+      star(nose - 12, 17, 9, "tw") + star(nose - 30, 84, 6, "tw tw-b") +
+      star(58, 34, 5, "tw tw-c") + `</g>` : "";
+
+    const glow = hero
+      ? `<ellipse cx="${r(w / 2)}" cy="50" rx="${r(w / 2 - 2)}" ry="49" fill="url(#${ID('gl')})"/>` : "";
+
+    const stops = pal.stops.map(s => `<stop offset="${s[0]}" stop-color="${s[1]}"/>`).join("");
+
+
+    // the head, told as a head: a lighter gill cover with a bright felt seam
+    const gill = `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85 ` +
+      `L ${nose + 6} 92 L ${nose + 6} 8 Z" fill="#fff5e2" fill-opacity=".15"/>` +
+      `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85" fill="none" ` +
+      `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.2"/>` +
+      `<ellipse cx="${nose - 34}" cy="58" rx="26" ry="19" fill="#fff6e6" fill-opacity=".14"/>`;
+
+    const svg = `
+<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="${ID('b')}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>
+    <linearGradient id="${ID('lit')}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".26"/>
+      <stop offset=".30" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".70" stop-color="${pal.belly}" stop-opacity="0"/>
+      <stop offset="1" stop-color="${pal.belly}" stop-opacity="${hero ? ".9" : ".34"}"/>
+    </linearGradient>
+    <linearGradient id="${ID('tt')}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="72" y2="0">
+      <stop offset="0" stop-color="${pal.tint}" stop-opacity=".7"/>
+      <stop offset="1" stop-color="${pal.tint}" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="${ID('bl')}">
+      <stop offset="0" stop-color="${pal.blush}" stop-opacity=".62"/>
+      <stop offset="1" stop-color="${pal.blush}" stop-opacity="0"/>
+    </radialGradient>
+    <path id="${ID('p')}" d="${body}"/>
+    <clipPath id="${ID('c')}"><use href="#${ID('p')}"/></clipPath>
+    ${hero ? `
+    <radialGradient id="${ID('gl')}">
+      <stop offset=".3" stop-color="#fff2f8" stop-opacity=".9"/>
+      <stop offset=".62" stop-color="#ffdcee" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#ffd9ec" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="${ID('hn')}" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#f3bf60"/>
+      <stop offset=".5" stop-color="#ffedb4"/>
+      <stop offset="1" stop-color="#fffdf4"/>
+    </linearGradient>
+    <linearGradient id="${ID('sh')}" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#9fe9d8" stop-opacity=".7"/>
+      <stop offset=".5" stop-color="#fff3c9" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#cbb2ff" stop-opacity=".7"/>
+    </linearGradient>` : ``}
+  </defs>
+  ${glow}
+  <use href="#${ID('p')}" fill="none" stroke="${pal.shade}" stroke-opacity=".24" stroke-width="5"/>
+  <use href="#${ID('p')}" fill="none" stroke="${pal.fuzz}" stroke-opacity=".12" stroke-width="9"/>
+  <use href="#${ID('p')}" fill="url(#${ID('b')})" stroke="${pal.fuzz}" stroke-opacity=".62" stroke-width="2.8"/>
+  <g clip-path="url(#${ID('c')})">
+    <rect x="0" y="0" width="72" height="100" fill="url(#${ID('tt')})"/>
+    <rect x="0" y="0" width="${w}" height="100" fill="url(#${ID('lit')})"/>
+    ${seams}
+    <path d="M ${pd + 18} 71 C ${xp} 86 ${L(xp, hb, .7)} 83 ${nose - 30} 70" fill="none"
+          stroke="${pal.shade}" stroke-opacity=".16" stroke-width="2.2" stroke-linecap="round"
+          stroke-dasharray="5 8"/>
+    ${hero ? `<ellipse class="sheen" cx="${r(w * .58)}" cy="50" rx="${r(w * .34)}" ry="42" fill="url(#${ID('sh')})"/>` : ``}
+    ${crest}${flipper}${gill}
+    <ellipse cx="${r(nose - 46)}" cy="61" rx="13" ry="8.5" fill="url(#${ID('bl')})"/>
+  </g>
+  <circle cx="${eyeX}" cy="${eyeY}" r="13" fill="#fffdf7" stroke="${pal.shade}" stroke-opacity=".22" stroke-width="1.5"/>
+  <g class="eye">
+    <circle cx="${eyeX}" cy="${eyeY}" r="6.8" fill="#3a2a1e"/>
+    <circle cx="${r(eyeX + 2)}" cy="${eyeY - 2.6}" r="2.5" fill="#fff"/>
+    <circle cx="${r(eyeX - 2.6)}" cy="${eyeY + 3}" r="1.2" fill="#fff" opacity=".8"/>
+  </g>
+  <path d="M ${r(nose - 19)} 63 q 7 8 13 -3" fill="none" stroke="${pal.shade}" stroke-opacity=".55"
+        stroke-width="2.6" stroke-linecap="round"/>
+  ${horn}${sparkles}
+</svg>`;
+    return svg.replace(/\s{2,}/g, " ").replace(/> </g, "><").replace(/\s+\/>/g, "/>").trim();
+  }
+},
+};
+for (const id of ["classic","deco","neon","plush"]) {
+  DESIGNS[id] = SKINS[id];
+  // The game scopes to [data-skin="id"]; the gallery scopes to .dz-id.
+  if (DESIGNS[id].css) DESIGNS[id].css = DESIGNS[id].css.replaceAll('[data-skin="' + id + '"]', '.dz-' + id);
+}
 </script>
 <script>
 /* ŠPROTAI — direction: RISO PRINT ------------------------------------------
@@ -724,548 +1669,6 @@ DESIGNS["00-current"] = {
     }
   };
 })();
-
-</script>
-<script>
-/* TIN LABEL 1936 — heritage Baltic sprat packaging.
-   Deep sea-teal lacquer ground, gold engraving, one gilded sprat.
-
-   This direction restyles the tin as well as the fish: aged-brass frame,
-   dark lacquered teal "oil", hairline gold lane rules. Those live in
-   .dz-deco .tin / .tin::before / .tin-inner / .grid i below and should be
-   lifted straight into the real stylesheet if this direction wins. */
-DESIGNS["deco"] = {
-  name:  "Tin Label 1936",
-  blurb: "sea-teal lacquer, gold engraving, one gilded sprat",
-
-  css: `
-  /* ---- the tin: aged brass frame, dark lacquered teal oil ---- */
-  .dz-deco .tin{
-    background:linear-gradient(145deg,#fbf1dc 0%,#cfb175 22%,#8b6c37 44%,#f0e0b3 58%,#a8874a 78%,#6a4f22 100%);
-    box-shadow:0 14px 28px #4a351240, inset 0 1px 0 #fff8e6;
-  }
-  .dz-deco .tin::before{                  /* engraved double keyline in the rim */
-    content:""; position:absolute; inset:4px; border-radius:16px;
-    border:1.5px solid #5d4416aa; box-shadow:inset 0 0 0 1.5px #fbeec4bb;
-    pointer-events:none;
-  }
-  .dz-deco .tin-inner{
-    background:radial-gradient(130% 100% at 24% 6%, #1c6a70 0%, #115059 34%, #0a3941 68%, #05262d 100%);
-    box-shadow:inset 0 3px 16px #00000075, inset 0 0 0 1px #d8bb7a4d;
-  }
-  .dz-deco .grid i{ background:#f0dca61c; }
-
-  /* ---- the door: the rim punched clean out at the hero's row, and the
-         strip that was there torn off and wound onto the key ---- */
-  .dz-deco .mouth{                        /* the hole: no rim, the page beyond */
-    position:absolute; left:calc(100% - 3px); top:var(--top);
-    width:14px; height:var(--cell);
-    background:linear-gradient(90deg,#01141a 0%,#04222a 30%,#0b2b2c 44%,#2e2712 50%,
-                                      #f6e0a8 55%,#fffaee 58%,#fdf6e9 63%,#fdf6e9 100%);
-    box-shadow:inset 0 2px 0 #fff6da, inset 0 -2px 0 #fff6da,
-               inset 0 3.5px 0 #6b4d17, inset 0 -3.5px 0 #6b4d17,
-               inset 0 5px 0 #a9853d99, inset 0 -5px 0 #a9853d99;
-  }
-  .dz-deco .wash{                         /* daylight coming in through the hole */
-    position:absolute; left:calc(100% - var(--cell) * 1.3);
-    top:calc(var(--top) - var(--cell) * 0.36); width:calc(var(--cell) * 1.3);
-    height:calc(var(--cell) * 1.72);
-    clip-path:polygon(100% 32%, 100% 68%, 0% 97%, 0% 3%);
-    background:linear-gradient(270deg,#ffe9b278 0%,#ffdf9c26 26%,#ffdf9c00 66%);
-  }
-  .dz-deco .lid{                          /* the torn strip, rolled onto the key */
-    --s: clamp(30px, var(--cell), 42px);
-    position:absolute; left:calc(100% - 1px);
-    top:calc(var(--top) - var(--s) * 1.2);
-    width:calc(var(--s) * 1.34); height:calc(var(--s) * 1.2); overflow:visible;
-  }
-  .dz-deco .lid.dn{                       /* hero on row 0: roll it the other way */
-    top:calc(var(--top) + var(--cell)); transform:scaleY(-1);
-  }
-  .dz-deco .lid svg{ width:100%; height:100%; display:block; overflow:visible }
-
-  /* ---- the hero's foil gleam: her one animation, no filters ---- */
-  .dz-deco .gleam{ animation:deco-gleam 6s linear infinite; animation-delay:-1.9s }
-  @keyframes deco-gleam{
-    0%,10%  { transform:translateX(-90px); opacity:0 }
-    16%     { opacity:1 }
-    64%     { opacity:1 }
-    70%,100%{ transform:translateX(var(--gx,360px)); opacity:0 }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .dz-deco .gleam{ animation:none; transform:translateX(45%); opacity:.5 }
-  }`,
-
-  door(g){
-    /* one strip of tin: torn out of the rim at the hero's row, run up the
-       side and wound into a tight coil on the key's shaft. Turns just touch,
-       so the dark outline shows between them and it reads as rolled metal. */
-    const COIL = "M46 81 A34 34 0 0 1 12 47 A34 34 0 0 1 46 13"
-      + " A31 31 0 0 1 77 47 A27 27 0 0 1 46 74"
-      + " A23 23 0 0 1 23 47 A19 19 0 0 1 46 28 A15 15 0 0 1 61 47 A11 11 0 0 1 46 58 A7 7 0 0 1 39 47";
-    const TAIL = "M54 68 C48 86 38 98 31 120 L3 120 C10 96 19 84 24 60 Z";
-    const BOW  = "M114 27 L129 37 L129 58 L114 68 L99 58 L99 37 Z";
-    const dn = g && g.row === 0 ? " dn" : "";
-    return `
-<div class="wash"></div>
-<div class="mouth"></div>
-<div class="lid${dn}"><svg viewBox="0 0 134 120" preserveAspectRatio="none" aria-hidden="true">
-  <defs>
-    <linearGradient id="deco-brass" x1="0" y1="0" x2=".25" y2="1">
-      <stop offset="0" stop-color="#fff9e8"/><stop offset=".22" stop-color="#f2daa6"/>
-      <stop offset=".48" stop-color="#c69d45"/><stop offset=".7" stop-color="#8a6626"/>
-      <stop offset=".88" stop-color="#e0c281"/><stop offset="1" stop-color="#7a5920"/>
-    </linearGradient>
-    <linearGradient id="deco-strip" x1="1" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff6dd"/><stop offset=".4" stop-color="#d6b263"/>
-      <stop offset=".75" stop-color="#8b6829"/><stop offset="1" stop-color="#e6cd91"/>
-    </linearGradient>
-  </defs>
-  <path d="${TAIL}" fill="url(#deco-strip)" stroke="#4a3410" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M25 59 C20 80 13 96 6 118" fill="none" stroke="#fff6de" stroke-width="2.6" opacity=".85"/>
-  <rect x="40" y="40" width="72" height="15" rx="6" fill="#4a3410"/>
-  <rect x="42" y="42" width="70" height="11" rx="4.5" fill="url(#deco-brass)"/>
-  <path d="${BOW}" fill="none" stroke="#4a3410" stroke-width="16" stroke-linejoin="round"/>
-  <path d="${BOW}" fill="none" stroke="url(#deco-brass)" stroke-width="11" stroke-linejoin="round"/>
-  <circle cx="46" cy="47" r="42" fill="#63481a"/>
-  <path d="${COIL}" fill="none" stroke="#4a3410" stroke-width="18" stroke-linecap="round"/>
-  <path d="${COIL}" fill="none" stroke="url(#deco-brass)" stroke-width="13.5" stroke-linecap="round"/>
-  <path d="${COIL}" fill="none" stroke="#fff8e4" stroke-width="2.2" stroke-linecap="round"
-        opacity=".55" transform="translate(-2,-4)"/>
-</svg></div>`;
-  },
-
-  sprat(len, hero){
-    const w = len * 100, r = n => Math.round(n);
-    const id = "deco-" + (hero ? "h" : "n") + len;
-    const X = w - 5;      // snout tip — the head is a fixed size at both lengths,
-    const S = w - 80;     // back peak      so a 3-cell sprat is a LONGER fish,
-    const P = 46;         // peduncle       not a bigger one
-    const L = S - P;
-
-    const B = `M${X} 47C${X-14} 31 ${X-34} 20 ${X-58} 19C${r(S-L*.15)} 17 ${r(P+L*.35)} 24 ${P} 42`
-            + `L${P} 58C${r(P+L*.35)} 76 ${r(S-L*.15)} 83 ${X-58} 81C${X-34} 80 ${X-14} 69 ${X} 53Z`;
-
-    const d1=r(P+L*.34), d2=r(P+L*.74), dA=r(P+L*.34+L*.128), pv=r(P+L*.72);
-    const a1=r(P+L*.12), a2=r(P+L*.46), aA=r(P+L*.12+L*.116);
-    const TAIL = hero
-      ? `M48 40L3 2L23 50L3 98L48 60Z`          // hero: deep-forked, her own silhouette
-      : `M48 40L5 6Q27 50 5 94L48 60Z`;
-    const DORS = `M${d2} 26L${dA} 11Q${r(d1+(dA-d1)*.35)} 20 ${d1} 30Z`;
-    const ANAL = `M${a2} 74L${aA} 89Q${r(a1+(aA-a1)*.35)} 81 ${a1} 70Z`;
-    const PELV = `M${pv} 74L${pv-5} 87Q${pv-10} 83 ${pv-16} 72Z`;
-    const PECT = `M${X-46} 53C${X-56} 64 ${X-64} 73 ${X-74} 80C${X-75} 69 ${X-69} 60 ${X-43} 57Z`;
-    const SMALL = DORS + ANAL + PELV;   // the three small fins as one subpathed d
-    const fan = (x,y,p) => p.map(q => `M${x} ${y}L${q[0]} ${q[1]}`).join("");
-
-    const gold = hero ? "#8a5510" : "#e8cd93";
-    /* Fins are the length information, so they are lit like an engraver lights
-       them: the membrane runs PALE at its outer margin — the exact contour that
-       has to separate from the oil — and drops to body-teal where it meets the
-       fish. The gradient is objectBoundingBox, so it rotates with the strip and
-       the light stays on the outer edge in all four directions. */
-    const finF = `url(#${id}-ft)`;               // the TAIL only — it carries length
-    const finP = hero ? "#f4aab9" : "#2b7570";   // pectoral lies on the pale belly: stays mid
-    const finM = hero ? "#f0a3b4" : "#2f7a74";   // dorsal/anal/pelvic: subordinate to the tail
-    const finR = hero ? "#cf8394" : "#e9cf98";
-    const finS = hero ? "#b06d78" : "#f6e2b4";   // the outer contour, and it carries weight
-
-    const stops = hero
-      ? `<stop offset="0" stop-color="#fff6d5"/><stop offset=".14" stop-color="#f9de8c"/>`
-      + `<stop offset=".32" stop-color="#f1b62c"/><stop offset=".5" stop-color="#dd9508"/>`
-      + `<stop offset=".66" stop-color="#efb936"/><stop offset=".84" stop-color="#f9dd8d"/>`
-      + `<stop offset="1" stop-color="#b0720c"/>`
-      : `<stop offset="0" stop-color="#0b333a"/><stop offset=".24" stop-color="#155258"/>`
-      + `<stop offset=".5" stop-color="#22706c"/><stop offset=".74" stop-color="#3e9280"/>`
-      + `<stop offset=".9" stop-color="#7fb08d"/><stop offset="1" stop-color="#bfcb92"/>`;
-
-    const finStops = hero
-      ? `<stop offset="0" stop-color="#ffe4ee"/><stop offset=".36" stop-color="#f9bccb"/>`
-      + `<stop offset="1" stop-color="#e28ea6"/>`
-      : `<stop offset="0" stop-color="#dbe8bf"/><stop offset=".26" stop-color="#9cc59e"/>`
-      + `<stop offset=".56" stop-color="#3f8380"/><stop offset="1" stop-color="#1f5e66"/>`;
-
-    const E = X - 40;     // eye centre
-
-    return `<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true"`
-+ ` stroke-linejoin="round" stroke-linecap="round"><defs>`
-+ `<linearGradient id="${id}-g" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>`
-+ `<linearGradient id="${id}-ft" x1="0" y1="0" x2="1" y2="0">${finStops}</linearGradient>`
-+ `<pattern id="${id}-s" width="16" height="12" patternUnits="userSpaceOnUse">`
-+ `<path d="M0 12Q8 2 16 12M-8 6Q0 -4 8 6M8 6Q16 -4 24 6" fill="none" stroke="${hero?"#a9720f":"#eddaab"}" stroke-width="1.25" opacity="${hero?.2:.55}"/></pattern>`
-+ `<clipPath id="${id}-c"><path d="${B}"/></clipPath>`
-+ `<clipPath id="${id}-f"><path d="${TAIL}"/><path d="${DORS}"/><path d="${ANAL}"/><path d="${PELV}"/><path d="${PECT}"/></clipPath>`
-+ (hero ? `<linearGradient id="${id}-hn" x1="0" y1="1" x2=".35" y2="0">`
-+ `<stop offset="0" stop-color="#ffd3df"/><stop offset=".45" stop-color="#fff9f0"/>`
-+ `<stop offset="1" stop-color="#ffffff"/></linearGradient>`
-+ `<linearGradient id="${id}-l" x1="0" y1="0" x2="1" y2="0">`
-+ `<stop offset="0" stop-color="#fffdf0" stop-opacity="0"/><stop offset=".34" stop-color="#fffdf0" stop-opacity=".2"/>`
-+ `<stop offset=".5" stop-color="#fffdf0" stop-opacity=".72"/><stop offset=".66" stop-color="#fffdf0" stop-opacity=".2"/>`
-+ `<stop offset="1" stop-color="#fffdf0" stop-opacity="0"/></linearGradient>` : ``)
-+ `</defs>`
-
-/* The counter. The oil goes dark right behind every trailing fin, so the pale
-   margin has something to be pale AGAINST wherever the tin's own gradient
-   happens to put it. Widest behind the tail, which is the one that carries
-   length; a hair behind the small fins, which only have to read as fins. */
-+ `<path d="${SMALL}" fill="#03202a" stroke="#03202a" stroke-width="3.6"/>`
-+ `<path d="${TAIL}" fill="#03202a" stroke="#03202a" stroke-width="5.4"/>`
-+ `<path d="${SMALL}" fill="${finM}" stroke="${finS}" stroke-width="2.2"/>`
-+ `<path d="${TAIL}" fill="${finF}" stroke="${finS}" stroke-width="2.8"/>`
-
-+ `<path d="${B}" fill="url(#${id}-g)" stroke="${hero?"#7a4a0b":"#ebd29c"}" stroke-width="2.6"/>`
-
-+ `<g clip-path="url(#${id}-c)">`
-+ `<rect width="${w}" height="100" fill="url(#${id}-s)"/>`
-+ `<path d="M${P+12} 60C${r(P+L*.4)} 80 ${S} 84 ${X-40} 72" fill="none" stroke="${hero?"#fff2cb":"#eef0d2"}" stroke-width="12" opacity="${hero?.22:.38}"/>`
-+ `<path d="M${P+12} 46C${r((P+S)/2)} 39 ${S} 37 ${X-44} 39" fill="none" stroke="${gold}" stroke-width="1.8" stroke-dasharray="5 6" opacity=".6"/>`
-+ (hero ? `<path class="gleam" style="--gx:${w+95}px" d="M0 -8L46 -8L24 108L-22 108Z" fill="url(#${id}-l)"/>` : ``)
-+ `</g>`
-
-+ `<path d="${PECT}" fill="${finP}" fill-opacity="${hero?.72:.94}" stroke="${hero?"#d295a3":gold}" stroke-width="${hero?1.2:1.5}"/>`
-+ `<g clip-path="url(#${id}-f)" fill="none" stroke="${finR}" stroke-width="1.5" opacity=".92">`
-+ fan(54,50,[[2,2],[4,20],[10,34],[2,98],[4,80],[10,66]])
-+ fan(d1-2,36,[[dA,0],[r((dA+d2)/2),6],[d2,20]])
-+ fan(a1-2,64,[[aA,100],[r((aA+a2)/2),94],[a2,80]])
-+ fan(X-45,56,[[X-78,84],[X-72,76],[X-64,67]])
-+ `</g>`
-
-+ `<path d="M${X-42} 22C${X-56} 40 ${X-56} 60 ${X-42} 78" fill="none" stroke="${gold}" stroke-width="1.8" opacity=".75"/>`
-+ `<path d="M${X-3} 51q-7 8 -19 7" fill="none" stroke="${gold}" stroke-width="2.3" opacity=".95"/>`
-
-+ (hero
-  ? `<path d="M${X-32} 29L${X-4} 2L${X-18} 34Z" fill="url(#${id}-hn)" stroke="#7a4a0b" stroke-width="1.8"/>`
-  + `<g fill="none" stroke="#c26f80" stroke-width="1.5" opacity=".95">`
-  + `<path d="M${X-25} 22L${X-15} 27"/><path d="M${X-18} 14L${X-10} 19"/><path d="M${X-12} 7L${X-6} 11"/></g>`
-  + `<path d="M${X-29} 28L${X-6} 5" fill="none" stroke="#fffdf6" stroke-width="2.4" opacity=".95"/>` : ``)
-
-+ `<circle cx="${E}" cy="40" r="11.8" fill="${hero?"#fff6df":"#f2e9cd"}" stroke="${hero?"#a9720f":"#c9a860"}" stroke-width="2"/>`
-+ `<g class="eye">`
-+ (hero
-  ? `<polygon points="${E},33 ${E+6},36 ${E+6},44 ${E},47 ${E-6},44 ${E-6},36" fill="#e0546e"/>`
-  + `<polygon points="${E},40 ${E},33 ${E-6},36" fill="#ffc6d3"/>`
-  + `<polygon points="${E},40 ${E-6},36 ${E-6},44" fill="#f28ba1"/>`
-  + `<polygon points="${E},40 ${E+6},36 ${E+6},44" fill="#c13f63"/>`
-  + `<polygon points="${E},40 ${E+6},44 ${E},47" fill="#96214a"/>`
-  + `<circle cx="${E-2.5}" cy="37" r="1.7" fill="#fff"/>`
-  : `<circle cx="${E}" cy="40" r="6.4" fill="#bf8d33"/>`
-  + `<circle cx="${E}" cy="40" r="4.2" fill="#0e2027"/>`
-  + `<circle cx="${E-2.4}" cy="37.3" r="2" fill="#fff" opacity=".95"/>`)
-+ `</g></svg>`;
-  }
-};
-
-</script>
-<script>
-/* NIGHT CATCH — the tin after dark.
-   Deep teal-black brine, sprats cut out of the dark by a cold cyan rim light
-   coming off the opened lid, and one hero who is herself the light source.
-   NOTE: this direction restyles the tin (dark oil + gunmetal frame). Those
-   rules are marked TIN: below so they can be lifted to the real stylesheet. */
-DESIGNS["neon"] = {
-  name: "Night Catch",
-  blurb: "black brine, cyan rim-light, one fish that glows",
-
-  css: `
-  /* TIN: gunmetal frame, cold. */
-  .dz-neon .tin{
-    background:linear-gradient(145deg,#8b99a6,#333d47 36%,#5f6d7a 54%,#1e262e);
-    box-shadow:0 16px 34px #06121a55, inset 0 1px 0 #ffffff3d;
-  }
-  /* TIN: the oil goes deep — teal-black brine with a faint diagonal sheen.
-     Pulled a stop darker than the first cut: the brine has to stay clearly
-     BELOW every part of a fish in value, or the tails sink into it. */
-  .dz-neon .tin-inner{
-    background:
-      linear-gradient(116deg, transparent 26%, #7fe9ff10 43%, #7fe9ff05 52%, transparent 64%),
-      radial-gradient(135% 95% at 20% 8%, #0c2b34 0%, #071d26 42%, #041014 76%, #010709 100%);
-    box-shadow:inset 0 3px 16px #000000c2, inset 0 0 0 1px #6fe6ff1f;
-  }
-  /* TIN: lane lines. Still faint, but they have to be countable — this is a
-     game about how many cells long a thing is. */
-  .dz-neon .grid i{ background:#7fe9ff1f; }
-
-  /* the hero paints over her neighbours so her glow can light them.
-     (real stylesheet: the hero's .fish element needs this z-index) */
-  .dz-neon .fish.hero{ z-index:5; }
-
-  /* ---------- THE DOOR: the lid, torn at her lane and peeled back ---------- */
-  /* daylight landing on the brine just inside the gap */
-  .dz-neon .neon-spill{
-    position:absolute; right:-6px;
-    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*1.6);
-    width:calc(var(--cell)*2.3); height:calc(var(--cell)*3.2);
-    background:radial-gradient(closest-side ellipse at 100% 50%,
-      rgba(226,255,255,.66) 0%, rgba(140,233,255,.32) 30%,
-      rgba(60,172,216,.12) 56%, rgba(0,0,0,0) 76%);
-  }
-  /* the shaft of light through the opening, widening as it enters */
-  .dz-neon .neon-beam{
-    position:absolute; right:-6px;
-    top:calc(var(--top) - var(--cell)*0.42); height:calc(var(--cell)*1.84);
-    width:calc(var(--cell)*1.5);
-    background:linear-gradient(270deg, rgba(240,255,255,.62), rgba(150,236,255,.17) 42%, rgba(0,0,0,0) 88%);
-    clip-path:polygon(100% 32%, 100% 68%, 0 98%, 0 2%);
-    -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 26%, #000 74%, transparent 100%);
-    mask-image:linear-gradient(180deg, transparent 0%, #000 26%, #000 74%, transparent 100%);
-  }
-  /* the gap itself: a bright cut clean through the rim */
-  .dz-neon .neon-gap{
-    position:absolute; left:calc(100% - 6px); width:21px;
-    background:linear-gradient(90deg,#8fe4ff 0%,#ffffff 30%,#dcf8ff 62%,#79dcff 100%);
-    -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
-    mask-image:linear-gradient(90deg, transparent 0%, #000 26%, #000 100%);
-    box-shadow:0 0 14px 5px rgba(198,248,255,.72), 0 0 46px 20px rgba(90,206,244,.32),
-               0 0 90px 34px rgba(60,170,220,.16);
-  }
-  /* the light blasting back OUT through the torn lane, so the cream page
-     between the two flaps is part of the beam and not a bright lozenge. */
-  .dz-neon .neon-out{
-    position:absolute; left:calc(100% + 2px);
-    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*1.0);
-    width:54px; height:calc(var(--cell)*2.0);
-    background:radial-gradient(farthest-side ellipse at 0% 50%,
-      rgba(160,238,255,.88) 0%, rgba(86,208,247,.52) 30%,
-      rgba(50,172,224,.2) 58%, rgba(40,150,205,0) 100%);
-  }
-  /* the two peeled halves of the lid. Width is fixed px (like the 11px rim —
-     it is a sheet of metal, not a grid unit); height tracks the cell so the
-     door never dwarfs the board on a small phone. */
-  .dz-neon .neon-panel{
-    position:absolute; left:calc(100% - 12px); width:53px; overflow:visible;
-  }
-  /* top/height are set inline by door(): the peel is clamped to the metal that
-     actually exists above and below the lane, so on row 0 or row 5 a flap is
-     shortened or dropped instead of floating off the board. */
-  .dz-neon .neon-panel.b{ transform:scaleY(-1); transform-origin:50% 50%; }
-
-  /* ---------- the hero's one animation ---------- */
-  @keyframes neon-breathe{ 0%,100%{opacity:.6} 50%{opacity:1} }
-  .dz-neon .neon-pulse{ animation:neon-breathe 3.6s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce){
-    .dz-neon .neon-pulse{ animation:none; opacity:.85 }
-  }`,
-
-  door(g){
-    // the lid, torn across her lane and bent back off the rim: a bowed sheet
-    // of metal, its far edge rolled into a bead, its torn edge ragged, creased
-    // dark where it folds against the rim. Mirrored below the gap, so the peel
-    // works on any row and her lane straight out through it is always clear.
-    const PH = 1.06, r3 = n => Math.round(n * 1000) / 1000;
-    const row = g && g.row || 0, rows = g && g.H || 6;
-    const hT = Math.min(PH, row), hB = Math.min(PH, rows - row - 1);
-    // the cut only overhangs the lane where a peel exists to chew its edge
-    const oT = r3(Math.min(.13, hT)), oB = r3(Math.min(.13, hB));
-    const panel = (cls, h, top) => h < .12 ? "" : `
-<svg class="neon-panel ${cls}" style="top:${top};height:calc(var(--cell)*${h})"
-     viewBox="0 0 53 56" preserveAspectRatio="none" aria-hidden="true">
-  <path d="M9 58 L11 7 C25 3 40 5 49 11 C52 24 52 42 49 56
-           L44 51 C37 55 33 49 26 52 C20 54 16 50 12 57 Z"
-        fill="#02080c" opacity=".4"/>
-  <path d="M5 55 L7 4 C21 0 36 2 45 8 C48 21 48 39 45 53
-           L40 48 C33 52 29 46 22 49 C16 51 12 47 8 54 Z"
-        fill="url(#neon-sheet)"/>
-  <path d="M45 53 L40 48 C33 52 29 46 22 49 C16 51 12 47 8 54"
-        fill="none" stroke="#cfeaf7" stroke-width="1.3" stroke-linejoin="round" opacity=".55"/>
-  <path d="M7 4 C21 0 36 2 45 8" fill="none" stroke="#040a0f" stroke-width="1.8" opacity=".75"/>
-  <path d="M5 55 L7 4" fill="none" stroke="#02070b" stroke-width="3.4" opacity=".85"/>
-  <path d="M9.6 5 L7.6 54" fill="none" stroke="#bcd6e8" stroke-width="1.4" opacity=".42"/>
-  <path d="M45 8 C48 21 48 39 45 53" fill="none" stroke="url(#neon-bead)"
-        stroke-width="6.4" stroke-linecap="round"/>
-  <path d="M43.4 11 C46 21 46 38 43.6 49.4" fill="none" stroke="#ffffff"
-        stroke-width="1.7" stroke-linecap="round" opacity=".88"/>
-  <path d="M26 2.6 C28.6 20 28.4 38 26.2 51" fill="none" stroke="#e6f6ff"
-        stroke-width="2.6" stroke-linecap="round" opacity=".3"/>
-</svg>`;
-    return `
-<svg width="0" height="0" aria-hidden="true" style="position:absolute">
-  <defs>
-    <linearGradient id="neon-sheet" x1="0" y1="0" x2="1" y2=".16">
-      <stop offset="0" stop-color="#0a1218"/>
-      <stop offset=".38" stop-color="#1a2630"/>
-      <stop offset=".56" stop-color="#57697a"/>
-      <stop offset=".63" stop-color="#dcefff"/>
-      <stop offset=".71" stop-color="#2f3d48"/>
-      <stop offset="1" stop-color="#070e13"/>
-    </linearGradient>
-    <linearGradient id="neon-bead" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="51" y2="0">
-      <stop offset="0" stop-color="#080e13"/>
-      <stop offset=".42" stop-color="#e6f5ff"/>
-      <stop offset="1" stop-color="#141d25"/>
-    </linearGradient>
-  </defs>
-</svg>
-<div class="neon-spill"></div>
-<div class="neon-beam"></div>
-<div class="neon-gap" style="top:calc(var(--top) - var(--cell)*${oT});height:calc(var(--cell)*${r3(1 + oT + oB)})"></div>` + panel("t", hT, `calc(var(--top) - var(--cell)*${hT})`)
-      + panel("b", hB, "calc(var(--top) + var(--cell))")
-      + `<div class="neon-out"></div>`;
-  },
-
-  sprat(len, hero){
-    const w = len * 100;
-    const id = "neon-" + (hero ? "h" : "n") + len;
-    const r = n => Math.round(n * 10) / 10;
-    // head and tail are FIXED in user units; only the middle stretches — so a
-    // 3-cell sprat reads as longer, never as bigger.
-    const x0 = 24, x1 = w - 5, L = x1 - x0, mx = r(x0 + L * 0.38);
-    const P = p => r(x0 + L * p);
-
-    const C = hero
-      ? { top:"#fff3fb", mid:"#ff4fb8", low:"#e2118f", deep:"#7d0757",
-          rim:"#ffffff", fin:"#ff7ccd", finDeep:"#a20d78", gill:"#ffd9f2",
-          sclera:"#fff2fb", iris:"#ff3fae", warm:"#fff0a8" }
-      // the ordinary sprat is a CLOSED shape, not an edge: every stop here,
-      // including the darkest belly and the tail fan, sits above the brine.
-      : { top:"#6fb8ca", mid:"#1f5567", low:"#174350", deep:"#153a47",
-          rim:"#b4faff", fin:"#2b6274", finDeep:"#1a4453", gill:"#7fe0f2",
-          warm:"#ffb567" };
-    const ink = hero ? "#3d0129" : "#03131b";
-    const sclera = hero ? "#fff2fb" : "#e2f8ff";
-    const iris = hero ? "#ff3fae" : "#2f7f95";
-
-    // blunt caudal peduncle: the body ends in a waist, not a taper
-    const body =
-      `M ${x0} 38 C ${P(.05)} 22 ${P(.20)} 9 ${mx} 8.5` +
-      ` C ${P(.60)} 7.6 ${r(x1-56)} 19 ${x1} 51`;
-
-    // belly bounce: its lower edge IS the body's own ventral curve, so warm
-    // light can never leak outside the silhouette
-    const vent =
-      ` C ${r(x1-56)} 83 ${P(.60)} 93.4 ${mx} 92.5` +
-      ` C ${P(.20)} 92 ${P(.05)} 79 ${x0} 63`;
-    const belly =
-      `M ${x1} 51` + vent +
-      ` L ${x0+3} 57 C ${P(.11)} 76 ${P(.34)} 84 ${mx} 84.5` +
-      ` C ${P(.60)} 85 ${r(x1-54)} 76 ${x1} 51 Z`;
-
-    // HERO: fan tucked 16 units under the body. She is lit from inside and
-    // sits on her own glow, so a tucked fan still reads as hers.
-    const tail = `M ${x0+16} 50 L 3 5 Q ${x0+4} 50 3 95 Z`;
-
-    // ORDINARY SPRAT: the fan is not a separate shape tucked under the body,
-    // it is the far end of ONE closed silhouette — body, peduncle and fork in a
-    // single outline. Tucked-and-separately-outlined read as a detached lens
-    // floating in the seam between two fish; this cannot.
-    // The fork is deliberately narrower than the body and deeply notched: a fan
-    // as tall as the body made two tails meeting end to end read as one fat
-    // lozenge lying across the seam, which is the exact confusion to avoid.
-    const fan = `L 4 86 Q ${x0+9} 50 4 14 Z`;                // vent-end → fork
-    const fanFill = `M ${x0} 38 L 4 14 Q ${x0+9} 50 4 86 L ${x0} 63 Z`;
-    const sil = hero ? `${body}${vent} Z` : `${body}${vent} ${fan}`;
-
-    // dorsal + anal fins, unchanged and still drawn under the body. Tried
-    // moving them on top so the dark moat would stop eating them: at 38px they
-    // came back as arcs INSIDE the fish that read as scratches, which is worse
-    // than a clean closed sprat. Left where they were.
-    const fy = 0, ay = 100;
-    const fins =
-      `<path d="M ${r(mx-26)} 17 C ${r(mx-12)} ${fy} ${r(mx+8)} ${fy+1} ${r(mx+32)} 15 Z" fill="url(#${id}-f)"/>` +
-      `<path d="M ${r(mx-26)} 17 C ${r(mx-12)} ${fy} ${r(mx+8)} ${fy+1} ${r(mx+32)} 15" fill="none"` +
-      ` stroke="${C.rim}" stroke-width="2.6" stroke-linecap="round" opacity=".6"/>` +
-      `<path d="M ${r(mx+3)} 84 C ${r(mx+16)} ${ay} ${r(mx+32)} ${ay-1} ${r(mx+45)} 85 Z" fill="url(#${id}-f)"/>` +
-      `<path d="M ${r(mx+3)} 84 C ${r(mx+16)} ${ay} ${r(mx+32)} ${ay-1} ${r(mx+45)} 85" fill="none"` +
-      ` stroke="${C.rim}" stroke-width="2.2" stroke-linecap="round" opacity=".36"/>`;
-
-    // hero horn: a slender twisted spike off the forehead, tip up-and-forward.
-    // 3:1 length-to-base, split light/shadow down its own axis so it reads as a
-    // cone and not a party hat at 4px.
-    const hx = r(x1 - 30), hy = -20;                                // tip
-    const b1x = r(x1 - 66), b1y = 16, b2x = r(x1 - 48), b2y = 30;   // base, on the skull
-    const axx = r((b1x + b2x) / 2), axy = r((b1y + b2y) / 2);       // base midpoint
-    const lp = t => `${r(b1x + (hx - b1x) * t)} ${r(b1y + (hy - b1y) * t)}`;
-    const ap = t => `${r(axx + (hx - axx) * t)} ${r(axy + (hy - axy) * t)}`;
-
-    return (`
-<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true">
-<defs>
-<linearGradient id="${id}-b" x2="0" y2="1">
-<stop offset="0" stop-color="${C.top}"/><stop offset=".24" stop-color="${C.mid}"/>
-<stop offset=".64" stop-color="${C.low}"/><stop offset="1" stop-color="${C.deep}"/>
-</linearGradient>
-<linearGradient id="${id}-r">
-<stop offset="0" stop-color="${C.rim}" stop-opacity="0"/>
-<stop offset=".24" stop-color="${C.rim}" stop-opacity=".95"/>
-<stop offset="1" stop-color="${C.rim}" stop-opacity="0"/>
-</linearGradient>
-<linearGradient id="${id}-f" x2="0" y2="1">
-<stop offset="0" stop-color="${C.fin}"/><stop offset="1" stop-color="${C.finDeep}"/>
-</linearGradient>
-<linearGradient id="${id}-w" x2="0" y2="1">
-<stop offset="${hero ? .68 : .42}" stop-color="${C.warm}" stop-opacity="0"/>
-<stop offset="1" stop-color="${C.warm}" stop-opacity="${hero ? .3 : .27}"/>
-</linearGradient>
-${hero ? "" : `<linearGradient id="${id}-c" x2="0" y2="1">
-<stop offset="0" stop-color="${C.rim}" stop-opacity=".95"/>
-<stop offset=".55" stop-color="#8fe2f4" stop-opacity=".6"/>
-<stop offset="1" stop-color="#dcab86" stop-opacity=".5"/>
-</linearGradient>`}
-<path id="${id}-bd" d="${sil}"/>
-${hero ? `<radialGradient id="${id}-g">
-<stop offset="0" stop-color="#ff8ad4" stop-opacity=".78"/>
-<stop offset=".34" stop-color="#ff3fae" stop-opacity=".42"/>
-<stop offset="1" stop-color="#d01f92" stop-opacity="0"/></radialGradient>
-<radialGradient id="${id}-bl">
-<stop offset="0" stop-color="#fff"/>
-<stop offset=".2" stop-color="#fff0fb" stop-opacity=".76"/>
-<stop offset="1" stop-color="#ff8ad8" stop-opacity="0"/></radialGradient>
-<linearGradient id="${id}-hn" y1="1" x2=".4" y2="0">
-<stop offset="0" stop-color="#ff86cf"/><stop offset=".45" stop-color="#ffdcf3"/>
-<stop offset="1" stop-color="#fff"/></linearGradient>
-<path id="${id}-s" d="M0-10 2-2 10 0 2 2 0 10-2 2-10 0-2-2Z"/>` : ""}
-</defs>
-${hero ? `<ellipse class="neon-pulse" cx="${r(w/2)}" cy="52" rx="${r(w*1.02)}" ry="136" fill="url(#${id}-g)"/>` : ""}
-${hero ? `<path d="${tail}" fill="url(#${id}-f)"/>
-<path d="M ${x0+15} 50 L 4 7" fill="none" stroke="${C.rim}"
- stroke-width="2.4" stroke-linecap="round" opacity=".45"/>` : ""}
-${fins}
-${hero ? `<use href="#${id}-bd" fill="url(#${id}-b)"/>
-<use href="#${id}-bd" fill="url(#${id}-b)" stroke="#ffa6e0" stroke-width="3.4" opacity=".55"/>`
-      // a dark moat, then the body, then a rim light that goes ALL the way
-      // round. Two sprats lying end to end are two closed shapes with black
-      // between them, never one long one.
-      : `<use href="#${id}-bd" fill="none" stroke="#020b10" stroke-width="6.4"/>
-<use href="#${id}-bd" fill="url(#${id}-b)"/>
-<path d="${fanFill}" fill="url(#${id}-f)"/>
-<path d="M ${x0-1} 44 L 9 22 M ${x0-1} 57 L 9 78" fill="none" stroke="${C.rim}"
- stroke-width="2" stroke-linecap="round" opacity=".3"/>
-<use href="#${id}-bd" fill="none" stroke="url(#${id}-c)" stroke-width="3.4"/>`}
-<path d="${belly}" fill="url(#${id}-w)"/>
-<path d="M ${r(x1-70)} 59 C ${r(x1-56)} 82 ${r(x1-36)} 80 ${r(x1-28)} 65 Z" fill="${C.rim}" opacity="${hero ? .18 : .12}"/>
-<path d="M ${x0+2} 40 C ${P(.06)} 23 ${P(.21)} 11.5 ${mx} 11 C ${P(.60)} 10.2 ${r(x1-54)} 21 ${r(x1-11)} 43"
- fill="none" stroke="url(#${id}-r)" stroke-width="5.6" stroke-linecap="round"/>
-<path d="M ${P(.17)} 33.5 Q ${r(mx+L*0.09)} 23 ${P(.76)} 29.5 Q ${r(mx+L*0.09)} 27 ${P(.17)} 33.5 Z"
- fill="url(#${id}-r)" opacity="${hero ? .62 : .34}"/>
-<path d="M ${r(x1-60)} 24 C ${r(x1-68)} 43 ${r(x1-68)} 59 ${r(x1-57)} 75" fill="none"
- stroke="${C.gill}" stroke-width="2.6" opacity=".26"/>
-${hero ? `<g>
-<circle cx="${hx}" cy="${hy}" r="36" fill="url(#${id}-bl)"/>
-<path d="M ${b1x} ${b1y} L ${hx} ${hy} L ${b2x} ${b2y} Z" fill="url(#${id}-hn)"/>
-<path d="M ${axx} ${axy} L ${hx} ${hy} L ${b2x} ${b2y} Z" fill="#c00f79" opacity=".5"/>
-<path d="M ${lp(.26)} L ${ap(.20)} M ${lp(.55)} L ${ap(.50)}" fill="none"
- stroke="#d70f92" stroke-width="2.1" stroke-linecap="round" opacity=".45"/>
-<path d="M ${b1x} ${b1y} L ${hx} ${hy}" fill="none" stroke="#ffffff"
- stroke-width="3" stroke-linecap="round" opacity=".95"/>
-<path d="M ${hx} ${hy-17.6} l 3 14.6 15 3 -15 3 -3 15 -3 -15 -15 -3 15 -3 Z" fill="#ffffff"/>
-</g>
-<g fill="#ffffff">
-<use href="#${id}-s" transform="translate(${P(.15)} 24) scale(.8)" opacity=".95"/>
-<use href="#${id}-s" transform="translate(${P(.44)} 95) scale(.6)" opacity=".85"/>
-<use href="#${id}-s" transform="translate(${r(x1-8)} 27) scale(.55)" opacity=".9"/>
-<use href="#${id}-s" transform="translate(${r(mx+L*0.32)} 4) scale(.62)" opacity=".9"/>
-</g>` : ""}
-<circle cx="${r(x1-42)}" cy="41" r="15" fill="${sclera}"/>
-<circle cx="${r(x1-42)}" cy="41" r="15" fill="none" stroke="${iris}" stroke-width="2.6" opacity=".5"/>
-<g class="eye">
-<circle cx="${r(x1-40.8)}" cy="41.6" r="7.6" fill="${ink}"/>
-<circle cx="${r(x1-37.4)}" cy="38.2" r="3" fill="#ffffff"/>
-</g>
-<path d="M ${r(x1-1)} 54 Q ${r(x1-14)} ${hero ? 65 : 68} ${r(x1-(hero?26:30))} ${hero ? 62 : 64}"
- fill="none" stroke="${ink}" stroke-width="${hero ? 2.6 : 3}" stroke-linecap="round"
- opacity="${hero ? .5 : .75}"/>
-</svg>`).replace(/\n\s*/g, " ").trim();
-  }
-};
 
 </script>
 <script>
@@ -2055,346 +2458,6 @@ ${star(ex - 41, 52, 4.6, ".9")}
 
 </script>
 <script>
-/* SPRAT PLUSH — soft-toy sprats. Chubby silhouettes, felt-fuzz edges, a soft
-   ambient shadow all round, blush cheeks, glossy bead eyes. The hero is a
-   pastel unicorn sprat: gold horn, rainbow mane, heart tail, sparkles.
-   The door is the rim cut clean through at her row and the two cut lips bent
-   back off it, the top one wound onto its key, the way a sardine tin opens. */
-DESIGNS["plush"] = {
-  name: "Sprat Plush",
-  blurb: "soft toys in oil; the hero is a unicorn",
-
-  css: `
-  /* ---- tin restyle: matte pewter frame, softer honey oil, near-invisible
-         lanes. Lift these three rules to the real stylesheet if this wins. ---- */
-  .dz-plush .tin{
-    border-radius:26px;
-    background:linear-gradient(150deg,#f7f3ec,#cdc5b7 42%,#eae3d8 58%,#bcb3a4);
-    box-shadow:0 16px 30px #c9a06038, inset 0 2px 0 #fffffff2, inset 0 -2px 0 #0000000f;
-  }
-  .dz-plush .tin-inner{
-    border-radius:16px;
-    background:radial-gradient(120% 110% at 28% 8%, #ffd88f 0%, #f3b360 52%, #dd9743 100%);
-    box-shadow:inset 0 3px 12px #a35f1a30;
-  }
-  .dz-plush .grid i{background:#ffffff26}
-
-  /* ---- the door. Everything is sized off --cell so the hole keeps the same
-         share of the corridor at 38px as at 58px. The whole thing is one SVG
-         with a fixed aspect (1.30 : 2.40 cells, viewBox 130x240, so one user
-         unit is exactly 1/100 of a cell) — uniform scale, nothing distorts.
-         The oil's right edge is at x=30 in that box; the hero's lane is the
-         band y 70..170, and nothing solid is drawn inside it. ---- */
-  .dz-plush .door{
-    position:absolute; left:100%; top:var(--top);
-    width:0; height:var(--cell);
-  }
-  .dz-plush .cut{
-    position:absolute; left:calc(var(--cell) * -.30); top:50%;
-    width:calc(var(--cell) * 1.30); height:calc(var(--cell) * 2.4);
-    transform:translateY(-50%); overflow:visible;
-  }
-
-  /* ---- the one animation: a gentle pulse, shared by every sparkle
-         and by the hero's iridescent sheen ---- */
-  @keyframes plush-pulse{
-    0%,100%{opacity:.55; transform:scale(.84)}
-    50%    {opacity:1;   transform:scale(1.1)}
-  }
-  .dz-plush .tw{
-    animation:plush-pulse 2.6s ease-in-out infinite;
-    transform-box:fill-box; transform-origin:center;
-  }
-  .dz-plush .tw-b{animation-duration:3.4s; animation-delay:-.9s}
-  .dz-plush .tw-c{animation-duration:2.1s; animation-delay:-1.6s}
-  .dz-plush .sheen{
-    animation:plush-pulse 5.2s ease-in-out infinite;
-    transform-box:fill-box; transform-origin:62% 50%;
-  }
-  @media (prefers-reduced-motion: reduce){
-    .dz-plush .tw,.dz-plush .sheen{animation:none}
-  }
-  `,
-
-  door(){
-    // A hole, then the hardware. The loudest thing here is the aperture: a
-    // near-black throat where the oil ends, flaring outward and brightening to
-    // daylight, so it goes dark-to-light left-to-right and never caps off at
-    // the far end. The two cut lips frame it and bend away from each other; the
-    // top one winds onto the key. The key stays small and sits above the lane.
-    const lip = (d) => `<path d="${d}" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8" stroke-linejoin="round"/>`;
-    return `<div class="door">
-  <svg class="cut" viewBox="0 0 130 240" aria-hidden="true">
-    <defs>
-      <linearGradient id="plush-throat" gradientUnits="userSpaceOnUse" x1="12" y1="0" x2="114" y2="0">
-        <stop offset="0" stop-color="#150a01"/>
-        <stop offset=".34" stop-color="#251202"/>
-        <stop offset=".58" stop-color="#7d4d18"/>
-        <stop offset=".74" stop-color="#f0d7a8"/>
-        <stop offset=".86" stop-color="#fffdf5" stop-opacity=".92"/>
-        <stop offset="1" stop-color="#fffdf5" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="plush-oil" gradientUnits="userSpaceOnUse" x1="-14" y1="0" x2="30" y2="0">
-        <stop offset="0" stop-color="#3a1e04" stop-opacity="0"/>
-        <stop offset="1" stop-color="#2c1602" stop-opacity=".85"/>
-      </linearGradient>
-      <linearGradient id="plush-metal" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#8e8574"/>
-        <stop offset=".22" stop-color="#fffdf7"/>
-        <stop offset=".62" stop-color="#ded6c5"/>
-        <stop offset="1" stop-color="#8a8170"/>
-      </linearGradient>
-      <radialGradient id="plush-roll" cx=".34" cy=".28" r=".82">
-        <stop offset="0" stop-color="#fdfbf5"/>
-        <stop offset=".46" stop-color="#d5ccba"/>
-        <stop offset="1" stop-color="#8a8170"/>
-      </radialGradient>
-      <linearGradient id="plush-key" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ffeec4"/>
-        <stop offset="1" stop-color="#c68f34"/>
-      </linearGradient>
-    </defs>
-
-    <!-- the oil goes dark as it runs up to the cut -->
-    <rect x="-14" y="72" width="44" height="96" fill="url(#plush-oil)"/>
-
-    <!-- THE HOLE: a flaring throat, black where the tin was, daylight outward -->
-    <path d="M 12 72 C 46 68 82 56 118 34 L 118 206 C 82 184 46 172 12 168 Z"
-          fill="url(#plush-throat)"/>
-    <path d="M 12 74 C 46 70 82 58 110 41" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
-    <path d="M 12 166 C 46 170 82 182 110 199" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
-
-    <!-- the two cut lips, bent back off the hole -->
-    ${lip("M 8 56 C 44 52 78 40 102 24 L 108 38 C 82 56 46 68 10 73 Z")}
-    ${lip("M 8 184 C 44 188 78 200 102 216 L 108 202 C 82 184 46 172 10 167 Z")}
-    <path d="M 10 73 C 46 68 82 56 108 38" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
-    <path d="M 10 167 C 46 172 82 184 108 202" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
-    <g transform="rotate(32 106 211)">
-      <ellipse cx="106" cy="211" rx="5" ry="9.5" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8"/>
-      <path d="M 104 204 V 218" fill="none" stroke="#5d5344" stroke-opacity=".5" stroke-width="1.6"/>
-    </g>
-
-    <!-- the lid, wound onto its key, well clear of her lane -->
-    <circle cx="92" cy="25" r="15.5" fill="url(#plush-roll)" stroke="#544b3a" stroke-width="2.3"/>
-    <path d="M 92 13 A 12 12 0 1 1 80 28 A 7.5 7.5 0 1 1 94 32" fill="none" stroke="#7e7563" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M 82 16 A 12 12 0 0 1 94 11" fill="none" stroke="#fffdf6" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/>
-    <g stroke-linecap="round" fill="none">
-      <path d="M 92 25 L 113 8" stroke="#4a4232" stroke-width="8"/>
-      <ellipse cx="119" cy="5" rx="7.5" ry="5.8" fill="none" stroke="#4a4232" stroke-width="7"/>
-      <path d="M 92 25 L 113 8" stroke="url(#plush-key)" stroke-width="5"/>
-      <ellipse cx="119" cy="5" rx="7.5" ry="5.8" fill="none" stroke="url(#plush-key)" stroke-width="4.4"/>
-    </g>
-    <circle cx="92" cy="25" r="3.6" fill="url(#plush-key)" stroke="#4a4232" stroke-width="1.6"/>
-
-    <!-- oil dribbling out under the lower lip, and a little glitter outside -->
-    <path d="M 34 176 C 40 196 37 214 31 224 C 25 212 27 192 28 175 Z" fill="#c9832c" opacity=".5"/>
-    <g fill="#dd9a3e">
-      <path class="tw" d="M 118 56 q 2 -2 2.5 -7.5 q .5 5.5 2.5 7.5 q -2 2 -2.5 7.5 q -.5 -5.5 -2.5 -7.5 Z"/>
-      <path class="tw tw-b" d="M 104 186 q 1.5 -1.5 1.9 -5.6 q .4 4.1 1.9 5.6 q -1.5 1.5 -1.9 5.6 q -.4 -4.1 -1.9 -5.6 Z"/>
-      <path class="tw tw-c" d="M 122 152 q 1.4 -1.4 1.7 -5 q .3 3.6 1.7 5 q -1.4 1.4 -1.7 5 q -.3 -3.6 -1.7 -5 Z"/>
-    </g>
-  </svg>
-</div>`;
-  },
-
-  sprat(len, hero){
-    const w = len * 100;
-    const r = v => Math.round(v);
-    const sfx = (hero ? "h" : "n") + len;
-    const ID = k => `plush-${k}-${sfx}`;
-    const L = (a, b, t) => r(a + (b - a) * t);
-
-    // ---- ONE continuous silhouette, and it is a FISH, not a capsule. Three
-    // landmarks do the work: a snout at `nose`, a gill line at `hb`, and a
-    // waist at `pd`. Between them the belly swells to FULL depth (y 6..94) at
-    // `xp` and tapers off both ways — the taper is what stops a three-cell
-    // sprat reading as a tube, and it costs almost nothing in packing because
-    // the neighbour's own taper meets it. Head (74u) and tail (44u) are
-    // ABSOLUTE, so a 3-cell sprat is a 2-cell sprat plus one cell of belly.
-    const nose = w - 4;
-    const hb   = nose - 74;                  // gill line / base of the head
-    const pd   = 44;                         // peduncle — the waist
-    const xp   = r(pd + (hb - pd) * 0.56);   // deepest point of the belly
-
-    // snout -> forehead -> nape. The snout is conical, not a dome.
-    const head = `M ${nose} 48 C ${nose - 2} 34 ${nose - 10} 24 ${nose - 25} 19` +
-                 ` C ${nose - 42} 15 ${nose - 57} 15 ${hb} 15`;
-    // nape -> over the belly's peak -> down into the waist
-    const back = ` C ${L(hb, xp, .40)} 15 ${L(xp, hb, .42)} 5.5 ${xp} 6` +
-                 ` C ${L(xp, pd, .42)} 6.5 ${L(pd, xp, .40)} 15 ${pd} 36`;
-    // forked caudal, reaching x=5 and fanning nearly the full height there
-    const tail = hero
-      ? ` C 30 20 13 3 4 8 C 17 25 30 42 33 50 C 30 58 17 75 4 92 C 13 97 30 80 ${pd} 64`
-      : ` C 34 26 18 13 5 9 C 14 24 24 38 27 50 C 24 62 14 76 5 91 C 18 87 34 74 ${pd} 64`;
-    // waist -> under the belly's deepest -> up the throat -> jaw -> snout
-    const belly = ` C ${L(pd, xp, .40)} 82 ${L(xp, pd, .42)} 93.5 ${xp} 94` +
-                  ` C ${L(xp, hb, .48)} 94 ${L(hb, xp, .40)} 88 ${hb} 86` +
-                  ` C ${nose - 57} 86 ${nose - 42} 85 ${nose - 26} 79` +
-                  ` C ${nose - 10} 71 ${nose - 2} 60 ${nose} 48 Z`;
-    const body = head + back + tail + belly;
-
-    // ---- colour. The ordinary sprat is a SMOKED sprat: slate satin back,
-    // a silver flank, and a honey-gold underside — the warmth lives in the
-    // bottom half so it reads soft and toy-like, and the hero keeps the whole
-    // pink hue to herself.
-    const pal = hero
-      ? { stops: [[0,"#fff7fb"],[.45,"#ffcbe0"],[1,"#ff9dc2"]],
-          fin:"#ff8fbc", pec:"#ff8fbc", fuzz:"#fff0f7", belly:"#fff6fb",
-          blush:"#ff6a9e", shade:"#7a3a55", }
-      : { stops: [[0,"#3f677f"],[.14,"#6e9ab2"],[.30,"#9dbac8"],[.46,"#c6cbba"],
-                  [.64,"#e8cf9b"],[.84,"#f6dda4"],[1,"#ffeecb"]],
-          fin:"#5c86a1", pec:"#daa25a", fuzz:"#fff4e2", belly:"#ffe6b6",
-          blush:"#ff9270", shade:"#4a2f16", };
-
-    const felt = `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.4"`;
-
-    // ---- crest. Every fin lives INSIDE the silhouette — a felt patch appliqued
-    // onto the back — so a fish never splays past its own lane and you can
-    // always tell which lane it is in and which way up it lies.
-    let crest;
-    if (hero){
-      const x0 = 78, x1 = hb - 8, n = len === 2 ? 5 : 7, step = (x1 - x0) / n;
-      const cols = ["#b9a3f2","#8fcdf5","#8fe4bb","#ffdc7a","#ffab74","#ff8fb8","#c0a6ff"];
-      crest = `<g ${felt}>`;
-      for (let i = 0; i < n; i++){
-        const a = r(x0 + i * step), b = r(a + step * 1.5), m = r((a + b) / 2);
-        const top = 13 + (i % 2) * 4;
-        crest += `<path d="M ${a} 36 C ${a} ${top + 8} ${m - 4} ${top} ${m} ${top} ` +
-                 `C ${r(m + 4)} ${top} ${b} ${top + 9} ${b} 34 Q ${m} 41 ${a} 36 Z" fill="${cols[i % 7]}"/>`;
-      }
-      crest += `</g>`;
-    } else {
-      // a felt sail sewn onto the back: steep leading edge, long concave
-      // trailing edge, and a base that ARCS with the back so it can never
-      // read as a ruled line. It is a shade DARKER than the back it sits on,
-      // which is what makes it a patch instead of an outline.
-      const bx0 = L(xp, hb, .55), ax = L(xp, hb, .22), bx1 = L(xp, pd, .35);
-      const sail = `M ${bx0} 35 C ${bx0 - 4} 22 ${ax + 9} 9 ${ax} 9 ` +
-                   `C ${ax - 20} 12 ${bx1 + 14} 22 ${bx1} 31 ` +
-                   `C ${L(bx1, bx0, .34)} 36 ${L(bx1, bx0, .70)} 38 ${bx0} 35 Z`;
-      crest = `<path d="${sail}" fill="${pal.fin}"/>` +
-              `<path d="M ${bx0} 35 C ${bx0 - 4} 22 ${ax + 9} 9 ${ax} 9 ` +
-              `C ${ax - 20} 12 ${bx1 + 14} 22 ${bx1} 31" fill="none" ` +
-              `stroke="${pal.fuzz}" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>` +
-              `<g stroke="#3d6a84" stroke-opacity=".3" stroke-width="1.8" ` +
-              `stroke-linecap="round" fill="none">` +
-              `<path d="M ${ax - 1} 32 Q ${ax - 5} 21 ${ax - 4} 13"/>` +
-              `<path d="M ${L(ax, bx1, .34)} 31 Q ${L(ax, bx1, .30)} 24 ${L(ax, bx1, .28)} 17"/></g>`;
-    }
-
-    // pectoral: a soft teardrop swept back and down off the gill cover
-    const fpx = hero ? hb - 6 : hb - 12;
-    const flipper = `<ellipse cx="${fpx}" cy="71" rx="17" ry="9.5" transform="rotate(24 ${fpx} 71)" ` +
-      `fill="${pal.pec}" fill-opacity="${hero ? '.8' : '.6'}" stroke="${pal.fuzz}" ` +
-      `stroke-opacity=".45" stroke-width="2"/>`;
-
-    // ---- seams. A plush sprat is sewn from panels, and the panel joins sit on
-    // the cell lines: one seam means two cells, two seams mean three. Length is
-    // the puzzle information, so it gets stated twice — outline and stitching.
-    let seams = "";
-    for (let k = 1; k < len; k++)
-      seams += `<path d="M ${k * 100} 4 V 96" fill="none" stroke="${pal.fuzz}" stroke-opacity=".5" ` +
-               `stroke-width="2.6" stroke-dasharray="7 8"/>`;
-
-    const eyeX = r(nose - 33), eyeY = 44;
-
-    const star = (x, y, rad, cls) =>
-      `<path class="${cls}" d="M ${r(x)} ${r(y - rad)} q ${r(rad * .22)} ${r(rad * .78)} ${rad} ${rad} ` +
-      `q ${r(-rad * .78)} ${r(rad * .22)} ${-rad} ${rad} q ${r(-rad * .22)} ${r(-rad * .78)} ${-rad} ${-rad} ` +
-      `q ${r(rad * .78)} ${r(-rad * .22)} ${rad} ${-rad} Z"/>`;
-
-    const hx = r(nose - 50);
-    const horn = hero ? `
-      <path d="M ${hx - 7} 30 Q ${hx + 4} 11 ${nose - 14} 7 Q ${hx + 14} 21 ${hx + 8} 31 Z"
-            fill="url(#${ID('hn')})" stroke="#e0a94c" stroke-opacity=".6" stroke-width="1.6"/>
-      <g stroke="#e0a94c" stroke-opacity=".95" stroke-width="2.6" stroke-linecap="round" fill="none">
-        <path d="M ${hx - 3} 25 Q ${hx + 6} 21 ${hx + 13} 18"/>
-        <path d="M ${hx + 6} 18 Q ${hx + 14} 14 ${hx + 22} 11"/>
-      </g>` : "";
-
-    const sparkles = hero ? `<g fill="#fffcf0">` +
-      star(nose - 12, 17, 9, "tw") + star(nose - 30, 84, 6, "tw tw-b") +
-      star(58, 34, 5, "tw tw-c") + `</g>` : "";
-
-    const glow = hero
-      ? `<ellipse cx="${r(w / 2)}" cy="50" rx="${r(w / 2 - 2)}" ry="49" fill="url(#${ID('gl')})"/>` : "";
-
-    const stops = pal.stops.map(s => `<stop offset="${s[0]}" stop-color="${s[1]}"/>`).join("");
-
-
-    // the head, told as a head: a lighter gill cover with a bright felt seam
-    const gill = `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85 ` +
-      `L ${nose + 6} 92 L ${nose + 6} 8 Z" fill="#fff5e2" fill-opacity="${hero ? '.14' : '.16'}"/>` +
-      `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85" fill="none" ` +
-      `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.2" stroke-linecap="round"/>` +
-      `<ellipse cx="${nose - 34}" cy="58" rx="26" ry="19" fill="#fff6e6" fill-opacity="${hero ? '.12' : '.16'}"/>`;
-
-    const svg = `
-<svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true">
-  <defs>
-    <linearGradient id="${ID('b')}" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient>
-    <linearGradient id="${ID('lit')}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity=".26"/>
-      <stop offset=".30" stop-color="#fff" stop-opacity="0"/>
-      <stop offset=".70" stop-color="${pal.belly}" stop-opacity="0"/>
-      <stop offset="1" stop-color="${pal.belly}" stop-opacity="${hero ? ".9" : ".34"}"/>
-    </linearGradient>
-    <linearGradient id="${ID('tt')}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="72" y2="0">
-      <stop offset="0" stop-color="${pal.fin}" stop-opacity=".85"/>
-      <stop offset="1" stop-color="${pal.fin}" stop-opacity="0"/>
-    </linearGradient>
-    <radialGradient id="${ID('bl')}">
-      <stop offset="0" stop-color="${pal.blush}" stop-opacity=".62"/>
-      <stop offset="1" stop-color="${pal.blush}" stop-opacity="0"/>
-    </radialGradient>
-    <path id="${ID('p')}" d="${body}"/>
-    <clipPath id="${ID('c')}"><use href="#${ID('p')}"/></clipPath>
-    ${hero ? `
-    <radialGradient id="${ID('gl')}">
-      <stop offset=".35" stop-color="#fff4fa" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#fff4fa" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="${ID('hn')}" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#f3bf60"/>
-      <stop offset=".5" stop-color="#ffedb4"/>
-      <stop offset="1" stop-color="#fffdf4"/>
-    </linearGradient>
-    <linearGradient id="${ID('sh')}" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#9fe9d8" stop-opacity=".7"/>
-      <stop offset=".5" stop-color="#fff3c9" stop-opacity=".15"/>
-      <stop offset="1" stop-color="#cbb2ff" stop-opacity=".7"/>
-    </linearGradient>` : ``}
-  </defs>
-  ${glow}
-  <use href="#${ID('p')}" fill="none" stroke="${pal.shade}" stroke-opacity=".17" stroke-width="8.5"/>
-  <use href="#${ID('p')}" fill="url(#${ID('b')})" stroke="${pal.fuzz}" stroke-opacity=".45" stroke-width="2.6"/>
-  <g clip-path="url(#${ID('c')})">
-    <rect x="0" y="0" width="72" height="100" fill="url(#${ID('tt')})"/>
-    <rect x="0" y="0" width="${w}" height="100" fill="url(#${ID('lit')})"/>
-    ${seams}
-    <path d="M ${pd + 18} 71 C ${xp} 86 ${L(xp, hb, .7)} 83 ${nose - 30} 70" fill="none"
-          stroke="${pal.shade}" stroke-opacity=".16" stroke-width="2.2" stroke-linecap="round"
-          stroke-dasharray="5 8"/>
-    ${hero ? `<ellipse class="sheen" cx="${r(w * .58)}" cy="50" rx="${r(w * .34)}" ry="42" fill="url(#${ID('sh')})"/>` : ``}
-    ${crest}${flipper}${gill}
-    <ellipse cx="${r(nose - 46)}" cy="61" rx="13" ry="8.5" fill="url(#${ID('bl')})"/>
-  </g>
-  <circle cx="${eyeX}" cy="${eyeY}" r="13" fill="#fffdf7" stroke="${pal.shade}" stroke-opacity=".22" stroke-width="1.5"/>
-  <g class="eye">
-    <circle cx="${eyeX}" cy="${eyeY}" r="6.8" fill="#3a2a1e"/>
-    <circle cx="${r(eyeX + 2)}" cy="${eyeY - 2.6}" r="2.5" fill="#fff"/>
-    <circle cx="${r(eyeX - 2.6)}" cy="${eyeY + 3}" r="1.2" fill="#fff" opacity=".8"/>
-  </g>
-  <path d="M ${r(nose - 19)} 63 q 7 8 13 -3" fill="none" stroke="${pal.shade}" stroke-opacity=".55"
-        stroke-width="2.6" stroke-linecap="round"/>
-  ${horn}${sparkles}
-</svg>`;
-    return svg.replace(/\s{2,}/g, " ").replace(/> </g, "><").trim();
-  }
-};
-
-</script>
-<script>
 const horiz = f => f.dir === "R" || f.dir === "L";
 
 function buildTin(design, tin){
@@ -2455,7 +2518,7 @@ function swatch(design, len, hero, cell){
 const host = document.getElementById("sheets");
 const tins = [];
 for (const [slug, d] of Object.entries(DESIGNS)){
-  const control = slug === "00-current";
+  const control = slug === "classic";
   const sheet = document.createElement("section");
   sheet.className = "sheet dz-" + slug + (control ? " control" : "");
   if (d.css){ const st = document.createElement("style"); st.textContent = d.css; sheet.append(st); }
@@ -2468,10 +2531,9 @@ for (const [slug, d] of Object.entries(DESIGNS)){
   const info = document.createElement("div"); info.className = "info";
   const h = document.createElement("h2");
   h.textContent = d.name || slug;
-  if (control){
-    const m = document.createElement("span"); m.className = "mark"; m.textContent = "shipping now";
-    h.append(m);
-  }
+  const mark = control ? "default" : (SHIPPED.includes(slug) ? "in the game" : "not shipped");
+  const m = document.createElement("span"); m.className = "mark"; m.textContent = mark;
+  h.append(m);
   info.append(h);
   const tag = document.createElement("p"); tag.className = "tagline"; tag.textContent = d.blurb || "";
   info.append(tag);

@@ -17,15 +17,22 @@
 import { readFile, writeFile, readdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { shippedSkins } from "./shipped.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SP = join(HERE, "..");
 
-const order = ["00-current", "riso", "deco", "neon", "holo", "paper", "plush"];
+/* The four that ship are read out of index.html, so this page cannot show art
+   the game does not draw. The candidates that were not chosen have nowhere
+   else to live, so they still come from designs/ — and are labelled. */
+const { source: shippedSrc, ids: SHIPPED } = await shippedSkins();
+const CANDIDATES = ["riso", "holo", "paper"];
 const found = (await readdir(join(SP, "designs"))).filter(f => f.endsWith(".js")).map(f => f.slice(0, -3));
-const slugs = [...order.filter(s => found.includes(s)), ...found.filter(s => !order.includes(s))];
-const files = [];
-for (const s of slugs) files.push(await readFile(join(SP, "designs", s + ".js"), "utf8"));
+const slugs = [...SHIPPED, ...CANDIDATES.filter(s => found.includes(s))];
+const files = [shippedSrc];
+for (const s of CANDIDATES.filter(s => found.includes(s))) {
+  files.push(await readFile(join(SP, "designs", s + ".js"), "utf8"));
+}
 
 const TIN = JSON.parse(await readFile(join(HERE, "tin.json"), "utf8"));
 let NOTES = {};
@@ -227,9 +234,9 @@ const page = `<title>Šprotai Proof Sheets</title>
 
 <div class="wrap">
 <header>
-  <p class="eyebrow">Šprotai · art direction · six candidates</p>
-  <h1>Pick the tin.<br><span>And pick the way out of it.</span></h1>
-  <p class="standfirst">Two decisions, drawn six ways. Every sheet below is the <b>same real tin — number 12</b>, dealt by the game's own generator, so nothing here is a mock-up and nothing is flattered by a friendlier board.</p>
+  <p class="eyebrow">Šprotai · the four looks in the game, and three that were drawn</p>
+  <h1>Four tins.<br><span>Pick one in the game.</span></h1>
+  <p class="standfirst">The first four are <b>in the game now</b> — tap the palette in the tools row to switch, and the choice sticks. The last three were drawn and not shipped. Every sheet is the <b>same real tin — number 12</b>, dealt by the game's own generator, and the four shipped looks are read straight out of <code>index.html</code>, so this page cannot show art the game does not draw.</p>
 
   <div class="brief">
     <div>
@@ -241,8 +248,8 @@ const page = `<title>Šprotai Proof Sheets</title>
       <p>Today it is an 11px sliver on the right rim. Every direction redraws it as <b>an opened tin</b> — lid sheared and wound back, mostly on a key.</p>
     </div>
     <div>
-      <h3>How to judge</h3>
-      <p>Set it to <b>Phone</b> and find the little one without hunting. That is the whole game, and it is where these separate hardest.</p>
+      <h3>Same puzzle</h3>
+      <p>A look is paint only. It cannot reach the generator, so <b>every player gets the same tin and the same par</b> whichever one they pick.</p>
     </div>
   </div>
 </header>
@@ -261,7 +268,7 @@ const page = `<title>Šprotai Proof Sheets</title>
 <footer>
   <span>Tin 12 · par 7 · 11 sprats</span>
   <span>Boards from the shipping generator</span>
-  <span>The fish and the door are separable — you can mix two directions</span>
+  <span>Change it in the game: the palette button, next to sound</span>
 </footer>
 </div>
 
@@ -269,6 +276,7 @@ const page = `<title>Šprotai Proof Sheets</title>
 const DESIGNS = {};
 const TIN = ${JSON.stringify(TIN)};
 const NOTES = ${JSON.stringify(NOTES)};
+const SHIPPED = ${JSON.stringify(SHIPPED)};
 const SPIN = { R:"", L:"scaleX(-1)", D:"rotate(90deg)", U:"rotate(-90deg)" };
 const W = 6, H = 6;
 </script>
@@ -334,7 +342,7 @@ function swatch(design, len, hero, cell){
 const host = document.getElementById("sheets");
 const tins = [];
 for (const [slug, d] of Object.entries(DESIGNS)){
-  const control = slug === "00-current";
+  const control = slug === "classic";
   const sheet = document.createElement("section");
   sheet.className = "sheet dz-" + slug + (control ? " control" : "");
   if (d.css){ const st = document.createElement("style"); st.textContent = d.css; sheet.append(st); }
@@ -347,10 +355,9 @@ for (const [slug, d] of Object.entries(DESIGNS)){
   const info = document.createElement("div"); info.className = "info";
   const h = document.createElement("h2");
   h.textContent = d.name || slug;
-  if (control){
-    const m = document.createElement("span"); m.className = "mark"; m.textContent = "shipping now";
-    h.append(m);
-  }
+  const mark = control ? "default" : (SHIPPED.includes(slug) ? "in the game" : "not shipped");
+  const m = document.createElement("span"); m.className = "mark"; m.textContent = mark;
+  h.append(m);
   info.append(h);
   const tag = document.createElement("p"); tag.className = "tagline"; tag.textContent = d.blurb || "";
   info.append(tag);

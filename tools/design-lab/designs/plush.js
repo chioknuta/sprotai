@@ -8,19 +8,35 @@ DESIGNS["plush"] = {
   blurb: "soft toys in oil; the hero is a unicorn",
 
   css: `
-  /* ---- tin restyle: matte pewter frame, softer honey oil, near-invisible
-         lanes. Lift these three rules to the real stylesheet if this wins. ---- */
+  /* ---- tin restyle: bone-pewter frame, DEEP smoked-oil ground, readable
+         lanes. Lift these three rules to the real stylesheet if this wins.
+
+         The oil used to be honey (#f3b360) and the fish were pastel, so fish
+         and ground sat at the same lightness and separated by hue alone — a
+         1.05 luminance ratio, which cost a Plush player moves against a par
+         shared with three other looks. Real smoked-sprat oil is dark brown, so
+         the fix was free: take the ground down to chestnut and leave the toys
+         pastel. Nothing about the felt had to change. ---- */
   .dz-plush .tin{
     border-radius:26px;
-    background:linear-gradient(150deg,#f7f3ec,#cdc5b7 42%,#eae3d8 58%,#bcb3a4);
-    box-shadow:0 16px 30px #c9a06038, inset 0 2px 0 #fffffff2, inset 0 -2px 0 #0000000f;
+    background:linear-gradient(150deg,#fbf7f0,#d3cabb 42%,#efe8dc 58%,#bfb5a5);
+    box-shadow:0 16px 30px #4a2c0e4d, inset 0 2px 0 #fffffff2, inset 0 -2px 0 #00000014;
   }
+  /* Not cocoa — oil. The radial is the tin's own gloss coming off the top-left
+     rim; the raking band over it is the sheen on the surface of the oil, which
+     is the thing that stops a dark ground reading as brown card. Kept a shade
+     lighter than it wants to be, because the door's throat is near-black and
+     needs to stay clearly darker than the oil it opens out of. */
   .dz-plush .tin-inner{
     border-radius:16px;
-    background:radial-gradient(120% 110% at 28% 8%, #ffd88f 0%, #f3b360 52%, #dd9743 100%);
-    box-shadow:inset 0 3px 12px #a35f1a30;
+    background:
+      linear-gradient(114deg, #ffffff00 22%, #ffd89a2b 38%, #ffd89a0f 50%, #ffffff00 64%),
+      radial-gradient(112% 98% at 22% 2%, #ad6527 0%, #90521c 38%, #663810 72%, #3d1f07 100%);
+    box-shadow:inset 0 3px 14px #00000073, inset 0 0 0 1px #ffd9a026;
   }
-  .dz-plush .grid i{background:#ffffff26}
+  /* lanes: warm cream, not white — they are puzzle information (which track a
+     sprat slides along), so they have to be countable, not decorative. */
+  .dz-plush .grid i{background:#ffe6bf3b}
 
   /* ---- the door. Everything is sized off --cell so the hole keeps the same
          share of the corridor at 38px as at 58px. The whole thing is one SVG
@@ -59,13 +75,26 @@ DESIGNS["plush"] = {
   }
   `,
 
-  door(){
+  door(g){
     // A hole, then the hardware. The loudest thing here is the aperture: a
     // near-black throat where the oil ends, flaring outward and brightening to
     // daylight, so it goes dark-to-light left-to-right and never caps off at
-    // the far end. The two cut lips frame it and bend away from each other; the
-    // top one winds onto the key. The key stays small and sits above the lane.
+    // the far end. The two cut lips frame it and bend away from each other; one
+    // of them winds onto the key.
+    //
+    // WHICH one is the only thing --row changes. The key normally winds off the
+    // metal ABOVE her lane, which is fine on rows 1-5 because there is board up
+    // there to wind onto. On row 0 there is not: 24px above the oil the date
+    // line starts, and the key was landing on it. So on row 0 the whole
+    // assembly — roll, key, and the little tab on the far lip — is reflected
+    // about her lane and winds off the metal BELOW instead. Everything that
+    // does NOT move (throat, both lips, the dribble) is drawn symmetrically
+    // about y=120 and inside y 38..202, i.e. within 0.35 of a cell of the oil's
+    // edge, so it clears the date line and the Moves row at every row. The hole
+    // itself is untouched by the flip: she swims out of exactly the same gap.
+    // (fit/door-budget.mjs measures this; fit/rows.mjs walks all six rows.)
     const lip = (d) => `<path d="${d}" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8" stroke-linejoin="round"/>`;
+    const flip = (g && g.row === 0) ? ` transform="matrix(1 0 0 -1 0 240)"` : "";
     return `<div class="door">
   <svg class="cut" viewBox="0 0 130 240" aria-hidden="true">
     <defs>
@@ -104,33 +133,42 @@ DESIGNS["plush"] = {
     <!-- THE HOLE: a flaring throat, black where the tin was, daylight outward -->
     <path d="M 12 72 C 46 68 82 56 118 34 L 118 206 C 82 184 46 172 12 168 Z"
           fill="url(#plush-throat)"/>
-    <path d="M 12 74 C 46 70 82 58 110 41" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
-    <path d="M 12 166 C 46 170 82 182 110 199" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
+    <path d="M 12 74 C 46 70 82 60 110 44" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
+    <path d="M 12 166 C 46 170 82 180 110 196" fill="none" stroke="#150a01" stroke-opacity=".8" stroke-width="7"/>
 
-    <!-- the two cut lips, bent back off the hole -->
-    ${lip("M 8 56 C 44 52 78 40 102 24 L 108 38 C 82 56 46 68 10 73 Z")}
-    ${lip("M 8 184 C 44 188 78 200 102 216 L 108 202 C 82 184 46 172 10 167 Z")}
-    <path d="M 10 73 C 46 68 82 56 108 38" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
-    <path d="M 10 167 C 46 172 82 184 108 202" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
-    <g transform="rotate(32 106 211)">
-      <ellipse cx="106" cy="211" rx="5" ry="9.5" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8"/>
-      <path d="M 104 204 V 218" fill="none" stroke="#5d5344" stroke-opacity=".5" stroke-width="1.6"/>
+    <!-- The two cut lips, bent back off the hole. They used to splay to y 24
+         and 216 — 28px past the oil at a 58px cell, over the date line — so
+         they are tucked to 38/202 and now lie along the throat's own edge
+         instead of outside it. The hole keeps its full flare (34..206); only
+         the metal around it comes in. -->
+    ${lip("M 8 59 C 44 55 78 48 101 38 L 107 50 C 82 62 46 70 10 73 Z")}
+    ${lip("M 8 181 C 44 185 78 192 101 202 L 107 190 C 82 178 46 170 10 167 Z")}
+    <path d="M 10 73 C 46 70 82 62 107 50" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M 10 167 C 46 170 82 178 107 190" fill="none" stroke="#fffdf6" stroke-opacity=".5" stroke-width="2"/>
+
+    <!-- THE HARDWARE, and the only thing --row moves: the little bent tab on
+         one lip, and the lid wound onto its key on the other. -->
+    <g${flip}>
+      <g transform="rotate(32 105 194)">
+        <ellipse cx="105" cy="194" rx="5" ry="9.5" fill="url(#plush-metal)" stroke="#5d5344" stroke-width="1.8"/>
+        <path d="M 103 187 V 201" fill="none" stroke="#5d5344" stroke-opacity=".5" stroke-width="1.6"/>
+      </g>
+      <circle cx="92" cy="31" r="15.5" fill="url(#plush-roll)" stroke="#544b3a" stroke-width="2.3"/>
+      <path d="M 92 19 A 12 12 0 1 1 80 34 A 7.5 7.5 0 1 1 94 38" fill="none" stroke="#7e7563" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M 82 22 A 12 12 0 0 1 94 17" fill="none" stroke="#fffdf6" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/>
+      <g stroke-linecap="round" fill="none">
+        <path d="M 92 31 L 113 14" stroke="#4a4232" stroke-width="8"/>
+        <ellipse cx="119" cy="11" rx="7.5" ry="5.8" fill="none" stroke="#4a4232" stroke-width="7"/>
+        <path d="M 92 31 L 113 14" stroke="url(#plush-key)" stroke-width="5"/>
+        <ellipse cx="119" cy="11" rx="7.5" ry="5.8" fill="none" stroke="url(#plush-key)" stroke-width="4.4"/>
+      </g>
+      <circle cx="92" cy="31" r="3.6" fill="url(#plush-key)" stroke="#4a4232" stroke-width="1.6"/>
     </g>
 
-    <!-- the lid, wound onto its key, well clear of her lane -->
-    <circle cx="92" cy="25" r="15.5" fill="url(#plush-roll)" stroke="#544b3a" stroke-width="2.3"/>
-    <path d="M 92 13 A 12 12 0 1 1 80 28 A 7.5 7.5 0 1 1 94 32" fill="none" stroke="#7e7563" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M 82 16 A 12 12 0 0 1 94 11" fill="none" stroke="#fffdf6" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/>
-    <g stroke-linecap="round" fill="none">
-      <path d="M 92 25 L 113 8" stroke="#4a4232" stroke-width="8"/>
-      <ellipse cx="119" cy="5" rx="7.5" ry="5.8" fill="none" stroke="#4a4232" stroke-width="7"/>
-      <path d="M 92 25 L 113 8" stroke="url(#plush-key)" stroke-width="5"/>
-      <ellipse cx="119" cy="5" rx="7.5" ry="5.8" fill="none" stroke="url(#plush-key)" stroke-width="4.4"/>
-    </g>
-    <circle cx="92" cy="25" r="3.6" fill="url(#plush-key)" stroke="#4a4232" stroke-width="1.6"/>
-
-    <!-- oil dribbling out under the lower lip, and a little glitter outside -->
-    <path d="M 34 176 C 40 196 37 214 31 224 C 25 212 27 192 28 175 Z" fill="#c9832c" opacity=".5"/>
+    <!-- oil dribbling out under the lower lip (shorter than it was: it hung
+         31px past the oil and landed on the Moves row on row 5), and a little
+         glitter outside -->
+    <path d="M 34 176 C 39 187 37 196 31 202 C 26 194 27 186 28 175 Z" fill="#c9832c" opacity=".5"/>
     <g fill="#dd9a3e">
       <path class="tw" d="M 118 56 q 2 -2 2.5 -7.5 q .5 5.5 2.5 7.5 q -2 2 -2.5 7.5 q -.5 -5.5 -2.5 -7.5 Z"/>
       <path class="tw tw-b" d="M 104 186 q 1.5 -1.5 1.9 -5.6 q .4 4.1 1.9 5.6 q -1.5 1.5 -1.9 5.6 q -.4 -4.1 -1.9 -5.6 Z"/>
@@ -176,18 +214,25 @@ DESIGNS["plush"] = {
                   ` C ${nose - 10} 71 ${nose - 2} 60 ${nose} 48 Z`;
     const body = head + back + tail + belly;
 
-    // ---- colour. The ordinary sprat is a SMOKED sprat: slate satin back,
-    // a silver flank, and a honey-gold underside — the warmth lives in the
-    // bottom half so it reads soft and toy-like, and the hero keeps the whole
-    // pink hue to herself.
+    // ---- colour. The ordinary sprat is a SMOKED sprat rendered in felt:
+    // powder-blue satin back, a silver flank, and an oatmeal underside. Every
+    // stop sits WELL ABOVE the chestnut oil in value — the old top stop
+    // (#3f677f) was darker than some of the ground and the back sank into it,
+    // which is exactly how you lose count of a sprat's length. `tint` is the
+    // separate, lighter blue used on the tail, because the tail is the thinnest
+    // part of the silhouette and the last thing that should go dim.
+    // White belongs to the hero. The ordinary sprat now bottoms out at wheat
+    // (#ffe4a6), not at near-white — it stays far above the oil, but it is a
+    // WARM pale, so the hero's cool white-pink is the only near-white object in
+    // the tin and she separates by hue and by value at once.
     const pal = hero
-      ? { stops: [[0,"#fff7fb"],[.45,"#ffcbe0"],[1,"#ff9dc2"]],
-          fin:"#ff8fbc", pec:"#ff8fbc", fuzz:"#fff0f7", belly:"#fff6fb",
-          blush:"#ff6a9e", shade:"#7a3a55", }
-      : { stops: [[0,"#3f677f"],[.14,"#6e9ab2"],[.30,"#9dbac8"],[.46,"#c6cbba"],
-                  [.64,"#e8cf9b"],[.84,"#f6dda4"],[1,"#ffeecb"]],
-          fin:"#5c86a1", pec:"#daa25a", fuzz:"#fff4e2", belly:"#ffe6b6",
-          blush:"#ff9270", shade:"#4a2f16", };
+      ? { stops: [[0,"#fffcfe"],[.40,"#ffcee3"],[1,"#ff9dc5"]],
+          fin:"#ff8fbc", tint:"#ffa8ca", pec:"#ff8fbc", fuzz:"#fff0f7",
+          belly:"#fff6fb", blush:"#ff5f97", shade:"#7a3a55", }
+      : { stops: [[0,"#5f9ab9"],[.13,"#86b8d0"],[.30,"#bcd6e0"],[.44,"#e7e2cd"],
+                  [.60,"#f8da93"],[.80,"#ffdf99"],[1,"#ffe7b4"]],
+          fin:"#4e88a8", tint:"#82b3ce", pec:"#eda94e", fuzz:"#fff6ea",
+          belly:"#ffdf9c", blush:"#ff8a63", shade:"#3d2611", };
 
     const felt = `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.4"`;
 
@@ -225,19 +270,34 @@ DESIGNS["plush"] = {
               `<path d="M ${L(ax, bx1, .34)} 31 Q ${L(ax, bx1, .30)} 24 ${L(ax, bx1, .28)} 17"/></g>`;
     }
 
-    // pectoral: a soft teardrop swept back and down off the gill cover
+    // pectoral: a felt blade rooted behind the gill and swept back and down,
+    // with one stitched ray. It used to be a plain rotated ellipse, which on a
+    // pale belly read as a stain rather than a fin — the point at the trailing
+    // end is what makes it a flipper at 38px.
     const fpx = hero ? hb - 6 : hb - 12;
-    const flipper = `<ellipse cx="${fpx}" cy="71" rx="17" ry="9.5" transform="rotate(24 ${fpx} 71)" ` +
-      `fill="${pal.pec}" fill-opacity="${hero ? '.8' : '.6'}" stroke="${pal.fuzz}" ` +
-      `stroke-opacity=".45" stroke-width="2"/>`;
+    const flipper =
+      `<g stroke="${pal.fuzz}" fill="none" stroke-width="2.2">` +
+      `<path d="M ${fpx + 11} 57 C ${fpx - 1} 60 ${fpx - 10} 70 ${fpx - 16} 85 ` +
+      `C ${fpx + 3} 82 ${fpx + 11} 71 ${fpx + 11} 57 Z" fill="${pal.pec}" ` +
+      `fill-opacity=".83" stroke-opacity=".62"/>` +
+      `<path d="M ${fpx + 5} 64 C ${fpx - 2} 70 ${fpx - 7} 76 ${fpx - 11} 82" ` +
+      `stroke-opacity=".34" stroke-linecap="round"/></g>`;
 
     // ---- seams. A plush sprat is sewn from panels, and the panel joins sit on
     // the cell lines: one seam means two cells, two seams mean three. Length is
     // the puzzle information, so it gets stated twice — outline and stitching.
-    let seams = "";
-    for (let k = 1; k < len; k++)
-      seams += `<path d="M ${k * 100} 4 V 96" fill="none" stroke="${pal.fuzz}" stroke-opacity=".5" ` +
-               `stroke-width="2.6" stroke-dasharray="7 8"/>`;
+    // Two threads, not one: a dark one laid a hair to the right of a light one.
+    // A single light dash disappeared against the cream belly and a single dark
+    // one disappeared against the slate back; the pair reads over both, so the
+    // cell count survives wherever the seam happens to cross.
+    let dark = "", light = "";
+    for (let k = 1; k < len; k++){
+      dark  += `M${k * 100 + 1.7} 4V96`;
+      light += `M${k * 100} 4V96`;
+    }
+    const seams = `<g fill="none" stroke-width="2.6" stroke-dasharray="7 8">` +
+      `<path d="${dark}" stroke="${pal.shade}" stroke-opacity=".26"/>` +
+      `<path d="${light}" stroke="${pal.fuzz}" stroke-opacity=".72"/></g>`;
 
     const eyeX = r(nose - 33), eyeY = 44;
 
@@ -267,10 +327,10 @@ DESIGNS["plush"] = {
 
     // the head, told as a head: a lighter gill cover with a bright felt seam
     const gill = `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85 ` +
-      `L ${nose + 6} 92 L ${nose + 6} 8 Z" fill="#fff5e2" fill-opacity="${hero ? '.14' : '.16'}"/>` +
+      `L ${nose + 6} 92 L ${nose + 6} 8 Z" fill="#fff5e2" fill-opacity=".15"/>` +
       `<path d="M ${hb + 7} 15 C ${hb + 17} 38 ${hb + 17} 62 ${hb + 4} 85" fill="none" ` +
-      `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.2" stroke-linecap="round"/>` +
-      `<ellipse cx="${nose - 34}" cy="58" rx="26" ry="19" fill="#fff6e6" fill-opacity="${hero ? '.12' : '.16'}"/>`;
+      `stroke="${pal.fuzz}" stroke-opacity=".5" stroke-width="2.2"/>` +
+      `<ellipse cx="${nose - 34}" cy="58" rx="26" ry="19" fill="#fff6e6" fill-opacity=".14"/>`;
 
     const svg = `
 <svg class="art" viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true">
@@ -283,8 +343,8 @@ DESIGNS["plush"] = {
       <stop offset="1" stop-color="${pal.belly}" stop-opacity="${hero ? ".9" : ".34"}"/>
     </linearGradient>
     <linearGradient id="${ID('tt')}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="72" y2="0">
-      <stop offset="0" stop-color="${pal.fin}" stop-opacity=".85"/>
-      <stop offset="1" stop-color="${pal.fin}" stop-opacity="0"/>
+      <stop offset="0" stop-color="${pal.tint}" stop-opacity=".7"/>
+      <stop offset="1" stop-color="${pal.tint}" stop-opacity="0"/>
     </linearGradient>
     <radialGradient id="${ID('bl')}">
       <stop offset="0" stop-color="${pal.blush}" stop-opacity=".62"/>
@@ -294,8 +354,9 @@ DESIGNS["plush"] = {
     <clipPath id="${ID('c')}"><use href="#${ID('p')}"/></clipPath>
     ${hero ? `
     <radialGradient id="${ID('gl')}">
-      <stop offset=".35" stop-color="#fff4fa" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#fff4fa" stop-opacity="0"/>
+      <stop offset=".3" stop-color="#fff2f8" stop-opacity=".9"/>
+      <stop offset=".62" stop-color="#ffdcee" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#ffd9ec" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="${ID('hn')}" x1="0" y1="1" x2="1" y2="0">
       <stop offset="0" stop-color="#f3bf60"/>
@@ -309,8 +370,9 @@ DESIGNS["plush"] = {
     </linearGradient>` : ``}
   </defs>
   ${glow}
-  <use href="#${ID('p')}" fill="none" stroke="${pal.shade}" stroke-opacity=".17" stroke-width="8.5"/>
-  <use href="#${ID('p')}" fill="url(#${ID('b')})" stroke="${pal.fuzz}" stroke-opacity=".45" stroke-width="2.6"/>
+  <use href="#${ID('p')}" fill="none" stroke="${pal.shade}" stroke-opacity=".24" stroke-width="5"/>
+  <use href="#${ID('p')}" fill="none" stroke="${pal.fuzz}" stroke-opacity=".12" stroke-width="9"/>
+  <use href="#${ID('p')}" fill="url(#${ID('b')})" stroke="${pal.fuzz}" stroke-opacity=".62" stroke-width="2.8"/>
   <g clip-path="url(#${ID('c')})">
     <rect x="0" y="0" width="72" height="100" fill="url(#${ID('tt')})"/>
     <rect x="0" y="0" width="${w}" height="100" fill="url(#${ID('lit')})"/>
@@ -332,6 +394,6 @@ DESIGNS["plush"] = {
         stroke-width="2.6" stroke-linecap="round"/>
   ${horn}${sparkles}
 </svg>`;
-    return svg.replace(/\s{2,}/g, " ").replace(/> </g, "><").trim();
+    return svg.replace(/\s{2,}/g, " ").replace(/> </g, "><").replace(/\s+\/>/g, "/>").trim();
   }
 };

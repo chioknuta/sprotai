@@ -60,11 +60,16 @@ DESIGNS["neon"] = {
                0 0 90px 34px rgba(60,170,220,.16);
   }
   /* the light blasting back OUT through the torn lane, so the cream page
-     between the two flaps is part of the beam and not a bright lozenge. */
+     between the two flaps is part of the beam and not a bright lozenge.
+     --oh is its height in cells, centred on her lane; door() trims it on the
+     rows where there is no board to splay over (see there). Its last stop is
+     transparent, but the ramp is still visible at ~94% of the radius, so this
+     ellipse is the outermost thing the door paints — it, not the metal, is
+     what decides how far above and below the oil the door reaches. */
   .dz-neon .neon-out{
-    position:absolute; left:calc(100% + 2px);
-    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*1.0);
-    width:54px; height:calc(var(--cell)*2.0);
+    position:absolute; left:calc(100% + 2px); --oh:2;
+    top:calc(var(--top) + var(--cell)*0.5 - var(--cell)*var(--oh)/2);
+    width:54px; height:calc(var(--cell)*var(--oh));
     background:radial-gradient(farthest-side ellipse at 0% 50%,
       rgba(160,238,255,.88) 0%, rgba(86,208,247,.52) 30%,
       rgba(50,172,224,.2) 58%, rgba(40,150,205,0) 100%);
@@ -97,6 +102,12 @@ DESIGNS["neon"] = {
     const hT = Math.min(PH, row), hB = Math.min(PH, rows - row - 1);
     // the cut only overhangs the lane where a peel exists to chew its edge
     const oT = r3(Math.min(.13, hT)), oB = r3(Math.min(.13, hB));
+    // ...and the halo outside the gap splays only as far as there is peel to
+    // splay off. Two cells of it, centred on her lane, is 25px past the oil on
+    // row 0 and row 5 — over the date line and over the Moves row — because on
+    // those rows one flap is missing and the glow was still drawn as if both
+    // were there. Same rule as hT/hB: clamp it to the metal that exists.
+    const oh = (hT < 1 || hB < 1) ? 1.7 : 2;
     const panel = (cls, h, top) => h < .12 ? "" : `
 <svg class="neon-panel ${cls}" style="top:${top};height:calc(var(--cell)*${h})"
      viewBox="0 0 53 56" preserveAspectRatio="none" aria-hidden="true">
@@ -140,7 +151,7 @@ DESIGNS["neon"] = {
 <div class="neon-beam"></div>
 <div class="neon-gap" style="top:calc(var(--top) - var(--cell)*${oT});height:calc(var(--cell)*${r3(1 + oT + oB)})"></div>` + panel("t", hT, `calc(var(--top) - var(--cell)*${hT})`)
       + panel("b", hB, "calc(var(--top) + var(--cell))")
-      + `<div class="neon-out"></div>`;
+      + `<div class="neon-out" style="--oh:${oh}"></div>`;
   },
 
   sprat(len, hero){

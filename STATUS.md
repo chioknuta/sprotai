@@ -61,38 +61,87 @@ requests.
   now that the share grid is the growth path. `og.png` is kept, unreferenced, so
   anything re-crawling an old link still resolves.
 
-## Open decision: the art direction, six candidates drawn (2026-08-18)
+## Four looks, and the player picks (2026-08-19)
 
 Asked for on 2026-08-18: make the door visible — "an opened can thingy" — and
-make the fish hipper, with the little one "unicorny, glittery, special".
-**Nothing has been chosen and `index.html` is untouched.** The candidates and
-the harness live in `tools/design-lab/`; read its README before lifting one.
+make the fish hipper, with the little one "unicorny, glittery, special". Six
+directions were drawn; four are now **in the game and switchable**: `classic`
+(the original), `deco` (Tin Label 1936), `neon` (Night Catch) and `plush`
+(Sprat Plush). The palette button in the tools row opens the picker; the choice
+is stored and survives a reload.
 
-- **Six directions**, each drawing both the fish and the door: *Riso Print*,
-  *Tin Label 1936*, *Night Catch*, *Holo Foil*, *Cut Paper*, *Sprat Plush*. The
-  shipping design is included as the control. The **fish and the door are
-  separable** — a chosen pair need not come from the same direction.
-- **They are drawn against real tins**, dealt by the shipping generator, at
-  56px and 38px cells. `harness/render.mjs` renders any direction to a PNG and
-  `harness/doors.mjs` renders every door with no fish, which is the test that
-  actually separates them: cover the board and see whether the shape says
-  *opened tin* or says *clip, pen, sticky note, padlock*.
-- **The 38px board is the decider, not the 56px one.** Three directions were
-  beautiful at desk size and broken at phone size, all in the same way: fish
-  edges dissolving into the ground so **length stopped being countable**, which
-  is the puzzle's own information. Deco's tails were dark teal on dark teal;
-  Night Catch's sprats merged into each other end-to-end; Plush's fins splayed
-  outside their own lane. All three were repaired; Plush is still the weakest.
-- **`harness/validate.mjs` is the part worth keeping** whatever gets chosen. It
-  checks the things that look fine in a gallery and break the real game: a
-  missing `<g class="eye">` (which silently kills the everyone-watches-her-leave
-  moment), id collisions between the many copies that share a page, external
-  references, filters on the ordinary sprats, and unscoped `@keyframes`.
-- Every candidate confines its animation to the hero and the door — nothing
-  animates across all 14 fish — and every one honours `prefers-reduced-motion`.
-- Cost to watch if one is adopted: the hero runs 3.7–5.1KB of markup against
-  today's 1.2KB. One fish per board, so it is not real; the **ordinary** sprat
-  at 2.6–3.7KB is the one that is on screen fourteen times.
+**A skin is paint and nothing else.** It cannot reach the generator, the solver
+or par — `spratSVG` always sat below the `generator:end` marker, and the skins
+replaced it in place. So no choice of look can make a tin unsolvable or a par
+dishonest, and everyone still plays the same daily. The generator block is
+**byte-identical** to the version before this change, and `node tools/verify.mjs`
+passes unchanged.
+
+- **`SKINS` in index.html is the source of truth for the art**, between
+  `skins:start` / `skins:end`. `tools/design-lab` reads the shipped skins back
+  out of it, the same trick `verify.mjs` uses on the generator, so the gallery
+  cannot drift from the game. The three unshipped directions still live in
+  `design-lab/designs/` and are labelled.
+- **Switching does not rebuild the board.** `applySkin()` repaints the fish art
+  and the door and nothing else — `build()` would clear an escape in flight (so
+  a win would never show its panel), reset `done`, hide the win panel and re-read
+  a save that is already deleted. Measured: board state, history, par, moves and
+  best come through byte-identical across all four skins, and Undo still walks
+  back afterwards. 0.6–6.9ms.
+- **A skin switch mid-escape ends the escape rather than corrupting it.**
+  `gaze()` writes inline transforms onto the `.eye` groups, and replacing the SVG
+  under them would strand the pupils, so `applySkin` calls `skipEscape()` first.
+  Verified: the win panel still shows, `freeze` clears, no stranded transforms.
+- **The stored skin name is validated against `SKIN_IDS`, never used.** Ten
+  hostile values were tried (`"toString"`, `"constructor"`, `"__proto__"`, a
+  number, an object, a trailing space); every one falls back to `classic`
+  without throwing. Without the allow-list `SKINS[x].sprat` throws inside
+  `build()` before any board draws — a bricked game that survives a refresh.
+
+### The doors did not fit on a phone, and that was true with or without skins
+
+`layout()` centres the tin and left **~27px** to the right of it. The opened
+lids need up to **59px**. `html{overflow-x:clip}` means the excess does not
+scroll — it stops dead, so deco's winding key was being sliced in half on every
+phone width and the design lab never showed it, because it renders on a 1400px
+page.
+
+**`layout()` now subtracts 120 instead of 74.** Derived, not chosen: the room
+right of the oil is `27 + (K - 54)/2`, a floor independent of cell size, so
+K=120 buys 60px against a worst case of 59. It costs ~7px of cell on a phone —
+and it also removed a **15px vertical scroll the page had at 375×667**.
+
+- Vertical overflow needed fixing separately, since no horizontal gutter helps
+  it: plush's key painted 44px above the oil at hero row 0 and **landed on the
+  date line**. Both plush and neon now mirror their hardware at the extreme rows.
+- **The budget is enforced, not remembered**: `design-lab/fit/door-budget.mjs`
+  measures every door from rendered pixels against 60px right / 24px above /
+  24px below, and `--self-test` proves the check still fires.
+  `fit/ship-check.mjs` is the acceptance test — every shipped skin, every phone
+  width, hero on rows 0/2/5.
+- **Known residual at 320px**, the smallest phones: deco loses ~4px off the
+  outer edge of its key and neon ~10px of outer glow. The metal fits. Everything
+  at 360px and up is clear. The only levers left there are a smaller cell floor
+  or an off-centre tin, and both were measured and judged worse.
+
+### Two things that quietly assumed one palette
+
+- **The bubbles were hardcoded honey** (`#f0bd6d45`) — the game's per-move
+  feedback, which went muddy grey-brown on a dark brine and read as grit. Now
+  `--bub-tint`, set per skin.
+- **`gaze()` moved pupils a fixed 5 units** regardless of the eye drawn around
+  them. Now `SKINS[skin].gaze ?? 5`.
+
+Also checked: no id collisions in the live DOM, `.fish` box geometry identical
+across skins (so `onUp()`'s tap-direction split is unaffected), every animated
+skin honours `prefers-reduced-motion`, and nothing animates across all 14 fish.
+
+**Cost:** index.html 58KB → 121KB raw, 20.5KB → 40.5KB gzipped. Still one file,
+still no build step, still runs off a disk.
+
+**Not changed, and worth knowing:** `og.jpg`, the PWA icons and `theme-color`
+are single-look, so `classic` is still the identity anyone meets from a link.
+Sharing is text-only, so four looks does not fragment what gets shared.
 
 ## Open thread: login and a leaderboard
 
