@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-08-17_
+_Last updated: 2026-08-18_
 
 ## LIVE at https://sprot.ai
 
@@ -60,6 +60,68 @@ requests.
   some chat apps quietly decline to render a link preview at all, which matters
   now that the share grid is the growth path. `og.png` is kept, unreferenced, so
   anything re-crawling an old link still resolves.
+
+## The daily no longer stalls (2026-08-18)
+
+Generating a tin was a synchronous hill-climb on the main thread. Measured over
+1096 dates on a laptop: **median 98ms, p99 991ms, worst 1557ms** — and a phone
+is several times slower again. It fires on first load, before anyone has seen
+the game work once, so the worst case was a new visitor watching a dead page.
+
+Two changes, and **not** the Worker that was on the shelf: a blob-URL Worker is
+exactly what `file://` blocks, and the single-file rule means its source would
+have to be smuggled in as a string. Neither was needed.
+
+**The climb is a coroutine.** `climbBoard` and `solveSteps` are generator
+functions; `makeBoard` and `minSlides` are two-line drivers that run them
+straight through, so the verifier and every blocking caller are unchanged. The
+UI drives them in ~8ms slices instead, with the page live in between.
+
+- **The tins are byte-identical.** Where a yield falls cannot change what comes
+  out — same rng order, same accept/reject order. Proved, not assumed: 360
+  boards generated from the old block and the new one and diffed, fish and par,
+  zero differences. `node tools/verify.mjs 400` is clean.
+- **Yielding is free.** Same hard tin, in the same browser: 4404ms in one
+  block, 4413ms in 200ms slices. The cost is zero; only the blocking is gone.
+- **The atom is one BFS chunk, not one solver call.** A single call on a
+  tangled board walks a quarter-million states — measured at **123ms**, a
+  visible stutter on its own. So the search yields every 256 nodes too, which
+  brings the longest the page is ever held down to single-figure milliseconds.
+- **Hidden tabs get 250ms slices**, because a browser deprioritises a
+  background renderer between tasks and handing the thread back is then pure
+  loss. Measured, hidden, one hard tin: 4.4s in one block, 4.4s at 200ms
+  slices, 15s at 40ms, 23.5s at 8ms. Visible, that penalty is not there.
+
+**A tin is climbed once per device, then kept.** Finished tins go to
+localStorage under `sprotai.slide.tins`, capped at 48, oldest evicted.
+
+- **Climbing costs thousands of solver calls; checking costs one.** A cached
+  tin is re-solved on the way in and dropped unless its par is exactly the
+  minimum the solver proves. Warm read: **2.5ms** for a daily, **4.8ms** for a
+  hard ladder tin that costs **4433ms** to climb cold in the same browser.
+- That check is the point, not a formality — the cache is user-editable, and
+  the game's two promises are that every board is solvable and every par is a
+  true minimum. Nine tampered rows were tried (par bent up and down, a sprat
+  shoved off the board, two overlapping, the little one lengthened, blockers
+  deleted, par as a string, empty list): every one rejected, the untouched row
+  accepted, and a bad row is deleted from storage rather than left to fail
+  again. Storage that refuses or throws degrades to "climb it", tested.
+- Band is recomputed from the tin number, never stored, so nothing on screen
+  comes from the cache except the board itself.
+
+**The board is inert while packing** (`pointer-events:none`). A pack can now
+last seconds, and a drag landing on the board it is about to replace would have
+saved those moves under the new tin's id — the same shape as the three deferred
+-callback bugs already on record.
+
+**Prefetch goes through the same queue**, worked from the back so the tin she
+is actually waiting for overtakes anything speculative. On the ladder it warms
+the next tin *and* today's daily; on the daily it warms the ladder tin she left.
+Coming back to the other tab measured **0.9ms with no wait shown at all**.
+
+Also fixed on the way past: the ladder tab called `build()` without waiting for
+its tin, which with a cold cache read an unpacked board straight out of the map.
+On the boot path — a returning ladder player — that was a white screen.
 
 ## Four looks, and the player picks (2026-08-19)
 
@@ -317,11 +379,9 @@ stuck". That is a harder generator, and it is the thing to prototype next.
 - No analytics, so there is no idea whether anyone plays. Cloudflare gives
   this free without tracking individuals; the proxy is off, so it needs
   turning on (safe now the certificate exists).
-- Daily generation is a synchronous main-thread hill-climb: median 89ms but
-  p99 ~800ms and a measured worst case of 1.46s over 1096 dates. The board
-  dims and says "packing…", but a slow phone will feel it. A Worker built
-  from a blob URL is the fix — it must be tested on `file://`, where Chromium
-  blocks blob Workers.
+- The page has never been opened from `file://` in a browser since the packing
+  change. The preview pane refuses to run file URLs, so it was reasoned about
+  and tested sideways instead (see above), not exercised. One click to check.
 - Mobile fold-fit verified in an emulated 375px viewport, not yet on a
   physical phone.
 
