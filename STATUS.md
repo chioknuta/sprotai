@@ -478,12 +478,20 @@ daily game which does not require log in", which this clears. Acknowledged:
 "We'll review the game and add it to Listdle within a week or so." Their
 consent dialog was set to **Reject all**, not accepted.
 
-**Google Search Console is the one thing still outstanding, and it needs her
-Google account** — nobody else can do it. Add `sprot.ai`, verify by TXT record
-(the DNS is already at Cloudflare), submit `https://sprot.ai/sitemap.xml`. That
-is what gets a domain crawled when nothing links to it, and until it is done
-the sitemap added today is just sitting there. Confirmed by search on the day:
-sprot.ai returned nothing at all.
+**Google Search Console is set up — she did it the same day.** The TXT record
+`google-site-verification=B-8Nxn7sMh1K5-OwjldAZRq9d_gybnUrfmg9vUJkIJ8` is live
+on sprot.ai, so the property is verified. (The record proves verification;
+whether the sitemap itself was submitted is only visible inside her own Search
+Console, so take that from her, not from DNS.)
+
+**Nothing is indexed yet, and that is normal.** Confirmed by search on the day:
+sprot.ai returned nothing at all. A brand-new property with no inbound links
+typically takes days to a few weeks to appear, and the Listdle listing — once
+it lands — is also the first real inbound link, which is what crawlers follow.
+So the thing to check in a week or two is a search for `site:sprot.ai`: if that
+returns the page, it is indexed, whatever a plain search for the name shows.
+**Do not re-diagnose this as a technical problem before then** — robots,
+sitemap, canonical and structured data are all correct and verified live.
 
 ### Still open, deliberately
 
