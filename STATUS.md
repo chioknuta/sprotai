@@ -425,28 +425,57 @@ the move list and replay it server-side, and a server running the old
   the 58px maximum and put the tin in a 375px-tall screen. Now clamped on
   height too. It does not bite in portrait at any phone width.
 
+### The three she sent back, all fixed the same day
+
+**The Share button.** She said the orange could change, and the answer turned
+out not to need it darkened. White needed the gradient taken to roughly
+`#9d6c26`→`#b85d27` — brown — and even `#cc5c12` still failed at the top stop
+(4.11). So it went the other way: the orange got **brighter**
+(`#f9b44a`→`#f08a34`) and the brand's own ink carries the label. 6.4:1 at the
+top, 5.43 at the midpoint, 4.61 at the bottom — checked across the gradient,
+not just at the ends, because a gradient can pass at both ends and sag in the
+middle. `--accent` is untouched; this is `.go` only, so Share, Next tin, Close
+and Done all move together.
+
+**Landscape is laid out sideways now.** Stacked in one column the arithmetic
+could not close — ~185px of header above the tin plus a 38px cell floor wants
+413px of a 375px-tall screen — so sideways the page becomes two columns, tin on
+the left and everything else beside it. CSS only, no DOM restructuring: `body`
+becomes a grid with one row per in-flow child and the tin spanning the column
+beside them. Three things that are load-bearing rather than stylistic:
+
+- **The row count is pinned to the children.** An open-ended `span 24` left
+  eighteen empty rows absorbing the tin's height, which pushed the board 97px
+  down with 2px under it. `repeat(9, auto)` plus `grid-row:1 / -1` centres it:
+  45px above, 55px below.
+- **The column gap is a door clearance, not a margin.** The opened lid paints
+  up to 59px right of the oil and overflows the tin's box, so a narrow gap
+  would land the door on the controls. 64px minimum.
+- **`max-height:600px` keeps it off tall windows.** A desktop browser is
+  landscape too and has room to stack.
+
+`layout()` sizes the cell for it — the vertical budget collapses to the page
+padding, and the binding constraint becomes leaving the other column width, so
+the tin takes 45%. Cell 46 at 667x375, 58 at 844x390. **ship-check now holds
+landscape to the same above-the-fold line as portrait** rather than exempting
+it, and all 96 pass.
+
+**Discoverability, the half that is code.** `robots.txt` and `sitemap.xml` did
+not exist (both 404). A missing robots.txt already means "crawl everything", so
+that was never the blocker — the blocker is that **nothing on the web links
+here**, and Google discovers by following links. The sitemap exists so it can
+be handed to Search Console, which is what gets a linkless domain crawled.
+Also added inline JSON-LD (`VideoGame`, free, browser, single-player) so a
+result can show as a game rather than an untitled page. It claims nothing
+untrue: no invented author, no ratings nobody has given. Canonical, title,
+description and `lang` were already correct.
+
+**The other half is hers and cannot be done from here** — it needs her Google
+account and her name on a submission. Confirmed by search on the day: sprot.ai
+returns nothing at all.
+
 ### Still open, deliberately
 
-- **The Share button fails AA and it is the one thing left unfixed.** White on
-  its orange gradient measures **1.97:1** at the top stop and 3.17 at the
-  bottom, against the 4.5 that 15px bold needs. Every fix is a visible brand
-  decision — darken the gradient to roughly `#9d6c26`→`#b85d27`, switch to ink
-  text (5.85 top but 3.63 bottom, so still short), or go to 18.66px bold and
-  need only 3.0 (white is still 1.97 at the top). It is the primary CTA and the
-  signature colour, so it is **her call, not a fix to make quietly.**
-- **Landscape cannot put the board above the fold, and no clamp fixes that.**
-  ~185px of header sits above the tin and the cell floor is 38, so the board
-  alone needs 413px in a 375px-tall screen. It would take a landscape-specific
-  layout — controls beside the tin rather than under it. The manifest already
-  asks for portrait. `ship-check` holds landscape to amputation and collision
-  and reports the fold rather than enforcing it.
-- **Nobody can find the game.** A web search for "sprot.ai" and "Šprotai"
-  returns nothing — not the site, not a mention, not a directory entry. Two
-  months live and completely undiscovered. `listdle.com/submit` is a form, not
-  a negotiation, and it indexes several hundred dailies with Logic and Shapes
-  categories. **Everything else — analytics, Ko-fi, the leaderboard, the sunset
-  call — is unanswerable until some non-zero number of strangers has loaded the
-  page.** Nothing in the code changes.
 - Domain confirmed independently by whois: expiry **2027-11-20**, ACTIVE,
   Spaceship — STATUS was accurate. Auto-renew is still off, so that wants a
   calendar reminder rather than a code change. The sunset decision ("sunset if

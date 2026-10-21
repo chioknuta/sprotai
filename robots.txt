@@ -1,0 +1,8 @@
+# Šprotai — everything here is meant to be found.
+# There was no robots.txt at all, which already meant "crawl everything"; this
+# exists for the Sitemap line, which is how a crawler that has never seen a
+# link to this domain learns what is here.
+User-agent: *
+Allow: /
+
+Sitemap: https://sprot.ai/sitemap.xml

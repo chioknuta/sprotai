@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- One page, because the game IS one page: the daily tin and the endless
+     ladder are both states of index.html, not separate URLs. The sitemap is
+     here so it can be handed to Google Search Console, which is what actually
+     gets a domain crawled when nothing on the web links to it yet. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://sprot.ai/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

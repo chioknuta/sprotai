@@ -227,16 +227,13 @@ for (const r of rows) {
      CLAUDE.md is that the BOARD fits above the fold, so what has to hold is
      that the tin and its controls are reachable without scrolling: that is
      `toolsBelowFold`. Failing on `scrolls` would red-light the footer forever. */
-  /* Above-the-fold is a PORTRAIT promise and only a portrait promise. The
-     arithmetic sideways does not close: ~185px of header sits above the tin,
-     the cell floor is 38, so the board alone needs 413px in a 375px-tall
-     screen. No clamp fixes that — only a landscape-specific layout would, and
-     that is a design decision, not a regression. The manifest already asks for
-     portrait. So landscape is held to amputation and collision, which it must
-     never do, and the fold column is reported rather than enforced. */
-  const landscape = r.vw > r.viewH;
+  /* Above the fold is now a promise in BOTH orientations. It used not to be:
+     stacked in one column the arithmetic sideways could not close, and the
+     controls sat 272px below the fold. Since landscape lays the board out
+     beside the controls instead of above them, there is no longer any reason
+     to exempt it, so it is held to the same line as portrait. */
   const amputated = r.clipped || r.sideways;
-  const foldBroken = r.toolsBelowFold && !landscape;
+  const foldBroken = r.toolsBelowFold;
   const allow = amputated && allowedClip(r)
     && !r.hitsDate && !r.hitsBar && !foldBroken;
   const fail = !allow && (amputated || r.hitsDate || r.hitsBar || foldBroken);

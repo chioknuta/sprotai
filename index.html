@@ -6,6 +6,29 @@
 <title>Šprotai — free the little one</title>
 <meta name="description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day, and endless tins besides.">
 <link rel="canonical" href="https://sprot.ai/">
+<!-- Structured data, inline so it costs no request. It says only what is
+     true — no invented author, no ratings nobody has given — and exists so a
+     search result can show this as a free browser game rather than as an
+     untitled page. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Šprotai",
+  "alternateName": "Sprotai",
+  "url": "https://sprot.ai/",
+  "image": "https://sprot.ai/og.jpg",
+  "description": "A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day, and endless tins besides.",
+  "genre": ["Puzzle", "Sliding block puzzle", "Daily puzzle"],
+  "gamePlatform": "Web browser",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "playMode": "SinglePlayer",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+}
+</script>
 <meta name="theme-color" content="#f0bd6d">
 
 <meta property="og:type" content="website">
@@ -95,6 +118,45 @@
   .btn.nav{padding:7px 13px; font-size:15px}
   #band{font-size:12.5px; opacity:.8}
   .tin.busy{opacity:.55; pointer-events:none; animation:packing 1.15s ease-in-out infinite}
+  /* ---------- sideways ----------
+     Stacked in one column, a landscape phone cannot work: ~185px of header
+     sits above the tin and the cell floor is 38, so the board alone wants
+     413px of a 375px-tall screen. The controls ended up 272px below the fold,
+     and because `.tin` sets touch-action:none the swipe you would make to
+     reach them slid a sprat instead. So sideways the page becomes two
+     columns — tin on the left, everything else beside it.
+
+     The column gap is not cosmetic: the opened lid paints up to 59px right of
+     the oil and overflows the tin's box, so a narrower gap would let the door
+     land on the controls. 64px clears it with the rim included.
+
+     max-height keeps this off tall windows: a normal desktop browser is
+     landscape too, and it has the room to stack. */
+  @media (orientation: landscape) and (max-height: 600px){
+    body{
+      display:grid;
+      grid-template-columns:auto auto;
+      justify-content:center; align-content:center; align-items:center;
+      column-gap:clamp(64px,7vw,88px); row-gap:7px;
+      padding:10px 16px;
+      /* One row per in-flow child of body, so the tin can span exactly the
+         column beside it. The two .sheet overlays are position:fixed and so
+         are not in flow; whichever of .tinbar / #dailyhead is hidden, and the
+         win panel while hidden, simply leave their row at zero height. */
+      grid-template-rows:repeat(9, auto);
+    }
+    .tin{grid-column:1; grid-row:1 / -1; align-self:center}
+    /* Portrait centres these by being a flex column; a grid track stretches
+       them instead, which left-aligned the footer and pulled the mode pill out
+       to the full column width. */
+    body > *:not(.tin){grid-column:2; text-align:center}
+    .modes, .tinbar{justify-self:center}
+    /* The name still says what this is; the tagline is the first thing that
+       can go when the height is the scarce axis. */
+    .tagline{display:none}
+    header{margin-bottom:-2px}
+    details{max-width:none}
+  }
   @keyframes packing{50%{opacity:.34}}
 
   .tin{
@@ -209,8 +271,17 @@
   .panel h2{font-size:20px; margin-bottom:2px}
   .panel p{color:var(--muted-txt); font-size:14px}
   .go{
+    /* White on the old #f6a93c->#e0722f measured 1.97:1 at the top stop and
+       3.17 at the bottom, against the 4.5 that 15px bold needs — the single
+       least legible thing in the game, on its most important button.
+       Darkening the orange far enough to carry white turns it brown (the top
+       stop still failed at 4.11 even at #cc5c12), so the fix goes the other
+       way: keep the orange BRIGHT — brighter than before — and let the brand's
+       own ink carry the label. 6.4:1 at the top, 5.43 at the midpoint, 4.61 at
+       the bottom, so it passes across the whole gradient and not just at the
+       ends. --accent is untouched; this is the .go button only. */
     font:inherit; font-weight:700; font-size:15px; margin-top:12px; width:100%;
-    background:linear-gradient(180deg,#f6a93c,#e0722f); color:#fff;
+    background:linear-gradient(180deg,#f9b44a,#f08a34); color:var(--ink);
     border:0; padding:11px 20px; border-radius:999px; cursor:pointer;
   }
   details{max-width:340px; font-size:13.5px; color:var(--muted-txt); text-align:center}
@@ -1865,8 +1936,15 @@ function layout(){
      bite in portrait at any phone width (there, width is the binding
      constraint), only on short viewports: a landscape phone, a tablet in
      split view, a short desktop window. */
-  const byH = Math.floor((window.innerHeight - 240) / H);
-  cell = Math.max(38, Math.min(58, Math.floor(avail / W), byH));
+  /* Sideways the furniture moves BESIDE the tin rather than above it, so the
+     vertical budget collapses to the page padding — and the binding
+     constraint becomes leaving the other column enough width. 45% of the
+     viewport for the tin leaves the controls the rest, past the door's gutter. */
+  const wide = window.innerWidth > window.innerHeight && window.innerHeight <= 600;
+  const byH = Math.floor((window.innerHeight - (wide ? 40 : 240)) / H);
+  const byW = wide ? Math.floor((window.innerWidth * 0.45 - 22) / W)
+                   : Math.floor(avail / W);
+  cell = Math.max(38, Math.min(58, byW, byH));
   tinEl.style.width = W * cell + "px";
   tinEl.style.height = H * cell + "px";
   gridEl.innerHTML = "";
