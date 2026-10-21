@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.codex/hooks/context-nudge.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
