@@ -22,17 +22,35 @@
 <meta name="twitter:description" content="A tin of sprats, packed too tight. Slide them aside and free the little pink one. A new tin every day.">
 <meta name="twitter:image" content="https://sprot.ai/og.jpg">
 
-<link rel="icon" href="/icon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" href="/icon-180.png">
-<link rel="manifest" href="/manifest.webmanifest">
+<!-- Relative, not root-absolute. The single-file rule is what lets the game
+     be dropped on any static host, and "/icon-192.png" quietly narrowed that
+     to hosts serving it at the DOMAIN ROOT: in a project subpath, a staging
+     subdirectory, or straight off a disk, the icons and the manifest 404 and
+     the install prompt goes with them. -->
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Šprotai">
 <style>
   :root{
-    --bg:#fdf6e9; --ink:#4a3520; --muted-txt:#a08a68;
+    /* --muted-txt was #a08a68: 3.09:1 on the cream, where AA asks 4.5 for
+       text this size. It carries the tagline, the Moves/Best labels, How to
+       play and the footer — so the whole of the page's quiet voice was below
+       the line. #806e53 is the LIGHTEST value on the same hue that reaches
+       4.55:1, so it is a legibility fix rather than a recolour. No skin
+       overrides :root, so this holds under all four looks. */
+    --bg:#fdf6e9; --ink:#4a3520; --muted-txt:#806e53;
     --oil-1:#f0bd6d; --oil-2:#dc9c44;
     --rim-1:#f2f4f7; --rim-2:#b9c0c9; --rim-3:#dfe3e9;
     --accent:#e8834a;
+    /* The same orange as --accent, darkened just enough to be legible as SMALL
+       TEXT on the cream and on the active tab's #fff8ea (4.5:1 against both).
+       --accent itself is unchanged: it is the brand, and it is used for fills,
+       borders and the focus ring, where contrast is not the text rule. The
+       mode tabs are the page's primary navigation AND they say which mode you
+       are in, and they were sitting at 2.55:1. */
+    --accent-txt:#a75e35;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   /* She swims clear of the rim, which puts her outside the body box — clip so
@@ -58,15 +76,22 @@
   .tagline{color:var(--muted-txt); font-size:13.5px; margin-top:1px}
 
   .modes{display:flex; gap:4px; background:#f3e3c8; padding:4px; border-radius:999px}
+  /* On the pill track (#f3e3c8), not on the cream — 4.53:1 there. */
   .modes button{
-    font:inherit; font-size:13.5px; font-weight:600; color:#a8895c;
+    font:inherit; font-size:13.5px; font-weight:600; color:#796343;
     background:none; border:0; padding:7px 16px; border-radius:999px; cursor:pointer;
   }
-  .modes button[aria-pressed="true"]{background:#fff8ea; color:var(--accent)}
+  .modes button[aria-pressed="true"]{background:#fff8ea; color:var(--accent-txt)}
   .tinbar{display:flex; align-items:center; gap:10px}
   .tinbar[hidden],#dailyhead[hidden]{display:none}
   .tinlabel{font-size:14.5px; color:var(--muted-txt); min-width:132px; text-align:center}
   .tinlabel b{color:var(--ink); font-variant-numeric:tabular-nums}
+  /* Shown only when the clock has rolled past the tin on screen and she is
+     mid-solve, so the new tin is offered rather than taking her board away. */
+  .newtin{display:block; margin:4px auto 0; border:0; cursor:pointer;
+    font:inherit; font-size:13px; color:var(--accent-txt); background:none;
+    text-decoration:underline; text-underline-offset:2px; padding:4px 8px}
+  .newtin[hidden]{display:none}
   .btn.nav{padding:7px 13px; font-size:15px}
   #band{font-size:12.5px; opacity:.8}
   .tin.busy{opacity:.55; pointer-events:none; animation:packing 1.15s ease-in-out infinite}
@@ -153,6 +178,12 @@
     .fish.dart .art{animation:none}
     .ripple,.bub{display:none}
     .tin.busy{animation:none}
+    /* The shake on a blocked move — the animation that fires most often of
+       any in the game, and the only one that was still moving things here.
+       The feedback itself is not lost: the sound still plays and the sprat in
+       the way still flashes, which is `blocker` — brightness and a glow, no
+       movement, so it is not what this media query is asking us to stop. */
+    .fish.stuck .art{animation:none}
   }
 
   /* Two rows on purpose: the count reads as a status line, the controls as a
@@ -160,9 +191,11 @@
   .bar{display:flex; align-items:center; gap:11px; font-size:14px; color:var(--muted-txt); flex-wrap:wrap; justify-content:center}
   .bar b{color:var(--ink); font-variant-numeric:tabular-nums}
   .bar.tools{gap:9px; margin-top:-4px}
-  .btn.icon{padding:9px 12px}
+  /* 44x44, the one-handed-on-a-phone target. These were 38x39. */
+  .btn.icon{padding:9px 12px; min-width:44px; min-height:44px; line-height:1}
   .btn{
-    font:inherit; font-size:14px; font-weight:600; color:#8a6b42;
+    /* On the button plate (#f7e8ce): 4.51:1. Undo and Reset were at 4.08. */
+    font:inherit; font-size:14px; font-weight:600; color:#81643d;
     background:#f7e8ce; border:0; padding:9px 16px; border-radius:999px; cursor:pointer;
   }
   .btn:active{transform:translateY(1px)}
@@ -181,11 +214,17 @@
     border:0; padding:11px 20px; border-radius:999px; cursor:pointer;
   }
   details{max-width:340px; font-size:13.5px; color:var(--muted-txt); text-align:center}
-  summary{cursor:pointer; color:#c98a3f; list-style:none}
+  /* How to play is the only onboarding there is, and it was the second
+     least legible thing on the page at 2.72:1. */
+  /* Was 20px tall — under even the 24px floor, and it is the only
+     onboarding in the game. It sits below the board, so the height costs
+     nothing above the fold. */
+  summary{cursor:pointer; color:#97672e; list-style:none;
+    min-height:44px; display:flex; align-items:center; justify-content:center}
   summary::-webkit-details-marker{display:none}
   details p{margin-top:8px}
   details b{color:var(--ink)}
-  footer{font-size:12px; color:#c0ad92}
+  footer{font-size:12px; color:#7b6f5d}
   footer a,.tip{color:#c09a63; text-decoration:none}
   footer a:hover,.tip:hover{text-decoration:underline}
   .tip{display:inline-block; margin-top:12px; font-size:13px}
@@ -223,7 +262,7 @@
   .look{
     display:flex; align-items:center; gap:12px; width:100%; text-align:left;
     font:inherit; cursor:pointer; padding:9px 12px; border-radius:13px;
-    background:#f7e8ce; border:2px solid transparent; color:#8a6b42;
+    background:#f7e8ce; border:2px solid transparent; color:#81643d;
   }
   .look[aria-pressed="true"]{border-color:var(--accent); background:#fff8ea}
   .look .swatch{
@@ -253,7 +292,7 @@
   <span class="tinlabel">Tin <b id="tinno">1</b> <span id="band"></span></span>
   <button class="btn nav" id="next" aria-label="Next tin">→</button>
 </div>
-<p class="tinlabel" id="dailyhead" hidden><b id="dailydate"></b><span id="dailystreak"></span></p>
+<p class="tinlabel" id="dailyhead" hidden><b id="dailydate"></b><span id="dailystreak"></span><button class="newtin" id="rollover" hidden>Today's tin is ready →</button></p>
 
 <div class="tin"><div class="tin-inner" id="tin">
   <div class="clip"><div class="grid" id="grid"></div></div>
@@ -1578,7 +1617,15 @@ const SPIN = { R:"", L:"scaleX(-1)", D:"rotate(90deg)", U:"rotate(-90deg)" };
 const Snd = {
   ctx:null, master:null, noise:null, on:true,
   init(){
-    if (this.ctx) return;
+    if (this.ctx){
+      /* iOS suspends the context whenever the tab is backgrounded or the phone
+         locks, and nothing resumed it — so the per-move bubble, the game's
+         answer to every single tap, went silent for the rest of the session.
+         Every caller of init() is already inside a user gesture, which is
+         exactly when resume() is allowed. */
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
+      return;
+    }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     try {
@@ -1690,6 +1737,18 @@ const $ = id => document.getElementById(id);
 const tinEl = $("tin"), gridEl = $("grid"), doorEl = $("door"), winEl = $("win");
 let mode = "daily", dayK = "", lvl = 1, par = 0, cell = 52,
     fish = [], off = [], hist = [], els = [], done = false;
+/* The id the board ON SCREEN was actually built from.
+   `boardId()` is derived from the live `mode`/`dayK`/`lvl`, and setMode flips
+   those the instant a tab is tapped — seconds before the new tin finishes
+   packing. For that whole window the old board is still on screen, with the
+   old fish and the old history, while `boardId()` already names the incoming
+   tin. `modeRun` guards the BUILD; it was never consulted by the writers, so
+   anything that saved during a pack filed the old board's moves under the new
+   board's key. That is the three-times-over deferred-callback bug on record,
+   reopened through the packing path: a half-played ladder tin's moves landing
+   on today's daily, or a ladder win recorded as the day's result.
+   Every writer compares against this and bails if it does not match. */
+let builtId = null;
 
 const store = {
   get(k, fb){ try { return JSON.parse(localStorage.getItem("sprotai.slide."+k)) ?? fb; } catch { return fb; } },
@@ -1797,7 +1856,17 @@ function place(i, o){
     15px taller than the viewport and scrolled. It no longer does. */
 function layout(){
   const avail = Math.min(window.innerWidth - 120, 372);
-  cell = Math.max(38, Math.min(58, Math.floor(avail / W)));
+  /* Width alone used to decide the cell, which is wrong the moment the
+     viewport is wider than it is tall: a sideways phone has width to spare, so
+     the cell clamped to its 58px maximum and the tin grew to 348px inside a
+     375px-tall screen. 240 is the vertical furniture measured around the
+     board — the header, the date line, the Moves row and the tools row — so
+     this is the largest cell whose tin still leaves them room. It does not
+     bite in portrait at any phone width (there, width is the binding
+     constraint), only on short viewports: a landscape phone, a tablet in
+     split view, a short desktop window. */
+  const byH = Math.floor((window.innerHeight - 240) / H);
+  cell = Math.max(38, Math.min(58, Math.floor(avail / W), byH));
   tinEl.style.width = W * cell + "px";
   tinEl.style.height = H * cell + "px";
   gridEl.innerHTML = "";
@@ -1826,30 +1895,104 @@ function layout(){
   });
 }
 
+/** What this sprat is and where it is NOW.
+    The label used to be written once, in build(), from the sprat's base row
+    and column — so it described the tin before the first move and then never
+    changed again. A screen reader's picture of the board went stale the moment
+    anything slid, and `off` is not zero to begin with when a half-played tin is
+    restored from a save. Saying which way it can still go turns the label from
+    a description into something you can act on. */
+function labelFor(i){
+  const f = fish[i], h = horiz(f);
+  const r = f.r + (h ? 0 : off[i]), c = f.c + (h ? off[i] : 0);
+  const [lo, hi] = rangeOf(i);
+  const ways = [];
+  if (off[i] > lo) ways.push(h ? "left" : "up");
+  if (off[i] < hi) ways.push(h ? "right" : "down");
+  return `${i === 0 ? "The little one" : "Sprat"}, ${f.len} long, `
+       + `lying ${h ? "across" : "down"} at row ${r+1} column ${c+1}. `
+       + (ways.length ? `Slides ${ways.join(" or ")}.` : "Boxed in.");
+}
+
 /* ---------- input: drag along the lane, or tap an end ---------- */
 let drag = null;
+/** Keyboard play.
+    Every sprat was already a <button> with a label and a focus ring, so the
+    whole scaffolding was there — but the only listener on it was pointerdown.
+    A button turns Enter and Space into a `click`, and nothing listened for
+    one, so the game could not be played by keyboard at all: eight of the
+    page's sixteen tab stops were controls that looked live and did nothing.
+    Arrows along the lane, Enter and Space to shuffle one square the way a tap
+    does; both routed through the same `commit`/`bump` the drag path uses, so
+    legality is decided in exactly one place. */
+function onKey(e, i){
+  if (done) return;
+  const h = horiz(fish[i]);
+  let dir = 0;
+  if (h && e.key === "ArrowLeft") dir = -1;
+  else if (h && e.key === "ArrowRight") dir = 1;
+  else if (!h && e.key === "ArrowUp") dir = -1;
+  else if (!h && e.key === "ArrowDown") dir = 1;
+  else if (e.key === "Enter" || e.key === " ") dir = 1;
+  else return;
+  e.preventDefault();          // also stops Space and the arrows scrolling
+  Snd.init();
+  const [lo, hi] = rangeOf(i);
+  const target = off[i] + dir;
+  if (target >= lo && target <= hi) commit(i, target);
+  else bump(i, dir);
+}
 function onDown(e, i){
   Snd.init();
   if (done) return;
+  // One finger at a time. A second touch landing on another sprat used to
+  // overwrite `drag` outright: the new sprat answered to the old finger's
+  // movement, and the first was left wearing `.dragging` with nothing to
+  // clear it.
+  if (drag) return;
   els[i].setPointerCapture?.(e.pointerId);
   const [lo, hi] = rangeOf(i);
-  drag = { i, lo, hi, x: e.clientX, y: e.clientY, start: off[i], moved: false, cur: off[i] };
+  drag = { i, lo, hi, x: e.clientX, y: e.clientY, start: off[i], moved: false,
+           cur: off[i], pointerId: e.pointerId, abandoned: false };
   els[i].classList.add("dragging");
 }
 function onMove(e){
-  if (!drag) return;
+  if (!drag || e.pointerId !== drag.pointerId) return;
   const f = fish[drag.i];
-  const d = horiz(f) ? e.clientX - drag.x : e.clientY - drag.y;
-  if (Math.abs(d) > 4) drag.moved = true;
-  const want = drag.start + Math.round(d / cell);
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  const along  = horiz(f) ? dx : dy;
+  const across = horiz(f) ? dy : dx;
+  if (Math.abs(along) > 4) drag.moved = true;
+  /* A gesture that travels mostly ACROSS the lane is not aimed at this sprat —
+     on a page that scrolls it is someone trying to scroll, and `.tin` sets
+     `touch-action:none` so the page will not do it for them. `moved` only ever
+     tracked the along-lane component, so such a drag arrived at `onUp` looking
+     exactly like a tap and shuffled the sprat a square. Abandon it instead:
+     the sprat snaps back and nothing is committed. */
+  if (!drag.moved && Math.abs(across) > 10 && Math.abs(across) > Math.abs(along) * 2) {
+    drag.abandoned = true;
+  }
+  if (drag.abandoned) return;
+  const want = drag.start + Math.round(along / cell);
   const next = Math.max(drag.lo, Math.min(drag.hi, want));
   if (next !== drag.cur){ drag.cur = next; place(drag.i, next); }
 }
-function onUp(e){
-  if (!drag) return;
-  const { i, start, cur, moved, lo, hi } = drag;
+/** The OS took the gesture away — a system edge-swipe, a call, the app going
+    to the background. That is not a tap, and routing it to `onUp` committed a
+    move the player never made. */
+function onCancel(e){
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  const { i } = drag;
   els[i].classList.remove("dragging");
   drag = null;
+  place(i);
+}
+function onUp(e){
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  const { i, start, cur, moved, lo, hi, abandoned } = drag;
+  els[i].classList.remove("dragging");
+  drag = null;
+  if (abandoned){ place(i); return; }
 
   if (!moved){
     // a tap: shuffle one square toward the end that was tapped
@@ -1878,6 +2021,7 @@ function bump(i, dir){
   }
 }
 function commit(i, to){
+  if (!onLiveBoard()) return;            // a tab was tapped; this board is on its way out
   hist.push({ i, from: off[i], to });
   off[i] = to;
   place(i);
@@ -1888,6 +2032,7 @@ function commit(i, to){
 /** Bank the result the instant she is free, not when the animation ends —
     a phone that backgrounds the tab mid-escape used to lose the win. */
 function recordWin(){
+  if (!onLiveBoard()) return;
   const key = "best." + boardId();
   const prev = store.get(key, null);
   if (prev === null || hist.length < prev) store.set(key, hist.length);
@@ -1931,6 +2076,10 @@ const boards = new Map();
 const currentTin = () => boards.get(boardId());
 /** Stable id for storage, so a daily and a ladder tin never collide. */
 const boardId = () => mode === "daily" ? "d:" + dayK : "t:" + lvl;
+/** Is the board on screen still the board `boardId()` now names? False for
+    the whole span between tapping a tab and the new tin finishing its climb.
+    Every writer checks this; see `builtId`. */
+const onLiveBoard = () => builtId !== null && boardId() === builtId;
 const bandOf = id => id[0] === "d" ? DAILY_BAND.name : bandFor(Number(id.slice(2))).name;
 
 /* ---------- a tin is climbed once per device, then kept ----------
@@ -2226,6 +2375,30 @@ const nextLine = () => `<p class="nextin">Next tin in <b id="nextin">…</b></p>
    "already done" panel and let Share publish that score as the day's result. */
 let modeRun = 0;
 
+/* ---------- the board is inert while a tin packs ----------
+   `.tin.busy{pointer-events:none}` was not the whole fix. Three ways in
+   survived it: pointermove/pointerup are bound to `window`, so a drag ALREADY
+   in flight keeps being delivered however inert the board is; the tools row
+   and the win panel sit outside `.tin` and stayed fully clickable; and Cmd+Z
+   reaches undo() through the document handler without touching the board at
+   all. The writer guards make all of those harmless, but an Undo button that
+   still looks live while doing nothing is its own small lie, so say so. */
+function enterBusy(){
+  tinEl.parentElement.classList.add("busy");
+  if (drag){
+    const el = els[drag.i];
+    el?.classList.remove("dragging");
+    try { el?.releasePointerCapture?.(drag.pointerId); } catch {}
+    drag = null;
+  }
+  $("undo").disabled = true;
+  $("reset").disabled = true;
+}
+function leaveBusy(){
+  tinEl.parentElement.classList.remove("busy");
+  $("reset").disabled = false;      // Undo's own state belongs to paint()
+}
+
 /** Packing a hard tin can take a moment, so paint the wait first — and only
     if there is going to be one. A cached tin builds in the same tick. */
 function goTo(n){
@@ -2233,11 +2406,11 @@ function goTo(n){
   const run = ++modeRun;
   const ready = () => {
     if (run !== modeRun) return;              // they moved on while it packed
-    tinEl.parentElement.classList.remove("busy");
+    leaveBusy();
     build(n);
   };
   if (ensure("t:" + n, ready)) return;
-  tinEl.parentElement.classList.add("busy");
+  enterBusy();
   // The header has to swap to the ladder's own — this is also how the Daily
   // tab hands over — but `lvl` is deliberately still the tin she is looking
   // at, so the number and the band are the new tin's, said by hand.
@@ -2252,6 +2425,11 @@ function build(n, fresh){
   stopTick();
   tinEl.classList.remove("freeze");
   const tin = currentTin();
+  // Asked to build a tin that is still packing — Reset or "Try again" landing
+  // during a pack used to dereference undefined here, throw, and leave the
+  // button looking broken. The pack's own `ready()` will build it.
+  if (!tin) return;
+  builtId = boardId();
   fish = tin.fish.map(f => ({ r:f.r, c:f.c, len:f.len, dir:f.dir }));
   par = tin.par;
   off = fish.map(() => 0);
@@ -2269,9 +2447,9 @@ function build(n, fresh){
     rot.className = "rot";
     rot.innerHTML = SKINS[skin].sprat(f.len, i === 0);
     el.append(rot);
-    el.setAttribute("aria-label",
-      `${i === 0 ? "The little one" : "Sprat"}, ${f.len} long, lying ${horiz(f) ? "across" : "down"} at row ${f.r+1} column ${f.c+1}`);
+    el.setAttribute("aria-label", labelFor(i));
     el.addEventListener("pointerdown", e => onDown(e, i));
+    el.addEventListener("keydown", e => onKey(e, i));
     tinEl.append(el);
     return el;
   });
@@ -2300,6 +2478,20 @@ function replay(saved){
   const restored = [];
   for (const m of saved){
     if (!Number.isInteger(m?.i) || !fish[m.i] || !Number.isInteger(m?.to)) return reset();
+    /* gridValid() below checks the resulting STATE — everyone inside the tin,
+       nobody overlapping — but it says nothing about the TRANSITION, so a
+       saved move was free to teleport a sprat straight through a blocker and
+       land somewhere perfectly legal. `hist.length` is what the game banks as
+       the move count, writes into the day record and draws in the share grid,
+       so a forged save could report finishing an 11-move daily in 4 — below a
+       par the generator exists to prove is a true minimum. rangeOf() reads the
+       live `off`, so this is exactly the legality onUp() enforces on a drag,
+       path clearance included.
+       It matters beyond this device: the leaderboard plan on record is to
+       submit the move list and replay it server-side, and a server running
+       this function would have accepted the forgery. */
+    const [lo, hi] = rangeOf(m.i);
+    if (m.to < lo || m.to > hi) return reset();
     restored.push({ i: m.i, from: off[m.i], to: m.to });
     off[m.i] = m.to;
     if (!gridValid()) return reset();
@@ -2330,6 +2522,9 @@ function renderHead(){
   $("dailyhead").hidden = !daily;
   if (daily){
     $("dailydate").textContent = prettyDay(dayK);
+    // build() only ever draws the tin for the current dayK, so a fresh paint
+    // is never stale; checkRollover() is what puts this back.
+    $("rollover").hidden = true;
     paintStreakChip();
   } else {
     $("tinno").textContent = lvl;
@@ -2346,6 +2541,7 @@ const savedFor = id => {
   return r && typeof r === "object" ? r[id] : null;
 };
 function saveRun(){
+  if (!onLiveBoard()) return;
   const runs = store.get("runs", {}) || {};
   if (done || !hist.length) delete runs[boardId()];
   else runs[boardId()] = hist;
@@ -2358,6 +2554,9 @@ function paint(){
   $("moves").textContent = hist.length;
   $("best").textContent = store.get("best." + boardId(), null) ?? "—";
   $("undo").disabled = !hist.length || done;
+  // paint() runs after every commit and every undo, which is exactly when a
+  // sprat's position and the ways it can still go have changed.
+  for (let i = 0; i < els.length; i++) els[i].setAttribute("aria-label", labelFor(i));
 }
 
 
@@ -2475,7 +2674,38 @@ function skipEscape(){
   fin();
   return true;
 }
+/** Put the panel where she can actually see it.
+    The tin rings, the oil closes over the gap — and on a phone the
+    congratulation, the streak line, the share grid and the Share button were
+    all below the fold, with no scrollbar, no arrow and no motion to suggest
+    there was more page. Measured at 375x553, which is what an iPhone SE gives
+    Safari with its toolbars up: ten pixels of the panel were visible. The
+    share grid is the stated growth path, so most players never saw it.
+    The board itself does fit above the fold at every portrait width, which is
+    why this went unnoticed: the promise holds right up until she wins. */
+function revealWin(){
+  // Honour reduced motion here too — this is a scroll she did not ask for.
+  const smooth = !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const go = () => {
+    // The panel it was asked to show has since been put away — a Reset, a tab
+    // change, another build. Scrolling to it now would be scrolling to nothing.
+    // That bail is all the staleness guard this needs: it moves the viewport
+    // and touches neither the board nor storage.
+    if (winEl.hidden) return;
+    try { winEl.scrollIntoView({ block: "nearest", behavior: smooth ? "smooth" : "auto" }); }
+    catch { winEl.scrollIntoView(false); }
+  };
+  /* Deferred, and the deferral is the whole fix. Called straight out of
+     afterDaily() on a fresh load it loses the race with the browser's own
+     scroll restoration, which puts the page back to the top once loading
+     finishes — so the panel ended up exactly where it started, at 543px in a
+     553px viewport with ten pixels showing, as if nothing had been called at
+     all. Waiting for `load` and then a frame puts this after the restore. */
+  if (document.readyState === "complete") requestAnimationFrame(go);
+  else addEventListener("load", () => requestAnimationFrame(go), { once: true });
+}
 function showWin(){
+  if (!onLiveBoard()) return;
   const n = hist.length;
   recordWin();                                  // idempotent; already banked
   paint();
@@ -2511,6 +2741,7 @@ function showWin(){
       <button class="btn" id="retry" style="margin-top:8px;width:100%">Try again</button>`;
     $("retry").onclick = () => build(null, true);
   };
+  revealWin();
 }
 /* ---------- your tins ----------
    Four numbers and one chart, all derived from the day record — nothing here
@@ -2592,6 +2823,9 @@ function closeSkins(){ skinsEl.hidden = true; }
 skinsEl.onclick = e => { if (e.target === skinsEl) closeSkins(); };
 
 function undo(){
+  // Reachable by Cmd+Z straight through the document handler, so it is not
+  // covered by the board going pointer-inert while a tin packs.
+  if (!onLiveBoard()) return;
   if (!hist.length || done) return;
   const m = hist.pop();
   off[m.i] = m.from;
@@ -2601,7 +2835,7 @@ function undo(){
 }
 window.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
-window.addEventListener("pointercancel", onUp);
+window.addEventListener("pointercancel", onCancel);
 window.addEventListener("pointerdown", () => skipEscape(), true);
 Snd.on = store.get("sound", true);
 $("mute").textContent = Snd.on ? "🔊" : "🔇";
@@ -2620,6 +2854,14 @@ $("prev").onclick = () => goTo(lvl - 1);
 $("next").onclick = () => goTo(lvl + 1);
 $("tab-daily").onclick = () => setMode("daily");
 $("tab-ladder").onclick = () => setMode("ladder");
+$("rollover").onclick = () => setMode("daily");
+/* Resume is the common case (a phone returning to a backgrounded tab, an
+   installed app coming out of the app switcher); the interval covers a tab
+   that simply sits there, visible, across midnight. 60s is far below the
+   resolution anyone could notice and costs a date comparison. */
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkRollover(); });
+window.addEventListener("pageshow", checkRollover);
+setInterval(checkRollover, 60000);
 window.addEventListener("resize", () => fish.length && layout());
 document.addEventListener("keydown", e => {
   if ((e.key === "z" || e.key === "Z") && (e.metaKey || e.ctrlKey)){ e.preventDefault(); undo(); }
@@ -2636,17 +2878,47 @@ function setMode(next){
     dayK = todayKey();
     const ready = () => {
       if (run !== modeRun) return;              // they tapped the other tab
-      tinEl.parentElement.classList.remove("busy");
+      leaveBusy();
       build();
       afterDaily();
     };
     if (ensure("d:" + dayK, ready)) return;
-    tinEl.parentElement.classList.add("busy");
+    enterBusy();
     renderHead();
     $("dailydate").textContent = "packing…";
   } else {
     goTo(lvl);
   }
+}
+
+/* ---------- the clock moves even when the page does not ----------
+   `dayK` is stamped once, in setMode("daily"), and nothing used to read the
+   clock again. A page that stayed alive across local midnight therefore went
+   on serving the previous day's tin for as long as it was open: `boardId()`
+   still named yesterday, so a win was recorded against yesterday's row — a
+   row that already existed — and no row was ever written for the day she
+   actually played. Her streak then broke on a day she had not missed. The
+   streak chip made it worse by saying so: it counts back from yesterday when
+   today is unplayed, so a stale page cheerfully showed the streak intact.
+
+   This is not an exotic case. A phone does not reload a page it returns to,
+   and an installed app is resumed from the app switcher rather than launched,
+   so for a home-screen player the stale day is the NORMAL path.
+
+   Two outcomes, because her moves are hers:
+     - nothing invested (untouched, or already finished) — move her straight on.
+     - mid-solve — offer it, and let her finish first. Taking the board away
+       would delete the moves she is in the middle of.
+
+   This needs no staleness token, which the three deferred-callback bugs on
+   record otherwise demand: it writes nothing to the board and nothing to
+   storage. It either hands over to setMode, which tokens itself, or toggles
+   one button's visibility. */
+function checkRollover(){
+  if (mode !== "daily" || !dayK) return;
+  if (todayKey() === dayK){ $("rollover").hidden = true; return; }
+  if (done || !hist.length){ setMode("daily"); return; }
+  $("rollover").hidden = false;
 }
 /** If today's tin is already done, say so instead of pretending it is fresh. */
 function afterDaily(){
@@ -2669,6 +2941,7 @@ function afterDaily(){
   $("again").onclick = () => { done = false; build(null, true); };
   $("toladder").onclick = () => setMode("ladder");
   startTick($("nextin"));
+  revealWin();
 }
 /** Spoiler-free: your score, never the board — and never the day's par, which
     is the one fact that would hand a reader the answer before they play. */
@@ -2682,7 +2955,16 @@ function shareDaily(btn, moves, perfect){
     + (st.cur >= 2 ? `🔥 ${st.cur}-day streak\n` : "")
     + `https://sprot.ai`;
   const ok = () => { btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Share", 1600); };
-  const copy = () => navigator.clipboard?.writeText(text).then(ok, () => window.prompt("Copy your result:", text));
+  const ask = () => window.prompt("Copy your result:", text);
+  /* `navigator.clipboard?.writeText(...).then(...)` short-circuits to undefined
+     where there is no Clipboard API at all — so the `.then` never ran, the
+     prompt fallback was unreachable, and Share silently did nothing. That is
+     not an exotic browser: the Clipboard API needs a secure context, and this
+     file is meant to run off a disk. */
+  const copy = () => {
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(ok, ask);
+    else ask();
+  };
   if (navigator.share){
     // Backing out of the share sheet is not a failure — don't quietly seize
     // the clipboard and then claim success.
@@ -2708,6 +2990,18 @@ if (KOFI){
   lvl = (last && Number.isInteger(last.lvl) && last.lvl >= 1) ? last.lvl : store.get("reached", 1);
   setMode(last?.mode === "ladder" ? "ladder" : "daily");
 })();
+
+/* ---------- offline ----------
+   Registered after the first board is already on its way, so it can never
+   delay the thing she came for. Guarded on protocol because a service worker
+   is not available from file:// at all, and running straight off a disk is a
+   promise this project keeps — `navigator.serviceWorker` is also absent on a
+   plain-http origin, which the optional chaining covers. Every failure is
+   swallowed on purpose: the game has never needed the network and must not
+   start caring whether it has one. */
+if (location.protocol === "https:" || location.protocol === "http:"){
+  addEventListener("load", () => navigator.serviceWorker?.register("sw.js").catch(() => {}));
+}
 </script>
 </body>
 </html>

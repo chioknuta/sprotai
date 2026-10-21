@@ -24,7 +24,17 @@
  * neighbours sit 13px away past the 11px rim, so more than 24px above or below
  * the oil lands on the date line or on the Moves/Best row.
  *
- *   node fit/door-budget.mjs               check designs/
+ * WHAT IT MEASURES. The four looks that SHIP are read out of the
+ * `skins:start`/`skins:end` block in index.html, the same way verify.mjs reads
+ * the generator — because measuring `designs/*.js` means measuring a frozen
+ * copy, and CLAUDE.md is explicit that a shipped look is changed by editing
+ * the game, not the candidate file. So a door edited the way the project says
+ * to edit one was invisible to its own budget check. The candidates that never
+ * shipped are still measured from `designs/`, since there is nowhere else for
+ * them to live; the report says which source each came from.
+ *
+ *   node fit/door-budget.mjs               check the shipped skins + candidates
+ *   node fit/door-budget.mjs --shipped     only what actually ships
  *   node fit/door-budget.mjs --self-test   prove the check actually fires
  */
 import { readFile, writeFile, readdir, mkdir } from "node:fs/promises";
@@ -33,6 +43,7 @@ import { promisify } from "node:util";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readPNG } from "./png.mjs";
+import { shippedSkins } from "../harness/shipped.mjs";
 const run = promisify(execFile);
 const HERE = dirname(fileURLToPath(import.meta.url)), SP = join(HERE, "..");
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -43,11 +54,27 @@ const BG = [0xfd, 0xf6, 0xe9], THRESH = 6;                 // page cream, "visib
 const SLOT_W = 560, SLOT_H = 560, MARGIN = 100, REACH = 150;
 
 const SELFTEST = process.argv.includes("--self-test");
-const slugs = (await readdir(join(SP, "designs"))).filter(f => f.endsWith(".js")).map(f => f.slice(0, -3)).sort();
-const sources = {};
-for (const s of slugs) sources[s] = await readFile(join(SP, "designs", s + ".js"), "utf8");
+const ONLY_SHIPPED = process.argv.includes("--shipped");
+
+/* The shipped block first: these ids are the game, and they win over any
+   same-named file in designs/. */
+const { source: shippedSource, ids: shippedIds } = await shippedSkins();
+const sources = {}, origin = {};
+for (const id of shippedIds) { sources[id] = shippedSource; origin[id] = "index.html"; }
+
+const candidates = (await readdir(join(SP, "designs")))
+  .filter(f => f.endsWith(".js")).map(f => f.slice(0, -3))
+  .filter(id => !shippedIds.includes(id));
+if (!ONLY_SHIPPED) {
+  for (const s of candidates) {
+    sources[s] = await readFile(join(SP, "designs", s + ".js"), "utf8");
+    origin[s] = "designs/";
+  }
+}
+const slugs = Object.keys(sources).sort();
 if (SELFTEST) {
   slugs.push("zz-toowide");
+  origin["zz-toowide"] = "self-test";
   sources["zz-toowide"] = `DESIGNS["zz-toowide"]={name:"Too Wide",blurb:"deliberately over budget",
     css:".dz-zz-toowide .tw{position:absolute;left:100%;top:var(--top);width:80px;height:var(--cell);background:#c33}",
     door(){return '<div class="tw"></div>'}, sprat(){return '<svg class="art"></svg>'}};`;
@@ -131,7 +158,7 @@ for (const slug of slugs) {
   if (wB.B > BUDGET.bottom)
     fail.push(`paints ${wB.B}px below the oil (budget ${BUDGET.bottom}) at cell ${wB.cell}, hero row ${wB.row}. It lands on the Moves/Best row.`);
   if (fail.length) bad++;
-  console.log(`${fail.length ? "✗" : "✓"} ${slug.padEnd(11)} right ${String(wR.R).padStart(3)}   above ${String(wT.T).padStart(3)}   below ${String(wB.B).padStart(3)}`);
+  console.log(`${fail.length ? "✗" : "✓"} ${slug.padEnd(11)} right ${String(wR.R).padStart(3)}   above ${String(wT.T).padStart(3)}   below ${String(wB.B).padStart(3)}   ${origin[slug] || "?"}`);
   for (const f of fail) console.log("    FAIL  door " + f);
 }
 console.log(bad ? `\n${bad} design(s) over the door budget.` : `\nEvery door fits the ${BUDGET.right}/${BUDGET.top}/${BUDGET.bottom}px budget.`);

@@ -45,7 +45,20 @@ for (const banned of ["document", "window", "Math.random", "Date.now", "new Date
   }
 }
 const W = 6, H = 6;
-const G = new Function("W", "H", `${block[1]}\nreturn { makeTin, bandFor };`)(W, H);
+/* The extracted block has to execute under the SAME rules as the page, or the
+   drift this extraction exists to prevent walks straight back in through the
+   gate. A Function body is sloppy mode by default, while in index.html the
+   same text sits below `"use strict";` — so an undeclared assignment (a plain
+   typo) quietly created a global here and passed, where the page throws
+   ReferenceError on first load and shows everyone a blank tin. Deploying is
+   `git push` with no CI, so this script is the only thing standing between an
+   edit and every visitor.
+   W and H are declared inside the body rather than passed as parameters for
+   the same reason: in the page they are `const`, and a parameter is a mutable
+   binding, so an assignment to W succeeded here and threw there. */
+const G = new Function(
+  `"use strict";\nconst W = ${W}, H = ${H};\n${block[1]}\nreturn { makeTin, bandFor };`
+)();
 
 /* ---------- independent solver: plain 2D grid, no bitmasks ---------- */
 const isH = f => f.dir === "R" || f.dir === "L";

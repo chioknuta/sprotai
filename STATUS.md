@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-08-19_
+_Last updated: 2026-10-21_
 
 ## LIVE at https://sprot.ai
 
@@ -205,6 +205,258 @@ still no build step, still runs off a disk.
 are single-look, so `classic` is still the identity anyone meets from a link.
 Sharing is text-only, so four looks does not fragment what gets shared.
 
+## The health check, and what it found (2026-10-21)
+
+Two months dormant, and nothing had rotted: the live site was byte-identical to
+the repo, `node tools/verify.mjs` passed, and the generator and skins blocks
+were untouched. Both are still byte-identical after everything below — checked
+by hash, not by eye. What the audit did find was two bugs that silently cost a
+player her streak, a dead acceptance test, and a win panel most phone players
+never saw.
+
+### The daily never rolled over unless the page was reloaded
+
+`dayK` was stamped once, in `setMode("daily")`, and nothing read the clock
+again — there was no `visibilitychange`, `pageshow` or interval anywhere. A
+page left open across local midnight went on serving the previous day's tin for
+as long as it stayed open, and a win was recorded against **yesterday's** row,
+which already existed, so no row was written for the day actually played.
+Verified arithmetic: play the 19th, 20th and 21st, leave it open, play on the
+22nd, and on the 23rd the streak reads **1 instead of 5**. Every day played.
+
+The streak chip made it worse — it counts back from yesterday when today is
+unplayed, so a stale page cheerfully showed the streak intact on the very day
+it was being lost.
+
+**This is the normal path for the thing she asked about.** A phone does not
+reload a page it returns to, and an installed app is resumed from the app
+switcher rather than launched. `checkRollover()` now runs on
+`visibilitychange`, on `pageshow`, and on a 60s interval. Two outcomes, because
+her moves are hers: nothing invested (untouched or finished) moves her straight
+on; mid-solve **offers** it as a tappable "Today's tin is ready →" in the date
+line. All three cases tested.
+
+### The writers were never tokened — bug #3, reopened through the packing path
+
+`modeRun` guards the *build*. It was never consulted by the *writers*.
+`setMode` assigns `mode` and `dayK` immediately, then waits seconds for a tin
+to climb; for that whole window the old board is on screen with the old fish and
+the old history while `boardId()` already names the incoming tin. So `commit`,
+`undo`, `recordWin`, `saveRun` and `showWin` all filed the old board's state
+under the new board's key.
+
+`.tin.busy{pointer-events:none}` was not the whole fix: pointermove/pointerup
+are bound to `window` so a drag in flight keeps being delivered, the tools row
+sits outside `.tin`, and Cmd+Z reaches `undo()` through the document handler.
+
+Fixed with `builtId` — the id the board on screen was actually built from — and
+a one-line `onLiveBoard()` check in all five writers. **Verified:** during a
+simulated pack, `undo` + `saveRun` + `commit` + `recordWin` + `showWin` all
+wrote nothing under the daily's id, and the ladder's moves were untouched.
+`enterBusy()` also drops any drag in flight, releases pointer capture, and
+disables Undo/Reset so a dead button does not look live.
+
+### The win panel was below the fold, and nothing scrolled to it
+
+No `scrollIntoView` anywhere in the file. At 375x553 — an iPhone SE with
+Safari's toolbars up — **ten pixels** of the panel were visible: the
+congratulation, the streak, the share grid and the Share button were all off
+screen with no scrollbar and nothing to suggest more page. The share grid is
+the growth path and most players never saw it. The board itself fits above the
+fold at every portrait width, which is exactly why nobody noticed: the promise
+holds right up until she wins.
+
+`revealWin()` fixes it, and **the deferral is the fix** — called synchronously
+it loses the race with the browser's own scroll restoration, which puts the
+page back to the top once loading finishes, leaving the panel precisely where
+it started. It now waits for `load` and a frame, bails if the panel has since
+been put away, and honours `prefers-reduced-motion`.
+
+### `ship-check.mjs` was dead, and Chrome killed it
+
+The named acceptance test for the door budget returned **72 of 72 "no
+reading"** and exited 1. Not a silent pass — a loud failure nobody had run in
+two months. The cause was outside this repo: Chrome stopped honouring
+`--virtual-time-budget` for `--dump-dom`, so the DOM was dumped before a single
+`setTimeout` had run and every page that measures itself asynchronously
+returned its placeholder. Chrome 155, updated the morning of the audit.
+
+Rewritten on the DevTools protocol (`fit/cdp.mjs`, no dependencies — Node has a
+global `WebSocket`). Three things fell out of that:
+
+- **The iframe is gone.** `Emulation.setDeviceMetricsOverride` sets a real
+  viewport, so `innerWidth` is the width asked for by construction.
+- **It measures paint, not rects.** The page is diffed against itself with the
+  door layer hidden, so a gradient counts where it stops being visible. This
+  killed two false alarms the rect-union raised and the old script would have
+  raised too: neon reported as landing on the date line at every width from 360
+  up (the date is centred; the lid is at the right-hand edge) and on the Moves
+  row at row 5 (`neon-spill`'s box overlaps "Best —" by 18px while its paint
+  has faded to nothing). **No shipped skin touches the furniture.**
+- **Landscape is in the matrix**, and `scrolls` is no longer a failure —
+  How to play and the footer are *meant* to be below the fold, and failing on
+  that red-lights the footer forever. What is enforced is that the tin and its
+  controls are reachable.
+
+The 320px residual (deco ~4px of key, neon ~10px of glow) is now an explicit
+logged ALLOW rather than a silent pass. **All 96 checks pass.**
+
+`door-budget.mjs` was measuring `designs/*.js` — frozen copies — so a door
+edited the way CLAUDE.md says to edit one was invisible to its own budget
+check. It now reads the shipped `skins:` block for the four that ship and
+`designs/` only for the candidates, and prints which source each came from.
+All four shipped skins pass: classic 13/0/0, deco 57/1/1, neon 53/17/17,
+plush 59/20/20 against 60/24/24. **Plush has 1px of horizontal headroom** —
+worth knowing before anyone touches that door.
+
+### `verify.mjs` ran the generator in sloppy mode
+
+`new Function(body)` is sloppy by default; in index.html the same text sits
+below `"use strict";`. So the verified code and the shipped code did not
+execute under the same rules — the exact drift the extraction exists to
+prevent. A one-character typo creating an implicit global printed "All 60 tins
+solvable", would have been pushed, and would have shown every visitor a blank
+page. Now prefixed with the directive, with `W`/`H` declared inside the body as
+`const` rather than passed as mutable parameters. **Proven:** the same injected
+typo now exits 1 with a ReferenceError.
+
+### It is an app now, and that was the honest answer to "could this be my first app"
+
+**Do not build a native app yet.** Apple's guideline 4.2 is hostile to thin web
+wrappers and a bare WKWebView over a responsive site is close to an automatic
+rejection; it costs $99/year and a review queue to find out. Google Play is $25
+once, but a personal account created now cannot ship to production until it has
+run a closed test with **12 testers for 14 unbroken days**. The only thing a
+native build buys this game that the web cannot is a scheduled local "today's
+tin is ready" notification. Revisit if retention ever proves that is the
+difference — and then as a real native shell, not a wrapper.
+
+What shipped instead is `sw.js`, and it is the whole gap: the game needs no
+network to generate, play, persist or score a puzzle, yet an installed copy
+showed the browser's offline error page. **Verified by stopping the server and
+reloading: full board, correct date, par 11, served by the service worker.**
+
+- **Network-first for the page, deliberately.** Cache-first is the usual advice
+  and the usual footgun — it pins everyone to the version they first loaded.
+  For a game that ships by `git push` with no CI, being one push behind is the
+  failure that cannot be debugged remotely. Cache-first only for the icons.
+- Registered behind a protocol guard, so running off a disk still works, and
+  every failure is swallowed.
+- Cross-origin requests are not touched, so turning on the `CFA` beacon later
+  is not intercepted.
+
+Also: **the asset paths were root-absolute.** `/icon-192.png` and
+`/manifest.webmanifest` quietly narrowed "drop it on any static host" to hosts
+serving it at the domain **root** — in a project subpath or off a disk the
+icons and the manifest 404 and the install prompt goes with them. Now relative,
+along with the manifest's own `start_url` and `scope`. And a **maskable icon**
+was added: both existing icons declare `purpose: "any"` and bake their rounded
+corners in as opaque white, which Android inscribes inside the safe area over a
+white plate — the shrunken already-rounded tile that reads as a web shortcut.
+`icon-512-maskable.png` is full-bleed with the fish inset to 0.92 so its
+farthest point sits 203.1px from centre against a safe radius of 204.8.
+
+### Accessibility, and the touch handling underneath it
+
+- **The game could not be played by keyboard at all.** Every sprat was already
+  a `<button>` with a label and a focus ring, but the only listener was
+  `pointerdown` — and a button turns Enter and Space into a `click`, which
+  nothing listened for. Eight of sixteen tab stops were controls that looked
+  live and did nothing. Arrows along the lane, Enter and Space to shuffle,
+  both routed through the same `commit`/`bump` the drag uses so legality is
+  decided in one place.
+- **The labels went stale on the first move.** Written once in `build()` from
+  the sprat's *base* row and column, so they described the tin before anything
+  slid — and `off` is not zero to begin with when a save is restored. Now
+  rebuilt in `paint()`, and they say which way a sprat can still go:
+  "Sprat, 2 long, lying down at row 1 column 5. Slides down."
+- **`pointercancel` was routed to `onUp`**, so a gesture the OS took away —
+  a system edge-swipe, a call, the app backgrounding — committed a move she
+  never made. It now snaps back.
+- **A second finger hijacked the drag**: `drag` was overwritten outright, so
+  the new sprat answered the old finger and the first was left wearing
+  `.dragging`. One pointer at a time now, matched on `pointerId`.
+- **A drag across the lane counted as a tap.** `moved` only ever tracked the
+  along-lane component, so a swipe perpendicular to a sprat fell through to the
+  tap branch and shuffled it a square — and since `.tin` sets
+  `touch-action:none`, that swipe was often someone trying to scroll. Measured:
+  a 90px drag straight down on a horizontal sprat committed a move. Abandoned
+  now, and the sprat snaps back.
+- **The shake on a blocked move** was the last thing still moving under
+  `prefers-reduced-motion`, and it is the animation that fires most often. The
+  feedback survives: the sound plays and the blocker still flashes, which is
+  brightness and glow rather than movement.
+- **Contrast: every text element on the page now passes WCAG AA**, swept
+  rather than spot-checked. It did not before — footer 2.03, the mode tabs
+  2.55 and 2.60, How to play 2.72, the Moves/Best labels 3.09, Undo and Reset
+  4.08. Each was moved to the **lightest** value on its own hue that reaches
+  4.5:1 against the background it actually sits on, so this is legibility, not
+  a recolour. `--accent` itself is untouched — a new `--accent-txt` carries the
+  small-text cases. No skin overrides `:root`, so it holds under all four.
+- Tap targets: the three icon buttons were 38x39 and How to play was 20px
+  tall, under even the 24px floor. Both now 44.
+
+### `replay()` accepted moves the board could never make
+
+The hardened save path recomputes `from` and calls `gridValid()` after every
+move — but `gridValid()` checks the resulting **state**, never the
+**transition**, so a saved move could teleport a sprat straight through a
+blocker and land somewhere perfectly legal. `hist.length` is what the game
+banks as the move count, writes into the day record and draws in the share
+grid, so a forged save could report finishing an 11-move daily in 4 — below a
+par the generator exists to prove is a minimum. Three lines, using the same
+`rangeOf()` the drag already trusts.
+
+**This matters beyond one device:** the leaderboard plan on record is to submit
+the move list and replay it server-side, and a server running the old
+`replay()` would have accepted the forgery.
+
+### Smaller, all verified
+
+- `build()` dereferenced `currentTin()` unchecked, so Reset or "Try again"
+  landing during a pack threw a TypeError and the button did nothing.
+- Share silently did nothing with no Clipboard API: optional chaining
+  short-circuited past the `window.prompt` fallback. Not exotic — the Clipboard
+  API needs a secure context and this file is meant to run off a disk.
+- `Snd.init()` returned early on an existing context and nothing resumed it, so
+  iOS killed the per-move bubble for the rest of the session after any lock or
+  backgrounding.
+- `layout()` sized the cell from width alone, so a sideways phone clamped to
+  the 58px maximum and put the tin in a 375px-tall screen. Now clamped on
+  height too. It does not bite in portrait at any phone width.
+
+### Still open, deliberately
+
+- **The Share button fails AA and it is the one thing left unfixed.** White on
+  its orange gradient measures **1.97:1** at the top stop and 3.17 at the
+  bottom, against the 4.5 that 15px bold needs. Every fix is a visible brand
+  decision — darken the gradient to roughly `#9d6c26`→`#b85d27`, switch to ink
+  text (5.85 top but 3.63 bottom, so still short), or go to 18.66px bold and
+  need only 3.0 (white is still 1.97 at the top). It is the primary CTA and the
+  signature colour, so it is **her call, not a fix to make quietly.**
+- **Landscape cannot put the board above the fold, and no clamp fixes that.**
+  ~185px of header sits above the tin and the cell floor is 38, so the board
+  alone needs 413px in a 375px-tall screen. It would take a landscape-specific
+  layout — controls beside the tin rather than under it. The manifest already
+  asks for portrait. `ship-check` holds landscape to amputation and collision
+  and reports the fold rather than enforcing it.
+- **Nobody can find the game.** A web search for "sprot.ai" and "Šprotai"
+  returns nothing — not the site, not a mention, not a directory entry. Two
+  months live and completely undiscovered. `listdle.com/submit` is a form, not
+  a negotiation, and it indexes several hundred dailies with Logic and Shapes
+  categories. **Everything else — analytics, Ko-fi, the leaderboard, the sunset
+  call — is unanswerable until some non-zero number of strangers has loaded the
+  page.** Nothing in the code changes.
+- Domain confirmed independently by whois: expiry **2027-11-20**, ACTIVE,
+  Spaceship — STATUS was accurate. Auto-renew is still off, so that wants a
+  calendar reminder rather than a code change. The sunset decision ("sunset if
+  nothing ships by ~Aug 2027") is now stale: something shipped.
+- `AGENTS.md` was an untracked near-copy of CLAUDE.md whose only edit was a
+  `.Codex/` path matching no directory here. It is now a pointer, because a
+  second copy of a 7KB instruction file is a second thing to update and nobody
+  does. `.codex/` is left untracked — that is tooling, and whether it belongs
+  in the repo is a call for whoever uses it.
+
 ## Open thread: login and a leaderboard
 
 Asked for on 2026-08-17 after friends played. Assessed, not built:
@@ -287,8 +539,11 @@ differ in difficulty rather than ramping smoothly.
 
 ## Deployed
 
-GitHub Pages, from the `chioknuta/sprotai` repo. `sprot.ai` is not pointed at
-it yet — that needs DNS records in Spaceship.
+GitHub Pages, from the `chioknuta/sprotai` repo. **See "LIVE at
+https://sprot.ai" at the top of this file for the current state** — the DNS was
+switched on 2026-08-10 and this section used to still say it had not been,
+which is the kind of thing that sends someone off to re-point a domain that is
+already pointed.
 
 ---
 

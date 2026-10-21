@@ -11,7 +11,12 @@ and what's next. Update it before the context window gets cleared.
 
 - **`index.html` ships as one self-contained file.** No build step, no
   dependencies, no external network requests. It must run by opening the file.
-  This is what lets the whole game be dropped on any static host.
+  This is what lets the whole game be dropped on any static host — **on any
+  path, not just a domain root**, so asset paths stay relative; `/icon-192.png`
+  and `/manifest.webmanifest` once broke every subdirectory and `file://`
+  install at once. The manifest, the icons and `sw.js` are separate files
+  beside it and always have been; the rule is that index.html itself fetches
+  nothing.
 - **Every generated puzzle must be solvable**, with no possibility of a
   player-created dead end. This is a correctness property, not a nice-to-have —
   an unsolvable daily puzzle is seen by everyone at once.
@@ -25,9 +30,13 @@ and what's next. Update it before the context window gets cleared.
 | Path | What |
 |---|---|
 | `index.html` | The entire game |
+| `sw.js` | Service worker: offline play. Network-first for the page |
+| `manifest.webmanifest` | PWA manifest. Paths are relative on purpose |
+| `AGENTS.md` | Pointer to this file, for other agents. Keep it a pointer |
 | `oil-line.html` | Retired prototype, kept for reference (see STATUS.md) |
 | `tools/verify.mjs` | Solvability + par verifier |
 | `tools/design-lab/` | Where the art lives and is checked — see its README |
+| `tools/design-lab/fit/cdp.mjs` | Drives headless Chrome over DevTools protocol |
 | `.claude/hooks/context-nudge.sh` | Stop hook: says when to `/clear` |
 | `.claude/launch.json` | Local preview server config |
 
@@ -43,6 +52,25 @@ node tools/verify.mjs
 ```
 
 Deeper pass: `node tools/verify.mjs 400`
+
+Check the shipped skins still fit every phone — run after touching a skin, a
+door, or `layout()`:
+
+```bash
+node tools/design-lab/fit/ship-check.mjs
+```
+
+The door budget on its own, shipped skins and candidates:
+
+```bash
+node tools/design-lab/fit/door-budget.mjs
+```
+
+**Do not reach for `--virtual-time-budget --dump-dom` in a new fit script.**
+Chrome stopped honouring it: the DOM comes back before any `setTimeout` has
+run, which killed `ship-check.mjs` outright (72 of 72 "no reading") on a Chrome
+update with no change to this repo. Use `fit/cdp.mjs`. `--screenshot` is still
+fine, which is why `door-budget.mjs` survived.
 
 Preview locally — use the `sprotai` config via the preview tool, or:
 
@@ -82,6 +110,13 @@ and a slow phone.
 
 Two traps, both of which have already bitten:
 
+- **Every writer must check `onLiveBoard()`.** `boardId()` is derived from the
+  live `mode`/`dayK`/`lvl`, and `setMode` flips those seconds before the new
+  tin finishes packing, so for that whole window the old board is on screen
+  while `boardId()` names the incoming one. `modeRun` guards the *build*, never
+  the writers. `builtId` is the id the board on screen was built from; anything
+  that writes storage or banks a result compares against it and bails. This is
+  the three-times-over deferred-callback bug, and it came back through packing.
 - **Occupancy must stay a two-word bitmask.** JS shifts modulo 32, so on a
   36-cell board `1 << 35` is `1 << 3` and the bottom of the tin aliases onto
   the top. A single word silently corrupted par on 259 of the first 300 tins.
