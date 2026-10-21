@@ -524,7 +524,39 @@ Asked for on 2026-08-17 after friends played. Assessed, not built:
 - **A live leaderboard leaks par**, which the share text deliberately hides.
   Friends-only, or unlocked after you have played.
 
-## Open thread: analytics is built but switched off
+## Analytics is ON (2026-10-21)
+
+`CFA` is set to the Cloudflare Web Analytics token and the beacon ships. Two
+things that would each have produced a dashboard reading zero forever:
+
+- **The dashboard's RUM setting must be "Enable with JS Snippet installation",
+  not plain "Enable."** "Enable" injects the snippet inside Cloudflare's proxy,
+  and these DNS records are DNS-only on purpose, so there is nothing to inject
+  through. It looks enabled and collects nothing. ("Enable, excluding visitor
+  data in the EU" is also wrong here — the owner and most early players are in
+  the EU, so it would exclude nearly everyone.)
+- **The beacon reports to an absolute endpoint when it has to.** It posts to
+  the relative `/cdn-cgi/rum` where a proxy would catch it — which on GitHub
+  Pages 404s — and falls back to
+  `https://cloudflareinsights.com/cdn-cgi/rum`. That fallback is the only
+  reason an unproxied site can use this at all; it was read out of the shipped
+  beacon rather than assumed.
+
+Also checked: the beacon is a plain IIFE with no module syntax, so loading it
+as a classic deferred script is right even though Cloudflare's copy-paste
+snippet now says `type="module"`.
+
+**The orange cloud beside `sprot.ai` in the Web Analytics hostname list is not
+the proxy.** It means "a zone on this account". Verified at the same time: all
+four A records are still `185.199.*` (GitHub Pages) and the certificate is
+still Let's Encrypt via GitHub, so the August DNS-only decision is intact.
+
+What it answers: is anyone playing, and do they come back. What it cannot
+answer: what share finish the daily, or whether streaks retain anyone — no
+custom events, which needs a Worker, which is the leaderboard's infrastructure
+too. Decide those together or not at all.
+
+## Open thread: the analytics switch, for the record
 
 **Set `CFA` in index.html to the Cloudflare Web Analytics token and it starts
 counting.** Same idiom as `KOFI`: empty means the page makes **no external

@@ -1787,14 +1787,24 @@ const kofiURL = () => "https://ko-fi.com/" + KOFI;
    It has to be the manual JS beacon rather than Cloudflare's automatic
    injection, because the DNS records are DNS-only by design: the orange-cloud
    proxy blocks GitHub's certificate issuance, so nothing is proxied to inject
-   into. Token comes from Cloudflare → Web Analytics → Add a site → sprot.ai.
+   into. In the dashboard that is RUM → "Enable with JS Snippet installation";
+   plain "Enable" looks identical and reports nothing, because the injection it
+   promises happens inside the proxy this domain does not use.
+
+   What makes the manual beacon work unproxied at all: it posts to the relative
+   `/cdn-cgi/rum` when it can — which here would hit GitHub Pages and 404 —
+   and falls back to the absolute `https://cloudflareinsights.com/cdn-cgi/rum`
+   otherwise. Checked in the shipped beacon, not assumed. Also checked: the
+   script is a plain IIFE with no module syntax, so loading it as a classic
+   deferred script is correct even though Cloudflare's copy-paste snippet now
+   says type="module".
 
    It counts visits, not people: no cookies, no fingerprinting, no cross-site
    identifier, nothing that says who was here. It answers "is anyone playing,
    and do they come back", which is the question. It cannot answer "how many
    finish the daily" — that needs custom events, which this product has none
    of, and which would mean running a Worker of our own. */
-const CFA = "";
+const CFA = "9cda0f77129c4735bb3622bc6ecc9c3b";
 if (CFA){
   const beacon = document.createElement("script");
   beacon.defer = true;
