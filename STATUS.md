@@ -470,9 +470,20 @@ result can show as a game rather than an untitled page. It claims nothing
 untrue: no invented author, no ratings nobody has given. Canonical, title,
 description and `lang` were already correct.
 
-**The other half is hers and cannot be done from here** — it needs her Google
-account and her name on a submission. Confirmed by search on the day: sprot.ai
-returns nothing at all.
+**Submitted to listdle.com on 2026-10-21**, with her go-ahead on the exact
+wording: URL `https://sprot.ai/`, title Šprotai, category LOGIC, the standard
+description plus "No login, no ads, free.", contact `aistelei@gmail.com` (her
+personal address, given for this). Their acceptance bar is "a free-to-play
+daily game which does not require log in", which this clears. Acknowledged:
+"We'll review the game and add it to Listdle within a week or so." Their
+consent dialog was set to **Reject all**, not accepted.
+
+**Google Search Console is the one thing still outstanding, and it needs her
+Google account** — nobody else can do it. Add `sprot.ai`, verify by TXT record
+(the DNS is already at Cloudflare), submit `https://sprot.ai/sitemap.xml`. That
+is what gets a domain crawled when nothing links to it, and until it is done
+the sitemap added today is just sitting there. Confirmed by search on the day:
+sprot.ai returned nothing at all.
 
 ### Still open, deliberately
 
